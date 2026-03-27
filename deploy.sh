@@ -19,7 +19,7 @@ if git diff --cached --quiet; then
 fi
 
 git commit -m "Update race trainer app — $(date '+%b %d %Y, %I:%M %p')"
-git push origin HEAD:main 2>&1
+git push origin HEAD:main --force 2>&1
 
 if [ $? -eq 0 ]; then
   echo ""
