@@ -4216,12 +4216,9 @@
           return;
         }
         const provider = new firebase.auth.GoogleAuthProvider();
-        // Try popup first; fall back to redirect if popup is blocked
-        firebaseAuth.signInWithPopup(provider).catch((err) => {
-          if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
-            firebaseAuth.signInWithRedirect(provider);
-          }
-        });
+        // Use redirect flow — more reliable on static hosts (GitHub Pages) where
+        // third-party cookie restrictions can silently break signInWithPopup.
+        firebaseAuth.signInWithRedirect(provider);
       };
       const handleGoogleSignOut = () => {
         if (firebaseAuth) firebaseAuth.signOut();
