@@ -4286,11 +4286,11 @@
             ...prev,
             weekWorkouts: newWeekWorkouts,
             adaptationState: newAdaptation,
-            lastAdaptedWeek: weekIdx
+            lastAdaptedWeek: weekIdx + 1  // advance past next boundary so auto-adapt doesn't re-run
           }));
         } catch (e) {
           // Even if rebuild fails, still mark the week as handled
-          setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx }));
+          setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx + 1 }));
         } finally {
           // Advance the dashboard view to the next week so user sees what's coming
           if (plan && weekIdx + 1 < plan.totalWeeks) setViewedWeekIdx(weekIdx + 1);
@@ -4302,7 +4302,7 @@
       const handleWeekKeepBase = () => {
         if (!weekCompleteModal) return;
         const { weekIdx } = weekCompleteModal;
-        setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx }));
+        setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx + 1 }));  // advance past next boundary so auto-adapt doesn't re-run
         // Advance the dashboard view to the next week
         if (plan && weekIdx + 1 < plan.totalWeeks) setViewedWeekIdx(weekIdx + 1);
         setWeekCompleteModal(null);
