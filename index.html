@@ -4192,24 +4192,31 @@
       const handleWeekAdapt = () => {
         if (!weekCompleteModal) return;
         const { weekIdx, completedLogs } = weekCompleteModal;
-        // Compute adaptation including this week's logs (cutoff = weekIdx+1)
-        const newAdaptation = computeAdaptationFromLogs(completedLogs, plan, weekIdx + 1);
-        // Rebuild future weeks only — current and past weeks are frozen
-        const newWeekWorkouts = plan.weekWorkouts.map((week, wIdx) => {
-          if (wIdx <= weekIdx) return week;
-          return buildWeekWorkouts(
-            plan.weeks[wIdx], plan.raceType, plan.goalTime,
-            plan.fitnessLevel, plan.includeStrength,
-            plan.fitnessAssessment, newAdaptation, plan.schedulePrefs || null
-          );
-        });
-        setPlan(prev => ({
-          ...prev,
-          weekWorkouts: newWeekWorkouts,
-          adaptationState: newAdaptation,
-          lastAdaptedWeek: weekIdx
-        }));
-        setWeekCompleteModal(null);
+        try {
+          // Compute adaptation including this week's logs (cutoff = weekIdx+1)
+          const newAdaptation = computeAdaptationFromLogs(completedLogs || logs, plan, weekIdx + 1);
+          // Rebuild future weeks only — current and past weeks are frozen
+          const newWeekWorkouts = (plan.weekWorkouts || []).map((week, wIdx) => {
+            if (wIdx <= weekIdx) return week;
+            if (!plan.weeks || !plan.weeks[wIdx]) return week; // safety: skip if week spec missing
+            return buildWeekWorkouts(
+              plan.weeks[wIdx], plan.raceType, plan.goalTime,
+              plan.fitnessLevel, plan.includeStrength ?? true,
+              plan.fitnessAssessment || null, newAdaptation, plan.schedulePrefs || null
+            );
+          });
+          setPlan(prev => ({
+            ...prev,
+            weekWorkouts: newWeekWorkouts,
+            adaptationState: newAdaptation,
+            lastAdaptedWeek: weekIdx
+          }));
+        } catch (e) {
+          // Even if rebuild fails, still mark the week as handled
+          setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx }));
+        } finally {
+          setWeekCompleteModal(null);
+        }
       };
 
       // User chose "Keep the base plan" in the week-complete modal
