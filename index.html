@@ -3956,9 +3956,8 @@
         const timer = setTimeout(async () => {
           try {
             setSyncing(true);
-            const profileId = profile?.id || 'default';
             const profileRef = firebaseDb.collection('users').doc(authUser.uid)
-                                         .collection('profiles').doc(profileId);
+                                         .collection('profiles').doc('primary');
             // Strip derived/large fields before saving (weekWorkouts are rebuilt client-side)
             const planToSave = plan ? { ...plan, weekWorkouts: undefined, adaptationState: plan.adaptationState || null } : null;
             await profileRef.set(

@@ -3869,11 +3869,10 @@
           if (user) {
             try {
               setSyncing(true);
-              // Use per-profile path: users/{uid}/profiles/{profileId}
-              // Falls back to users/{uid} for legacy data
-              const profileId = profile?.id || 'default';
+              // Always use a fixed 'primary' key for cloud sync so all devices
+              // signed into the same Google account share one Firestore path.
               const profileRef = firebaseDb.collection('users').doc(user.uid)
-                                           .collection('profiles').doc(profileId);
+                                           .collection('profiles').doc('primary');
               const legacyRef  = firebaseDb.collection('users').doc(user.uid);
 
               let d = null;
@@ -3957,9 +3956,8 @@
         const timer = setTimeout(async () => {
           try {
             setSyncing(true);
-            const profileId = profile?.id || 'default';
             const profileRef = firebaseDb.collection('users').doc(authUser.uid)
-                                         .collection('profiles').doc(profileId);
+                                         .collection('profiles').doc('primary');
             // Strip derived/large fields before saving (weekWorkouts are rebuilt client-side)
             const planToSave = plan ? { ...plan, weekWorkouts: undefined, adaptationState: plan.adaptationState || null } : null;
             await profileRef.set(
