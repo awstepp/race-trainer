@@ -3883,7 +3883,25 @@
               } else {
                 // Try legacy flat doc (backwards-compatible)
                 const legacyDoc = await legacyRef.get();
-                if (legacyDoc.exists) d = legacyDoc.data();
+                if (legacyDoc.exists) {
+                  d = legacyDoc.data();
+                } else {
+                  // New device — profile ID won't match. Scan all saved profiles
+                  // and load the most recently synced one.
+                  const allProfiles = await firebaseDb.collection('users').doc(user.uid)
+                                                      .collection('profiles').get();
+                  if (!allProfiles.empty) {
+                    let latestData = null, latestTime = '';
+                    allProfiles.forEach(doc => {
+                      const data = doc.data();
+                      if (data.config && (data.lastSynced || '') > latestTime) {
+                        latestTime = data.lastSynced || '';
+                        latestData = data;
+                      }
+                    });
+                    if (latestData) d = latestData;
+                  }
+                }
               }
 
               if (d && d.config) {

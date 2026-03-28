@@ -2,13 +2,16 @@
 # Race Trainer — Deploy to GitHub + Netlify
 # Run this from Terminal: bash ~/Desktop/Race\ Trainer/deploy.sh
 
+# Ensure git is findable when run from cron (cron has a minimal PATH)
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
 cd "$HOME/Desktop/Race Trainer" || { echo "❌ Could not find Race Trainer folder on Desktop"; exit 1; }
 
 # Clear any stale git lock files
 rm -f .git/HEAD.lock .git/index.lock .git/refs/heads/*.lock 2>/dev/null
 
 echo ""
-echo "🚀 Deploying Race Trainer..."
+echo "🚀 Deploying Race Trainer — $(date '+%b %d %Y, %I:%M %p')"
 echo ""
 
 git add -A
