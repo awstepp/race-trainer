@@ -3770,7 +3770,8 @@
       const completedCount = activeDays.filter(({ log }) => !!log).length;
 
       // Preview what adaptation would do — use weekIdx+1 as the cutoff so this week's logs are included
-      const adaptPreview  = computeAdaptationFromLogs(completedLogs, plan, weekIdx + 1);
+      let adaptPreview = { mileageMultiplier: 1.0, paceOffsetSec: 0, sampleCount: 0, summary: null };
+      try { adaptPreview = computeAdaptationFromLogs(completedLogs || {}, plan, weekIdx + 1); } catch(e) {}
       const mileagePct    = Math.round((adaptPreview.mileageMultiplier - 1) * 100);
       const paceOff       = Math.round(adaptPreview.paceOffsetSec || 0);
       const hasChanges    = Math.abs(mileagePct) >= 3 || Math.abs(paceOff) > 5;
