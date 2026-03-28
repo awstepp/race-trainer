@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.raceready.autodeploy</string>
+
+    <!-- Watch index.html for changes -->
+    <key>WatchPaths</key>
+    <array>
+        <string>/Users/alexstepp/Desktop/Race Trainer/index.html</string>
+    </array>
+
+    <!-- Run the deploy script when a change is detected -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/alexstepp/Desktop/Race Trainer/deploy.sh</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- Log output to deploy.log in the same folder -->
+    <key>StandardOutPath</key>
+    <string>/Users/alexstepp/Desktop/Race Trainer/deploy.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/alexstepp/Desktop/Race Trainer/deploy.log</string>
+</dict>
+</plist>
