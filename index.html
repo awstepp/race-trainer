@@ -4216,9 +4216,16 @@
           return;
         }
         const provider = new firebase.auth.GoogleAuthProvider();
-        // Use redirect flow — more reliable on static hosts (GitHub Pages) where
-        // third-party cookie restrictions can silently break signInWithPopup.
-        firebaseAuth.signInWithRedirect(provider);
+        // Use popup — redirect flow breaks on GitHub Pages subdirectory paths.
+        // Popup works now that the API key referrer restriction includes awstepp.github.io.
+        firebaseAuth.signInWithPopup(provider).catch((err) => {
+          // Only fall back to redirect if the popup was explicitly blocked by the browser
+          if (err.code === 'auth/popup-blocked') {
+            firebaseAuth.signInWithRedirect(provider);
+          } else {
+            console.error('Sign-in error:', err.code, err.message);
+          }
+        });
       };
       const handleGoogleSignOut = () => {
         if (firebaseAuth) firebaseAuth.signOut();
