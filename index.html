@@ -287,7 +287,7 @@
       };
     }
 
-    function generatePlan(raceType, raceDate, goalTime, fitnessLevel, includeStrength = true, fitnessAssessment = null, schedulePrefs = null) {
+    function generatePlan(raceType, raceDate, goalTime, fitnessLevel, includeStrength = true, fitnessAssessment = null, schedulePrefs = null, weekStartOffset = 0) {
       const rtConfig = RACE_TYPES[raceType];
       const volumeFactor = FITNESS_LEVELS[fitnessLevel]?.volumeFactor || 0.85;
       const maxWeeks = rtConfig.weeks;
@@ -312,7 +312,7 @@
       const peakLongRunMiles  = calcPeakLongRunMiles(raceType, totalWeeks, volumeFactor, fitnessAssessment);
       const standardLongRun   = PEAK_LONG_RUN[raceType] || peakLongRunMiles;
       const isCompressedPlan  = totalWeeks < maxWeeks;
-      return { raceType, raceDate, goalTime, fitnessLevel, includeStrength, fitnessAssessment, schedulePrefs, totalWeeks, weeks, peakLongRunMiles, standardLongRun, isCompressedPlan };
+      return { raceType, raceDate, goalTime, fitnessLevel, includeStrength, fitnessAssessment, schedulePrefs, weekStartOffset, totalWeeks, weeks, peakLongRunMiles, standardLongRun, isCompressedPlan };
     }
 
     function getPhase(weekIdx, totalWeeks, thresholdWeek) {
@@ -872,22 +872,30 @@
       return d;
     }
 
-    // Returns the Monday that training begins (raceDate minus totalWeeks worth of days)
-    function getTrainingStartDate(raceDate, totalWeeks) {
+    // Returns the Sunday that training begins, always aligned to a calendar week.
+    // weekStartOffset (days) lets users shift to the following Sunday if they
+    // prefer to start fresh rather than inherit a partial first week.
+    function getTrainingStartDate(raceDate, totalWeeks, weekStartOffset) {
       const d = new Date(raceDate);
+      d.setHours(0, 0, 0, 0);
       d.setDate(d.getDate() - totalWeeks * 7);
+      // Snap back to Sunday so dayIdx 0=Sun, 1=Mon … 6=Sat matches today.getDay()
+      const dow = d.getDay();
+      if (dow !== 0) d.setDate(d.getDate() - dow);
+      // Apply optional offset (0 = start this Sunday, 7 = start next Sunday)
+      if (weekStartOffset) d.setDate(d.getDate() + weekStartOffset);
       return d;
     }
 
     // Week 0 Day 0 = first day of training; counts forward toward race date
-    function getWorkoutDate(raceDate, totalWeeks, weekIdx, dayIdx) {
-      const start = getTrainingStartDate(raceDate, totalWeeks);
+    function getWorkoutDate(raceDate, totalWeeks, weekIdx, dayIdx, weekStartOffset) {
+      const start = getTrainingStartDate(raceDate, totalWeeks, weekStartOffset);
       return addDays(start, weekIdx * 7 + dayIdx);
     }
 
     // Which training week are we in right now?
-    function getCurrentWeekIdx(raceDate, totalWeeks) {
-      const start = getTrainingStartDate(raceDate, totalWeeks);
+    function getCurrentWeekIdx(raceDate, totalWeeks, weekStartOffset) {
+      const start = getTrainingStartDate(raceDate, totalWeeks, weekStartOffset);
       const today = new Date();
       start.setHours(0, 0, 0, 0);
       today.setHours(0, 0, 0, 0);
@@ -1436,7 +1444,7 @@
             if (workout.type === 'rest' || workout.type.startsWith('strength')) return;
             const key = `${weekIdx}-${dayIdx}`;
             if (logs[key]) return;
-            const workoutDate = getWorkoutDate(plan.raceDate, plan.totalWeeks, weekIdx, dayIdx);
+            const workoutDate = getWorkoutDate(plan.raceDate, plan.totalWeeks, weekIdx, dayIdx, plan.weekStartOffset || 0);
             workoutDate.setHours(0, 0, 0, 0);
             if (workoutDate < today) {
               result.push({ weekIdx, dayIdx, workout, date: workoutDate, key });
@@ -2803,7 +2811,7 @@
     // Fitness Trend Chart
     function FitnessTrendChart({ plan, logs }) {
       if (!plan?.weeks || !plan?.weekWorkouts || !logs) return null;
-      const currentWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+      const currentWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
 
       // Build per-week data from logs
       const weeklyData = plan.weeks.slice(0, currentWeekIdx + 1).map((week, weekIdx) => {
@@ -2991,7 +2999,7 @@
       }
 
       const today = new Date();
-      const calendarWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+      const calendarWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
       // viewedWeek follows the calendar unless the user has manually navigated or wrapped up a week
       const currentWeekIdx = viewedWeekIdx != null
         ? Math.max(0, Math.min(viewedWeekIdx, plan.totalWeeks - 1))
@@ -3000,7 +3008,7 @@
       const weekWorkouts = plan.weekWorkouts[currentWeekIdx] || [];
       const phase = plan.weeks[currentWeekIdx]?.phase;
       const currentDayIdx = today.getDay();
-      const trainingStart = getTrainingStartDate(plan.raceDate, plan.totalWeeks);
+      const trainingStart = getTrainingStartDate(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
       const daysToRace = Math.ceil((new Date(plan.raceDate) - today) / 86400000);
 
       return (
@@ -3265,7 +3273,7 @@
             <div className="space-y-3">
               {weekWorkouts.map((w, i) => {
                 if (isViewingCurrentWeek && i <= currentDayIdx) return null;
-                const weekStart = getWorkoutDate(plan.raceDate, plan.totalWeeks, currentWeekIdx, 0);
+                const weekStart = getWorkoutDate(plan.raceDate, plan.totalWeeks, currentWeekIdx, 0, plan.weekStartOffset || 0);
                 const date = addDays(weekStart, i);
                 return (
                   <WorkoutCard
@@ -3350,7 +3358,7 @@
                 </div>
                 <div className="space-y-2">
                   {weekWorkouts.map((w, dayIdx) => {
-                    const date = getWorkoutDate(plan.raceDate, plan.totalWeeks, weekIdx, dayIdx);
+                    const date = getWorkoutDate(plan.raceDate, plan.totalWeeks, weekIdx, dayIdx, plan.weekStartOffset || 0);
                     return (
                       <WorkoutCard
                         key={dayIdx}
@@ -3414,7 +3422,7 @@
       const streak = (() => {
         if (!plan) return 0;
         let count = 0;
-        const cwi = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+        const cwi = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
         for (let w = cwi; w >= 0; w--) {
           const hasLog = Object.keys(logs).some(k => k.startsWith(`${w}-`));
           if (hasLog) count++; else break;
@@ -3425,7 +3433,7 @@
       // ── Completion rate ─────────────────────────────────────────────────
       const completionRate = (() => {
         if (!plan) return null;
-        const cwi = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+        const cwi = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
         let planned = 0, completed = 0;
         for (let w = 0; w <= cwi; w++) {
           (plan.weekWorkouts[w] || []).forEach((wo, d) => {
@@ -3463,7 +3471,7 @@
       // ── Weekly mileage by week (planned vs actual) ──────────────────────
       const weeklyData = (() => {
         if (!plan) return [];
-        const cwi = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+        const cwi = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
         return plan.weeks.slice(0, cwi + 1).map((wk, w) => {
           const actual = Object.entries(logs)
             .filter(([k, l]) => k.startsWith(`${w}-`) && l.type === 'run')
@@ -3928,7 +3936,7 @@
         const tryBuildFromConfig = (c) => {
           if (!c || !c.raceType || !c.raceDate || !c.goalTime || !c.fitnessLevel) return null;
           const schedulePrefs = c.schedulePrefs || null;
-          const newPlan = generatePlan(c.raceType, c.raceDate, c.goalTime, c.fitnessLevel, c.includeStrength !== false, c.fitnessAssessment || null, schedulePrefs);
+          const newPlan = generatePlan(c.raceType, c.raceDate, c.goalTime, c.fitnessLevel, c.includeStrength !== false, c.fitnessAssessment || null, schedulePrefs, c.weekStartOffset || 0);
           const weeks = [];
           for (let i = 0; i < newPlan.totalWeeks; i++) {
             weeks.push(buildWeekWorkouts(newPlan.weeks[i], newPlan.raceType, newPlan.goalTime, newPlan.fitnessLevel, newPlan.includeStrength, newPlan.fitnessAssessment, null, schedulePrefs));
@@ -4008,7 +4016,7 @@
       useEffect(() => {
         if (!plan || !plan.weeks) return;
 
-        const currentWeekIdx  = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+        const currentWeekIdx  = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
         const lastAdaptedWeek = plan.lastAdaptedWeek ?? -1;
 
         // Not yet at a new week boundary — do nothing
@@ -4194,7 +4202,7 @@
 
       const buildPlanFromConfig = (cfg) => {
         const schedulePrefs = cfg.schedulePrefs || null;
-        const newPlan = generatePlan(cfg.raceType, cfg.raceDate, cfg.goalTime, cfg.fitnessLevel, cfg.includeStrength !== false, cfg.fitnessAssessment || null, schedulePrefs);
+        const newPlan = generatePlan(cfg.raceType, cfg.raceDate, cfg.goalTime, cfg.fitnessLevel, cfg.includeStrength !== false, cfg.fitnessAssessment || null, schedulePrefs, cfg.weekStartOffset || 0);
         const weeks = [];
         for (let i = 0; i < newPlan.totalWeeks; i++) {
           weeks.push(buildWeekWorkouts(newPlan.weeks[i], newPlan.raceType, newPlan.goalTime, newPlan.fitnessLevel, newPlan.includeStrength, newPlan.fitnessAssessment, null, schedulePrefs));
