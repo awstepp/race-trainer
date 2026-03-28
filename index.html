@@ -3732,6 +3732,110 @@
       );
     }
 
+    // ── Week Complete Modal ───────────────────────────────────────────────────
+    // Shown when the user logs the final workout of the current week.
+    // Lets the user choose: adapt plan based on performance, or keep base plan.
+    function WeekCompleteModal({ weekIdx, plan, completedLogs, onAdapt, onKeepBase }) {
+      if (!plan) return null;
+
+      const weekWorkouts = plan.weekWorkouts[weekIdx] || [];
+      const weekData     = plan.weeks[weekIdx] || {};
+
+      // Weekly stats from logs
+      const activeDays = weekWorkouts
+        .map((w, i) => ({ w, i, log: completedLogs[`${weekIdx}-${i}`] }))
+        .filter(({ w }) => w.type !== 'rest');
+      const totalMiles    = activeDays.reduce((s, { log }) => s + (parseFloat(log?.milesVal) || 0), 0);
+      const completedCount = activeDays.filter(({ log }) => !!log).length;
+
+      // Preview what adaptation would do — use weekIdx+1 as the cutoff so this week's logs are included
+      const adaptPreview  = computeAdaptationFromLogs(completedLogs, plan, weekIdx + 1);
+      const mileagePct    = Math.round((adaptPreview.mileageMultiplier - 1) * 100);
+      const paceOff       = Math.round(adaptPreview.paceOffsetSec || 0);
+      const hasChanges    = Math.abs(mileagePct) >= 3 || Math.abs(paceOff) > 5;
+      const weeksLeft     = plan.totalWeeks - weekIdx - 1;
+
+      return (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-xl max-w-sm w-full shadow-2xl border border-slate-600 overflow-hidden">
+
+            {/* Header */}
+            <div className="bg-gradient-to-r from-emerald-800 to-green-700 p-5 text-center">
+              <div className="text-4xl mb-2">🎉</div>
+              <h2 className="text-xl font-bold text-white">Week {weekData.weekNum} Complete!</h2>
+              <p className="text-emerald-200 text-sm mt-1">
+                {completedCount} workout{completedCount !== 1 ? 's' : ''} logged
+                {totalMiles > 0 ? ` · ${totalMiles.toFixed(1)} mi total` : ''}
+              </p>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 space-y-4">
+              {/* Adaptation preview */}
+              <div className="bg-slate-700 rounded-lg p-4 space-y-2">
+                <p className="text-sm font-semibold text-gray-200">What adapting would change:</p>
+                {hasChanges ? (
+                  <div className="space-y-1.5 text-sm">
+                    {Math.abs(mileagePct) >= 3 && (
+                      <div className="flex items-start gap-2">
+                        <span className={mileagePct > 0 ? 'text-green-400' : 'text-yellow-400'}>
+                          {mileagePct > 0 ? '↑' : '↓'}
+                        </span>
+                        <span className="text-gray-300">
+                          Mileage targets {mileagePct > 0
+                            ? `increased ${mileagePct}% — you're trending ahead of schedule`
+                            : `eased back ${Math.abs(mileagePct)}% — goal floor still protected`}
+                        </span>
+                      </div>
+                    )}
+                    {Math.abs(paceOff) > 5 && (
+                      <div className="flex items-start gap-2">
+                        <span className={paceOff < 0 ? 'text-green-400' : 'text-yellow-400'}>
+                          {paceOff < 0 ? '⚡' : '🐢'}
+                        </span>
+                        <span className="text-gray-300">
+                          Training paces adjusted {Math.abs(paceOff)}s/mi {paceOff < 0 ? 'faster' : 'slower'}
+                        </span>
+                      </div>
+                    )}
+                    {weeksLeft > 0 && (
+                      <p className="text-gray-500 text-xs pt-1">
+                        Applies to the next {weeksLeft} week{weeksLeft !== 1 ? 's' : ''} · Race pace is never changed
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-300">
+                    ✅ Your performance was right on target — no adjustments needed.
+                  </p>
+                )}
+              </div>
+
+              {/* Action buttons */}
+              <div className="space-y-2">
+                <button
+                  onClick={onAdapt}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition text-sm"
+                >
+                  {hasChanges ? '🔄 Adapt my plan' : '✅ Got it, move to next week'}
+                </button>
+                {hasChanges && (
+                  <button
+                    onClick={onKeepBase}
+                    className="w-full py-3 bg-slate-600 hover:bg-slate-500 text-gray-200 font-semibold rounded-lg transition text-sm"
+                  >
+                    📋 Keep the base plan as-is
+                  </button>
+                )}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     function App({ profile, onSwitchProfile }) {
       const profileId = profile.id;
       const CK  = key => pKey(profileId, key); // config key helper
@@ -3827,6 +3931,7 @@
       const [authUser, setAuthUser] = useState(null);
       const [syncing, setSyncing] = useState(false);
       const [showSetup, setShowSetup] = useState(false);
+      const [weekCompleteModal, setWeekCompleteModal] = useState(null); // { weekIdx, completedLogs }
 
       useEffect(() => { localStorage.setItem(CK('config'),   JSON.stringify(config));   }, [config]);
       useEffect(() => { localStorage.setItem(CK('plan'),     JSON.stringify(plan));     }, [plan]);
@@ -4059,10 +4164,59 @@
       const handleLogSave = (logData) => {
         const { weekIdx, dayIdx } = logModalData;
         const key = `${weekIdx}-${dayIdx}`;
-        setLogs(prev => ({
+        const newLogs = { ...logs, [key]: logData };
+        setLogs(newLogs);
+
+        // After saving, check if this was the last workout of the current week
+        const currentWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+        const alreadyHandled = (plan.lastAdaptedWeek ?? -1) >= weekIdx;
+
+        if (weekIdx === currentWeekIdx && !alreadyHandled) {
+          const weekWorkouts = plan.weekWorkouts[weekIdx] || [];
+          // Non-rest day indices that should be logged
+          const nonRestIdxs = weekWorkouts
+            .map((w, i) => ({ w, i }))
+            .filter(({ w }) => w.type !== 'rest')
+            .map(({ i }) => i);
+          // All done if every non-rest day now has a log entry
+          const allDone = nonRestIdxs.length > 0 && nonRestIdxs.every(i => !!newLogs[`${weekIdx}-${i}`]);
+          if (allDone) {
+            setWeekCompleteModal({ weekIdx, completedLogs: newLogs });
+          }
+        }
+      };
+
+      // User chose "Adapt my plan" in the week-complete modal
+      const handleWeekAdapt = () => {
+        if (!weekCompleteModal) return;
+        const { weekIdx, completedLogs } = weekCompleteModal;
+        // Compute adaptation including this week's logs (cutoff = weekIdx+1)
+        const newAdaptation = computeAdaptationFromLogs(completedLogs, plan, weekIdx + 1);
+        // Rebuild future weeks only — current and past weeks are frozen
+        const newWeekWorkouts = plan.weekWorkouts.map((week, wIdx) => {
+          if (wIdx <= weekIdx) return week;
+          return buildWeekWorkouts(
+            plan.weeks[wIdx], plan.raceType, plan.goalTime,
+            plan.fitnessLevel, plan.includeStrength,
+            plan.fitnessAssessment, newAdaptation, plan.schedulePrefs || null
+          );
+        });
+        setPlan(prev => ({
           ...prev,
-          [key]: logData
+          weekWorkouts: newWeekWorkouts,
+          adaptationState: newAdaptation,
+          lastAdaptedWeek: weekIdx
         }));
+        setWeekCompleteModal(null);
+      };
+
+      // User chose "Keep the base plan" in the week-complete modal
+      const handleWeekKeepBase = () => {
+        if (!weekCompleteModal) return;
+        const { weekIdx } = weekCompleteModal;
+        // Mark as handled without applying any adaptation
+        setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx }));
+        setWeekCompleteModal(null);
       };
 
       const handleSwapWorkout = (weekIdx, dayIdx) => {
@@ -4186,6 +4340,7 @@
           <NavBar currentTab={currentTab} onTabChange={setCurrentTab} />
 
           {logModalOpen && <WorkoutLogModal isOpen={logModalOpen} weekIdx={logModalData?.weekIdx} dayIdx={logModalData?.dayIdx} workout={logModalData?.workout} gpsResult={logModalData?.gpsResult} onClose={() => setLogModalOpen(false)} onSave={handleLogSave} onGPSTrack={handleGPSTrack} />}
+          {weekCompleteModal && <WeekCompleteModal weekIdx={weekCompleteModal.weekIdx} plan={plan} completedLogs={weekCompleteModal.completedLogs} onAdapt={handleWeekAdapt} onKeepBase={handleWeekKeepBase} />}
           {swapModalOpen && <SubstituteModal isOpen={swapModalOpen} weekIdx={swapModalData?.weekIdx} dayIdx={swapModalData?.dayIdx} currentType={swapModalData?.currentType} onClose={() => setSwapModalOpen(false)} onSubstitute={handleSubstitute} />}
           {gpsOpen && gpsWorkoutCtx && <GPSTracker workout={gpsWorkoutCtx.workout} paceOffset={0} onComplete={handleGPSComplete} onCancel={handleGPSCancel} />}
           {injuryModalOpen && <InjuryLogModal isOpen={injuryModalOpen} onClose={() => setInjuryModalOpen(false)} onSave={handleLogInjury} />}
