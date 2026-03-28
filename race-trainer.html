@@ -3959,7 +3959,11 @@
             const profileRef = firebaseDb.collection('users').doc(authUser.uid)
                                          .collection('profiles').doc('primary');
             // Strip derived/large fields before saving (weekWorkouts are rebuilt client-side)
-            const planToSave = plan ? { ...plan, weekWorkouts: undefined, adaptationState: plan.adaptationState || null } : null;
+            // Must use destructuring — Firestore rejects undefined values
+            const planToSave = plan ? (() => {
+              const { weekWorkouts, ...rest } = plan;
+              return { ...rest, adaptationState: plan.adaptationState || null };
+            })() : null;
             await profileRef.set(
               {
                 config,
