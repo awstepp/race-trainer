@@ -45,19 +45,20 @@
     const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
     // ============ FIREBASE SETUP ============
-    // Config is loaded from localStorage (set via the in-app "Setup Cloud Sync" wizard).
-    // No code editing needed — just open the app and click "☁️ Setup Sync" in the header.
-    const _savedFbCfg = (() => {
-      try { const s = localStorage.getItem('rr_firebase_config'); return s ? JSON.parse(s) : null; } catch(e) { return null; }
-    })();
-    const FIREBASE_CONFIG = _savedFbCfg || {
-      apiKey: "YOUR_API_KEY", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: ""
+    const FIREBASE_CONFIG = {
+      apiKey:            "AIzaSyBJfiuo2UWQ3fXnUclTggrkM1OoZYSoez4",
+      authDomain:        "raceready-7a440.firebaseapp.com",
+      projectId:         "raceready-7a440",
+      storageBucket:     "raceready-7a440.firebasestorage.app",
+      messagingSenderId: "145333956079",
+      appId:             "1:145333956079:web:15c00124685a59049f1a1a",
+      measurementId:     "G-8LPR3WZ61M"
     };
 
     let firebaseApp = null;
     let firebaseAuth = null;
     let firebaseDb = null;
-    let FIREBASE_ENABLED = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY" && FIREBASE_CONFIG.projectId);
+    let FIREBASE_ENABLED = true;
 
     if (FIREBASE_ENABLED && typeof firebase !== 'undefined') {
       try {
