@@ -576,7 +576,11 @@
       const phaseScaling = computeAdaptation(weekNum, phase, raceType); // existing phase-based volume scalar
 
       // Pull adaptive multipliers (from logged workout history)
-      const mileageMult   = adaptationState?.mileageMultiplier || 1.0;
+      // Goal-floor: adaptation can never reduce mileage below 88% of the base plan.
+      // This ensures the user stays on track toward their race goal even after rough weeks.
+      const GOAL_FLOOR = 0.88;
+      const rawMileageMult = adaptationState?.mileageMultiplier || 1.0;
+      const mileageMult   = Math.max(rawMileageMult, GOAL_FLOOR);
       const paceOffsetSec = adaptationState?.paceOffsetSec     || 0;
 
       // Apply pace offset to training paces.
@@ -768,16 +772,19 @@
     //   paceOffsetSec      – shift all training paces     (e.g. -20 = 20 sec/mi faster)
     //   sampleCount        – number of runs used
     //   summary            – human-readable description
-    function computeAdaptationFromLogs(logs, plan) {
+    function computeAdaptationFromLogs(logs, plan, currentWeekIdx) {
       const DEFAULT = { mileageMultiplier: 1.0, paceOffsetSec: 0, sampleCount: 0, summary: null };
       if (!plan || !plan.weekWorkouts || !logs || Object.keys(logs).length === 0) return DEFAULT;
 
-      // Gather logged RUNNING workouts in chronological order
+      // Gather logged RUNNING workouts in chronological order.
+      // Only use data from fully-completed weeks (weekIdx < currentWeekIdx) so that
+      // mid-week logs never trigger a plan change during the current week.
       const entries = Object.keys(logs)
         .map(key => {
           const [w, d] = key.split('-').map(Number);
           return { weekIdx: w, dayIdx: d, key };
         })
+        .filter(({ weekIdx }) => currentWeekIdx == null || weekIdx < currentWeekIdx)
         .sort((a, b) => a.weekIdx !== b.weekIdx ? a.weekIdx - b.weekIdx : a.dayIdx - b.dayIdx);
 
       const samples = [];
@@ -3827,22 +3834,27 @@
       useEffect(() => { localStorage.setItem(CK('subs'),     JSON.stringify(substitutions)); }, [substitutions]);
       useEffect(() => { localStorage.setItem(CK('injuries'), JSON.stringify(injuries)); }, [injuries]);
 
-      // ── Auto-adapt future weeks when logs change ───────────────────────────
+      // ── Weekly adaptation: only fires when entering a new week ────────────
+      // Adaptation runs at most once per week transition. It only looks at logs
+      // from fully-completed weeks so mid-week logging never reshuffles targets.
+      // A goal-floor inside buildWeekWorkouts (0.88) ensures the adapted plan
+      // never drops too far below what the goal trajectory requires.
       useEffect(() => {
-        if (!plan || !plan.weeks || Object.keys(logs).length === 0) return;
+        if (!plan || !plan.weeks) return;
 
-        const newAdaptation = computeAdaptationFromLogs(logs, plan);
-        const prevAdaptation = plan.adaptationState || {};
+        const currentWeekIdx  = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+        const lastAdaptedWeek = plan.lastAdaptedWeek ?? -1;
 
-        // Only rebuild if something changed meaningfully (avoids render loops)
-        const mileageShift = Math.abs((newAdaptation.mileageMultiplier || 1) - (prevAdaptation.mileageMultiplier || 1));
-        const paceShift    = Math.abs((newAdaptation.paceOffsetSec    || 0) - (prevAdaptation.paceOffsetSec    || 0));
-        if (mileageShift < 0.01 && paceShift < 1.5) return;
+        // Not yet at a new week boundary — do nothing
+        if (currentWeekIdx <= lastAdaptedWeek) return;
 
-        // Only rebuild current week onward — preserve logged past weeks as-is
-        const currentWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+        // Compute adaptation using only logs from completed weeks
+        const newAdaptation = computeAdaptationFromLogs(logs, plan, currentWeekIdx);
+
+        // Rebuild current week + all future weeks with the new multipliers.
+        // Past weeks are always preserved as-is.
         const newWeekWorkouts = plan.weekWorkouts.map((week, weekIdx) => {
-          if (weekIdx < currentWeekIdx) return week; // past weeks untouched
+          if (weekIdx < currentWeekIdx) return week;
           return buildWeekWorkouts(
             plan.weeks[weekIdx],
             plan.raceType,
@@ -3855,8 +3867,13 @@
           );
         });
 
-        setPlan(prev => ({ ...prev, weekWorkouts: newWeekWorkouts, adaptationState: newAdaptation }));
-      }, [logs]);
+        setPlan(prev => ({
+          ...prev,
+          weekWorkouts: newWeekWorkouts,
+          adaptationState: newAdaptation,
+          lastAdaptedWeek: currentWeekIdx   // mark this week as adapted
+        }));
+      }, [plan?.lastAdaptedWeek]);
       // ──────────────────────────────────────────────────────────────────────
 
       // ── Firebase Auth listener ──────────────────────────────────────────
