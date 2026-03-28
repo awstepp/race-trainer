@@ -2991,7 +2991,12 @@
       }
 
       const today = new Date();
-      const currentWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+      const calendarWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
+      // viewedWeek follows the calendar unless the user has manually navigated or wrapped up a week
+      const currentWeekIdx = viewedWeekIdx != null
+        ? Math.max(0, Math.min(viewedWeekIdx, plan.totalWeeks - 1))
+        : calendarWeekIdx;
+      const isViewingCurrentWeek = currentWeekIdx === calendarWeekIdx;
       const weekWorkouts = plan.weekWorkouts[currentWeekIdx] || [];
       const phase = plan.weeks[currentWeekIdx]?.phase;
       const currentDayIdx = today.getDay();
@@ -3018,6 +3023,34 @@
               </div>
             </div>
           )}
+
+          {/* Week navigation */}
+          <div className="flex items-center justify-between bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5">
+            <button
+              onClick={() => onSetViewedWeek && onSetViewedWeek(Math.max(0, currentWeekIdx - 1))}
+              disabled={currentWeekIdx === 0}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-slate-700 disabled:opacity-25 disabled:cursor-not-allowed transition"
+            >◀</button>
+
+            <div className="text-center">
+              <div className="text-white font-semibold text-sm">
+                Week {plan.weeks[currentWeekIdx]?.weekNum} of {plan.totalWeeks}
+                <span className="ml-2 text-xs text-gray-500 capitalize">{phase}</span>
+              </div>
+              {!isViewingCurrentWeek && (
+                <button
+                  onClick={() => onSetViewedWeek && onSetViewedWeek(calendarWeekIdx)}
+                  className="text-xs text-orange-400 hover:text-orange-300 underline underline-offset-2 mt-0.5"
+                >↩ Back to current week</button>
+              )}
+            </div>
+
+            <button
+              onClick={() => onSetViewedWeek && onSetViewedWeek(Math.min(plan.totalWeeks - 1, currentWeekIdx + 1))}
+              disabled={currentWeekIdx === plan.totalWeeks - 1}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-slate-700 disabled:opacity-25 disabled:cursor-not-allowed transition"
+            >▶</button>
+          </div>
 
           {/* Adaptation Banner */}
           <AdaptationBanner phase={phase} adaptationState={adaptationState} />
@@ -3205,30 +3238,35 @@
           {/* Fitness Trends */}
           <FitnessTrendChart plan={plan} logs={logs} />
 
-          {/* Today */}
-          <div>
-            <h2 className="text-white font-bold text-lg mb-3">📅 Today</h2>
-            {currentDayIdx < weekWorkouts.length && (
-              <WorkoutCard
-                workout={weekWorkouts[currentDayIdx]}
-                dateStr={today.toLocaleDateString()}
-                weekIdx={currentWeekIdx}
-                dayIdx={currentDayIdx}
-                onLog={onLogWorkout}
-                onSwap={onSwapWorkout}
-                logData={logs[`${currentWeekIdx}-${currentDayIdx}`]}
-                onGPSTrack={onGPSTrack}
-              />
-            )}
-          </div>
+          {/* Today / All workouts */}
+          {isViewingCurrentWeek ? (
+            <div>
+              <h2 className="text-white font-bold text-lg mb-3">📅 Today</h2>
+              {currentDayIdx < weekWorkouts.length && (
+                <WorkoutCard
+                  workout={weekWorkouts[currentDayIdx]}
+                  dateStr={today.toLocaleDateString()}
+                  weekIdx={currentWeekIdx}
+                  dayIdx={currentDayIdx}
+                  onLog={onLogWorkout}
+                  onSwap={onSwapWorkout}
+                  logData={logs[`${currentWeekIdx}-${currentDayIdx}`]}
+                  onGPSTrack={onGPSTrack}
+                />
+              )}
+            </div>
+          ) : null}
 
-          {/* Upcoming */}
+          {/* Upcoming (current week) / All workouts (other weeks) */}
           <div>
-            <h2 className="text-white font-bold text-lg mb-3">📋 Upcoming</h2>
+            <h2 className="text-white font-bold text-lg mb-3">
+              {isViewingCurrentWeek ? '📋 Upcoming' : '📋 All Workouts'}
+            </h2>
             <div className="space-y-3">
               {weekWorkouts.map((w, i) => {
-                if (i <= currentDayIdx) return null;
-                const date = addDays(today, i - currentDayIdx);
+                if (isViewingCurrentWeek && i <= currentDayIdx) return null;
+                const weekStart = getWorkoutDate(plan.raceDate, plan.totalWeeks, currentWeekIdx, 0);
+                const date = addDays(weekStart, i);
                 return (
                   <WorkoutCard
                     key={i}
@@ -3246,8 +3284,8 @@
             </div>
           </div>
 
-          {/* Move on to next week */}
-          {(() => {
+          {/* Wrap up this week — only show for the current calendar week */}
+          {isViewingCurrentWeek && (() => {
             const nonRestIdxs = weekWorkouts.map((w,i)=>({w,i})).filter(({w})=>w.type!=='rest').map(({i})=>i);
             const unloggedCount = nonRestIdxs.filter(i => !logs[`${currentWeekIdx}-${i}`]).length;
             return (
