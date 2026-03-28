@@ -4185,26 +4185,7 @@
       const handleLogSave = (logData) => {
         const { weekIdx, dayIdx } = logModalData;
         const key = `${weekIdx}-${dayIdx}`;
-        const newLogs = { ...logs, [key]: logData };
-        setLogs(newLogs);
-
-        // After saving, check if this was the last workout of the current week
-        const currentWeekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks);
-        const alreadyHandled = (plan.lastAdaptedWeek ?? -1) >= weekIdx;
-
-        if (weekIdx === currentWeekIdx && !alreadyHandled) {
-          const weekWorkouts = plan.weekWorkouts[weekIdx] || [];
-          // Non-rest day indices that should be logged
-          const nonRestIdxs = weekWorkouts
-            .map((w, i) => ({ w, i }))
-            .filter(({ w }) => w.type !== 'rest')
-            .map(({ i }) => i);
-          // All done if every non-rest day now has a log entry
-          const allDone = nonRestIdxs.length > 0 && nonRestIdxs.every(i => !!newLogs[`${weekIdx}-${i}`]);
-          if (allDone) {
-            setWeekCompleteModal({ weekIdx, completedLogs: newLogs });
-          }
-        }
+        setLogs(prev => ({ ...prev, [key]: logData }));
       };
 
       // User chose "Adapt my plan" in the week-complete modal
