@@ -3182,8 +3182,8 @@
                   {weekWorkouts.map((w, i) => {
                     const logData    = logs[`${currentWeekIdx}-${i}`];
                     const isCompleted = !!logData;
-                    const isToday    = i === currentDayIdx;
-                    const isPast     = i < currentDayIdx;
+                    const isToday    = isViewingCurrentWeek && i === currentDayIdx;
+                    const isPast     = isViewingCurrentWeek && i < currentDayIdx;
                     const isRest     = w.type === 'rest';
                     const wt         = WORKOUT_TYPES[w.type];
                     const isMissed   = isPast && !isRest && !isCompleted;
