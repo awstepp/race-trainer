@@ -2976,7 +2976,7 @@
     }
 
     // Dashboard
-    function Dashboard({ plan, logs, injuries, onLogWorkout, onSwapWorkout, onGPSTrack, onModifyPlan, onLogInjury, onResetPlan, adaptationState, onNextWeek }) {
+    function Dashboard({ plan, logs, injuries, onLogWorkout, onSwapWorkout, onGPSTrack, onModifyPlan, onLogInjury, onResetPlan, adaptationState, onNextWeek, viewedWeekIdx, onSetViewedWeek }) {
       if (!plan || !plan.weekWorkouts || plan.weekWorkouts.length === 0) {
         return (
           <div className="text-white p-8 text-center space-y-4">
@@ -3954,6 +3954,7 @@
       const [syncing, setSyncing] = useState(false);
       const [showSetup, setShowSetup] = useState(false);
       const [weekCompleteModal, setWeekCompleteModal] = useState(null); // { weekIdx, completedLogs }
+      const [viewedWeekIdx, setViewedWeekIdx] = useState(null); // null = follow calendar
 
       useEffect(() => { localStorage.setItem(CK('config'),   JSON.stringify(config));   }, [config]);
       useEffect(() => { localStorage.setItem(CK('plan'),     JSON.stringify(plan));     }, [plan]);
@@ -4216,6 +4217,8 @@
           // Even if rebuild fails, still mark the week as handled
           setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx }));
         } finally {
+          // Advance the dashboard view to the next week so user sees what's coming
+          if (plan && weekIdx + 1 < plan.totalWeeks) setViewedWeekIdx(weekIdx + 1);
           setWeekCompleteModal(null);
         }
       };
@@ -4224,8 +4227,9 @@
       const handleWeekKeepBase = () => {
         if (!weekCompleteModal) return;
         const { weekIdx } = weekCompleteModal;
-        // Mark as handled without applying any adaptation
         setPlan(prev => ({ ...prev, lastAdaptedWeek: weekIdx }));
+        // Advance the dashboard view to the next week
+        if (plan && weekIdx + 1 < plan.totalWeeks) setViewedWeekIdx(weekIdx + 1);
         setWeekCompleteModal(null);
       };
 
@@ -4347,7 +4351,7 @@
               </div>
             </div>
 
-            {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} onNextWeek={handleNextWeek} />}
+            {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} onNextWeek={handleNextWeek} viewedWeekIdx={viewedWeekIdx} onSetViewedWeek={setViewedWeekIdx} />}
             {currentTab === 'plan' && <PlanView plan={plan} logs={logs} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onResetPlan={handleResetPlan} />}
             {currentTab === 'progress' && <ProgressView logs={logs} plan={plan} injuries={injuries} onLogInjury={() => setInjuryModalOpen(true)} />}
           </div>
