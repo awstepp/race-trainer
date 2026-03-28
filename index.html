@@ -2976,7 +2976,7 @@
     }
 
     // Dashboard
-    function Dashboard({ plan, logs, injuries, onLogWorkout, onSwapWorkout, onGPSTrack, onModifyPlan, onLogInjury, onResetPlan, adaptationState }) {
+    function Dashboard({ plan, logs, injuries, onLogWorkout, onSwapWorkout, onGPSTrack, onModifyPlan, onLogInjury, onResetPlan, adaptationState, onNextWeek }) {
       if (!plan || !plan.weekWorkouts || plan.weekWorkouts.length === 0) {
         return (
           <div className="text-white p-8 text-center space-y-4">
@@ -3245,6 +3245,27 @@
               })}
             </div>
           </div>
+
+          {/* Move on to next week */}
+          {(() => {
+            const nonRestIdxs = weekWorkouts.map((w,i)=>({w,i})).filter(({w})=>w.type!=='rest').map(({i})=>i);
+            const unloggedCount = nonRestIdxs.filter(i => !logs[`${currentWeekIdx}-${i}`]).length;
+            return (
+              <div className="pt-2">
+                {unloggedCount > 0 && (
+                  <div className="mb-3 text-sm text-yellow-300 bg-yellow-900 bg-opacity-40 border border-yellow-700 rounded-lg px-4 py-2">
+                    ⚠️ You still have {unloggedCount} workout{unloggedCount !== 1 ? 's' : ''} this week not logged — no worries if you skipped them, you can still move on.
+                  </div>
+                )}
+                <button
+                  onClick={() => onNextWeek && onNextWeek(currentWeekIdx, logs)}
+                  className="w-full py-3 bg-slate-700 hover:bg-slate-600 border border-slate-500 text-gray-200 font-semibold rounded-lg transition text-sm"
+                >
+                  Wrap up this week →
+                </button>
+              </div>
+            );
+          })()}
         </div>
       );
     }
@@ -4219,6 +4240,11 @@
         setWeekCompleteModal(null);
       };
 
+      // "Wrap up this week" button in Dashboard
+      const handleNextWeek = (weekIdx, currentLogs) => {
+        setWeekCompleteModal({ weekIdx, completedLogs: currentLogs });
+      };
+
       const handleSwapWorkout = (weekIdx, dayIdx) => {
         const currentType = plan?.weekWorkouts?.[weekIdx]?.[dayIdx]?.type;
         if (!currentType) return;
@@ -4332,7 +4358,7 @@
               </div>
             </div>
 
-            {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} />}
+            {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} onNextWeek={handleNextWeek} />}
             {currentTab === 'plan' && <PlanView plan={plan} logs={logs} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onResetPlan={handleResetPlan} />}
             {currentTab === 'progress' && <ProgressView logs={logs} plan={plan} injuries={injuries} onLogInjury={() => setInjuryModalOpen(true)} />}
           </div>
