@@ -6872,7 +6872,7 @@
 
             {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} onNextWeek={handleNextWeek} viewedWeekIdx={viewedWeekIdx} onSetViewedWeek={setViewedWeekIdx} />}
             {currentTab === 'plan' && <PlanView plan={plan} logs={logs} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onResetPlan={handleResetPlan} />}
-            {currentTab === 'nutrition' && <NutritionTab />}
+            {currentTab === 'nutrition' && <NutritionTab plan={plan} />}
             {currentTab === 'progress' && <ProgressView logs={logs} plan={plan} injuries={injuries} onLogInjury={() => setInjuryModalOpen(true)} />}
           </div>
 
