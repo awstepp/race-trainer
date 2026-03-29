@@ -3736,11 +3736,1654 @@
       );
     }
 
+    // ============ RECIPE DATA ============
+    const RECIPES = [
+      // ── MEAL PREP (5+ servings) ───────────────────────────────────────────
+      {
+        id: 'chipotle-chicken-burrito-bowls',
+        name: 'Chipotle Chicken Burrito Bowls',
+        type: 'meal-prep', category: 'bowls', emoji: '🌯',
+        servings: 5, prepTime: '15 min', cookTime: '25 min',
+        calories: 390, protein: 42, carbs: 38, fat: 8,
+        fitnessGoals: ['endurance', 'muscle-gain'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'gluten-free'],
+        ingredients: [
+          { amount: '2 lbs', item: 'boneless skinless chicken thighs' },
+          { amount: '2 cups dry', item: 'white or brown rice' },
+          { amount: '1 can (15oz)', item: 'black beans, drained & rinsed' },
+          { amount: '1 cup', item: 'frozen corn' },
+          { amount: '1', item: 'red bell pepper, diced' },
+          { amount: '1', item: 'green bell pepper, diced' },
+          { amount: '1 cup', item: 'salsa of choice' },
+          { amount: '1 tsp each', item: 'cumin, chili powder, smoked paprika, garlic powder, onion powder' },
+          { amount: '½ tsp', item: 'chipotle chili powder' },
+          { amount: '1 tbsp', item: 'olive oil' },
+          { amount: 'to taste', item: 'salt & pepper' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs boneless skinless chicken thighs'] },
+          { category: '🥬 Produce', items: ['1 red bell pepper', '1 green bell pepper', 'fresh cilantro (optional)', '1 lime (optional)'] },
+          { category: '🌾 Pantry', items: ['2 cups white or brown rice', '1 can (15oz) black beans', '1 cup frozen corn', '1 cup salsa', 'olive oil'] },
+          { category: '🧄 Spices', items: ['cumin', 'chili powder', 'smoked paprika', 'garlic powder', 'onion powder', 'chipotle chili powder'] }
+        ],
+        instructions: [
+          'Cook rice according to package directions, season lightly with salt.',
+          'Season chicken on both sides with all spices, salt & pepper.',
+          'Heat olive oil in a large skillet over medium-high heat. Cook chicken 5–6 min per side until 165°F internal temp. (Air fryer: 375°F for 12 min.) Rest 5 min, then slice.',
+          'In the same pan, sauté bell peppers 3–4 min. Add corn and beans, heat 2 min.',
+          'Divide rice into 5 containers. Top with chicken, veggie-bean mixture, and 3 tbsp salsa each.',
+          'Refrigerate up to 5 days. Reheat 2–2.5 min in microwave. Add fresh cilantro and lime before eating.'
+        ],
+        tips: [
+          'Chicken breast works for even less fat',
+          'Add sliced avocado right before eating to prevent browning',
+          'Swap salsa for enchilada sauce for a richer flavor'
+        ]
+      },
+      {
+        id: 'honey-garlic-chicken-rice-prep',
+        name: 'Honey Garlic Chicken & Rice Prep',
+        type: 'meal-prep', category: 'bowls', emoji: '🍯',
+        servings: 6, prepTime: '10 min', cookTime: '30 min',
+        calories: 380, protein: 44, carbs: 36, fat: 7,
+        fitnessGoals: ['muscle-gain', 'endurance'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'low-fat'],
+        ingredients: [
+          { amount: '2.5 lbs', item: 'boneless skinless chicken thighs' },
+          { amount: '2 cups dry', item: 'jasmine or basmati rice' },
+          { amount: '2 cups', item: 'broccoli florets' },
+          { amount: '1 cup', item: 'snap peas or green beans' },
+          { amount: '3 tbsp', item: 'honey' },
+          { amount: '3 tbsp', item: 'low-sodium soy sauce' },
+          { amount: '4 cloves', item: 'garlic, minced' },
+          { amount: '1 tbsp', item: 'rice vinegar' },
+          { amount: '1 tsp', item: 'sesame oil' },
+          { amount: '1 tsp', item: 'cornstarch' },
+          { amount: '½ tsp each', item: 'garlic powder, onion powder, salt, pepper' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2.5 lbs boneless skinless chicken thighs'] },
+          { category: '🥬 Produce', items: ['2 cups broccoli florets', '1 cup snap peas or green beans', '4 garlic cloves'] },
+          { category: '🌾 Pantry', items: ['2 cups jasmine or basmati rice', 'honey', 'low-sodium soy sauce', 'rice vinegar', 'sesame oil', 'cornstarch'] },
+          { category: '🧄 Spices', items: ['garlic powder', 'onion powder', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Cook rice per package directions.',
+          'Whisk together honey, soy sauce, minced garlic, rice vinegar, sesame oil, and cornstarch in a bowl. Set aside.',
+          'Season chicken with garlic powder, onion powder, salt & pepper. Cook in a hot skillet 5–6 min per side until cooked through. Remove and slice into bite-size pieces.',
+          'In the same skillet, stir-fry broccoli and snap peas 3–4 min. Add chicken back in, pour sauce over everything and toss over medium heat 2–3 min until sauce thickens and coats everything.',
+          'Divide rice into 6 containers and top with the chicken and veggie mixture.',
+          'Stores 5 days refrigerated. Reheat covered 2 min in microwave.'
+        ],
+        tips: [
+          'Add red pepper flakes for heat',
+          'Swap broccoli for bok choy or zucchini for variety',
+          'Double the sauce batch if you like it saucier'
+        ]
+      },
+      {
+        id: 'turkey-taco-bowls-prep',
+        name: 'Ground Turkey Taco Bowls',
+        type: 'meal-prep', category: 'bowls', emoji: '🌮',
+        servings: 5, prepTime: '10 min', cookTime: '20 min',
+        calories: 415, protein: 38, carbs: 42, fat: 10,
+        fitnessGoals: ['weight-loss', 'muscle-gain'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'lean'],
+        ingredients: [
+          { amount: '2 lbs', item: '93% lean ground turkey' },
+          { amount: '2 cups dry', item: 'brown rice' },
+          { amount: '1 can (15oz)', item: 'pinto beans, drained & rinsed' },
+          { amount: '1 cup', item: 'frozen corn' },
+          { amount: '1', item: 'medium onion, diced' },
+          { amount: '1', item: 'jalapeño, seeded & minced (optional)' },
+          { amount: '1 packet', item: 'low-sodium taco seasoning (or 2 tsp cumin, 1 tsp chili powder, ½ tsp paprika)' },
+          { amount: '½ cup', item: 'water' },
+          { amount: '1 cup', item: 'salsa or pico de gallo' },
+          { amount: '½ cup', item: 'plain Greek yogurt (sour cream sub)' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs 93% lean ground turkey'] },
+          { category: '🥬 Produce', items: ['1 medium onion', '1 jalapeño (optional)', 'fresh cilantro (optional)', '1 lime (optional)'] },
+          { category: '🌾 Pantry', items: ['2 cups brown rice', '1 can (15oz) pinto beans', '1 cup frozen corn', '1 packet taco seasoning', '1 cup salsa'] },
+          { category: '🥛 Dairy', items: ['½ cup plain Greek yogurt'] }
+        ],
+        instructions: [
+          'Cook brown rice per package directions.',
+          'Sauté diced onion and jalapeño in a large skillet over medium heat with a little spray oil until softened, ~3 min.',
+          'Add ground turkey, break apart with a spoon, and cook until no longer pink, ~7 min.',
+          'Add taco seasoning and ½ cup water, stir well. Simmer 3 min until sauce thickens.',
+          'Stir in beans and corn, heat through 2 min.',
+          'Portion rice into 5 containers, top with turkey mixture and 3 tbsp salsa each.',
+          'Refrigerate up to 5 days. Add a dollop of Greek yogurt before eating.'
+        ],
+        tips: [
+          'Greek yogurt as sour cream cuts fat significantly while adding protein',
+          '93% lean turkey is ideal — 99% can get dry in this recipe',
+          'Add diced avocado right before eating for healthy fats'
+        ]
+      },
+      {
+        id: 'slow-cooker-turkey-chili',
+        name: 'Slow Cooker Turkey Chili',
+        type: 'meal-prep', category: 'soups-salads', emoji: '🍲',
+        servings: 8, prepTime: '15 min', cookTime: '6 hrs',
+        calories: 310, protein: 36, carbs: 26, fat: 6,
+        fitnessGoals: ['weight-loss', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'low-fat', 'gluten-free'],
+        ingredients: [
+          { amount: '2 lbs', item: '93% lean ground turkey' },
+          { amount: '2 cans (15oz each)', item: 'kidney beans, drained & rinsed' },
+          { amount: '1 can (15oz)', item: 'black beans, drained & rinsed' },
+          { amount: '1 can (28oz)', item: 'crushed tomatoes' },
+          { amount: '1 can (14oz)', item: 'diced tomatoes' },
+          { amount: '1 cup', item: 'chicken broth, low-sodium' },
+          { amount: '1', item: 'medium onion, diced' },
+          { amount: '1', item: 'green bell pepper, diced' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '2 tbsp', item: 'chili powder' },
+          { amount: '1 tsp each', item: 'cumin, smoked paprika, garlic powder, onion powder' },
+          { amount: '½ tsp', item: 'cayenne pepper' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs 93% lean ground turkey'] },
+          { category: '🥬 Produce', items: ['1 medium onion', '1 green bell pepper', '3 garlic cloves'] },
+          { category: '🌾 Pantry', items: ['2 cans (15oz) kidney beans', '1 can (15oz) black beans', '1 can (28oz) crushed tomatoes', '1 can (14oz) diced tomatoes', '1 cup low-sodium chicken broth'] },
+          { category: '🧄 Spices', items: ['chili powder', 'cumin', 'smoked paprika', 'garlic powder', 'onion powder', 'cayenne pepper'] }
+        ],
+        instructions: [
+          'Brown ground turkey in a skillet over medium-high heat, breaking it up. Drain any excess liquid.',
+          'Transfer browned turkey to slow cooker. Add all remaining ingredients and stir to combine.',
+          'Cook on LOW for 6–8 hours or HIGH for 3–4 hours.',
+          'Stir, taste, and adjust seasoning before serving.',
+          'Portion into 8 containers. Refrigerates 5 days or freeze for up to 3 months.',
+          'Serve topped with Greek yogurt, a little shredded cheese, or diced avocado.'
+        ],
+        tips: [
+          'This freezes extremely well — make a double batch',
+          'Add a square of dark chocolate near the end for depth of flavor',
+          'For thicker chili, remove lid the last 30 min of cooking'
+        ]
+      },
+      {
+        id: 'sheet-pan-chicken-fajita-bowls',
+        name: 'Sheet Pan Chicken Fajita Bowls',
+        type: 'meal-prep', category: 'bowls', emoji: '🫑',
+        servings: 5, prepTime: '15 min', cookTime: '25 min',
+        calories: 360, protein: 40, carbs: 30, fat: 9,
+        fitnessGoals: ['weight-loss', 'endurance'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'gluten-free', 'low-fat'],
+        ingredients: [
+          { amount: '2 lbs', item: 'boneless skinless chicken breast' },
+          { amount: '3', item: 'bell peppers (mixed colors), sliced' },
+          { amount: '2', item: 'medium onions, sliced' },
+          { amount: '2 cups dry', item: 'brown rice or cauliflower rice' },
+          { amount: '2 tbsp', item: 'olive oil' },
+          { amount: '2 tsp each', item: 'cumin, chili powder, smoked paprika' },
+          { amount: '1 tsp each', item: 'garlic powder, onion powder, salt' },
+          { amount: '½ tsp', item: 'oregano' },
+          { amount: 'juice of 1', item: 'lime' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs boneless skinless chicken breast'] },
+          { category: '🥬 Produce', items: ['3 bell peppers (mixed colors)', '2 medium onions', '1 lime'] },
+          { category: '🌾 Pantry', items: ['2 cups brown rice or cauliflower rice', 'olive oil'] },
+          { category: '🧄 Spices', items: ['cumin', 'chili powder', 'smoked paprika', 'garlic powder', 'onion powder', 'salt', 'oregano'] }
+        ],
+        instructions: [
+          'Preheat oven to 425°F. Line a large sheet pan with foil.',
+          'Mix together all spices in a small bowl.',
+          'Slice chicken into strips. Toss chicken, peppers, and onions in olive oil and spice mixture until evenly coated.',
+          'Spread everything in a single layer on the sheet pan.',
+          'Roast 20–25 min until chicken is cooked through and edges are slightly caramelized, stirring halfway.',
+          'Squeeze lime juice over everything. Divide over rice into 5 containers.',
+          'Refrigerates 5 days. Reheat covered 2 min in microwave.'
+        ],
+        tips: [
+          'Use cauliflower rice to cut carbs significantly for weight-loss days',
+          'Chicken thighs work here too and stay juicier',
+          'Great with Greek yogurt and a little hot sauce'
+        ]
+      },
+      {
+        id: 'baked-teriyaki-salmon-quinoa',
+        name: 'Baked Teriyaki Salmon & Quinoa',
+        type: 'meal-prep', category: 'protein-mains', emoji: '🐟',
+        servings: 5, prepTime: '10 min', cookTime: '20 min',
+        calories: 460, protein: 42, carbs: 38, fat: 14,
+        fitnessGoals: ['endurance', 'general-health', 'muscle-gain'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'omega-3', 'gluten-free'],
+        ingredients: [
+          { amount: '2.5 lbs', item: 'salmon fillet, skin-on, cut into 5 portions' },
+          { amount: '2 cups dry', item: 'quinoa' },
+          { amount: '2 cups', item: 'broccoli florets' },
+          { amount: '3 tbsp', item: 'low-sodium soy sauce' },
+          { amount: '2 tbsp', item: 'honey' },
+          { amount: '1 tbsp', item: 'rice vinegar' },
+          { amount: '2 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp', item: 'fresh ginger, grated (or ¼ tsp ground)' },
+          { amount: '1 tsp', item: 'sesame oil' },
+          { amount: '1 tsp', item: 'cornstarch' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2.5 lbs salmon fillet'] },
+          { category: '🥬 Produce', items: ['2 cups broccoli florets', '2 garlic cloves', 'fresh ginger'] },
+          { category: '🌾 Pantry', items: ['2 cups quinoa', 'low-sodium soy sauce', 'honey', 'rice vinegar', 'sesame oil', 'cornstarch'] }
+        ],
+        instructions: [
+          'Preheat oven to 400°F. Cook quinoa per package directions.',
+          'Whisk together soy sauce, honey, rice vinegar, garlic, ginger, sesame oil, and cornstarch to make the teriyaki sauce.',
+          'Place salmon on a foil-lined baking sheet. Brush generously with sauce, reserving some for serving.',
+          'Roast salmon 12–15 min until it flakes easily with a fork.',
+          'While salmon cooks, steam broccoli 4–5 min until tender.',
+          'Portion quinoa into 5 containers, add broccoli, and place salmon on top. Drizzle reserved sauce over each.',
+          'Refrigerates 4 days. Salmon is best reheated in microwave at 50% power for 2 min to avoid drying out.'
+        ],
+        tips: [
+          'Skin-on salmon holds together better in meal prep — remove after reheating if preferred',
+          'Salmon is packed with omega-3s — excellent for joint recovery and endurance athletes',
+          'Swap quinoa for brown rice for more carbs on heavy training weeks'
+        ]
+      },
+      {
+        id: 'greek-chicken-veggie-prep',
+        name: 'Greek Chicken & Veggie Meal Prep',
+        type: 'meal-prep', category: 'bowls', emoji: '🫒',
+        servings: 5, prepTime: '15 min', cookTime: '25 min',
+        calories: 340, protein: 43, carbs: 20, fat: 11,
+        fitnessGoals: ['weight-loss', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'low-carb', 'mediterranean'],
+        ingredients: [
+          { amount: '2 lbs', item: 'boneless skinless chicken thighs' },
+          { amount: '1', item: 'English cucumber, diced' },
+          { amount: '2 cups', item: 'cherry tomatoes, halved' },
+          { amount: '1', item: 'red onion, thinly sliced' },
+          { amount: '1 cup', item: 'kalamata olives, pitted' },
+          { amount: '100g', item: 'reduced-fat feta cheese, crumbled' },
+          { amount: '3 tbsp', item: 'olive oil, divided' },
+          { amount: 'juice of 2', item: 'lemons' },
+          { amount: '2 tsp', item: 'dried oregano' },
+          { amount: '1 tsp each', item: 'garlic powder, onion powder, salt, pepper' },
+          { amount: '2 cups dry', item: 'couscous or quinoa' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs boneless skinless chicken thighs'] },
+          { category: '🥬 Produce', items: ['1 English cucumber', '2 cups cherry tomatoes', '1 red onion', '2 lemons'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['100g reduced-fat feta cheese', '1 cup kalamata olives'] },
+          { category: '🌾 Pantry', items: ['2 cups couscous or quinoa', 'olive oil'] },
+          { category: '🧄 Spices', items: ['dried oregano', 'garlic powder', 'onion powder', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Marinate chicken in 2 tbsp olive oil, lemon juice, oregano, garlic powder, salt & pepper for at least 15 min (or overnight).',
+          'Cook couscous or quinoa per package directions.',
+          'Cook chicken in a skillet or grill pan over medium-high heat 5–6 min per side until cooked through. Rest 5 min then slice.',
+          'In a large bowl, toss cucumber, tomatoes, red onion, and olives with remaining 1 tbsp olive oil, a squeeze of lemon, and pinch of oregano.',
+          'Divide couscous into 5 containers. Top with chicken, Greek salad, and crumbled feta.',
+          'Keep dressing separate until ready to eat. Lasts 4 days refrigerated.'
+        ],
+        tips: [
+          'The fresh veggie components stay crunchiest if stored separately from the chicken and couscous',
+          'Swap couscous for cauliflower rice for a low-carb version',
+          'Tzatziki (Greek yogurt, cucumber, garlic, dill) makes an excellent sauce here'
+        ]
+      },
+      {
+        id: 'egg-veggie-frittata-prep',
+        name: 'High-Protein Egg & Veggie Frittata',
+        type: 'meal-prep', category: 'breakfast', emoji: '🥚',
+        servings: 6, prepTime: '10 min', cookTime: '30 min',
+        calories: 270, protein: 28, carbs: 8, fat: 14,
+        fitnessGoals: ['weight-loss', 'muscle-gain', 'general-health'],
+        timing: ['breakfast', 'any'],
+        tags: ['high-protein', 'low-carb', 'gluten-free'],
+        ingredients: [
+          { amount: '8', item: 'large eggs' },
+          { amount: '1 cup', item: 'liquid egg whites (or 6 more egg whites)' },
+          { amount: '1 cup', item: 'cottage cheese (2%), blended smooth' },
+          { amount: '1 cup', item: 'baby spinach, roughly chopped' },
+          { amount: '½ cup', item: 'sun-dried tomatoes, chopped' },
+          { amount: '½ cup', item: 'roasted red peppers, diced' },
+          { amount: '½ cup', item: 'reduced-fat feta or shredded mozzarella' },
+          { amount: '1', item: 'small onion, diced' },
+          { amount: '2 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp each', item: 'Italian seasoning, salt, pepper' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['8 large eggs', '1 cup liquid egg whites', '1 cup 2% cottage cheese', '½ cup reduced-fat feta or mozzarella'] },
+          { category: '🥬 Produce', items: ['1 cup baby spinach', '1 small onion', '2 garlic cloves'] },
+          { category: '🌾 Pantry', items: ['½ cup sun-dried tomatoes', '½ cup roasted red peppers'] },
+          { category: '🧄 Spices', items: ['Italian seasoning', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Preheat oven to 375°F. Grease a 9x13 baking dish or 12-inch oven-safe skillet.',
+          'Sauté onion and garlic in a spritz of olive oil spray over medium heat, 2–3 min until softened. Add spinach and wilt, 1 min. Remove from heat.',
+          'In a large bowl, whisk together eggs, egg whites, and blended cottage cheese until smooth. Season with Italian seasoning, salt & pepper.',
+          'Stir in the sautéed veggies, sun-dried tomatoes, and roasted peppers into the egg mixture.',
+          'Pour into prepared baking dish. Top with cheese.',
+          'Bake 25–30 min until the center is set and top is lightly golden.',
+          'Cool completely, then slice into 6 portions. Refrigerates 5 days.'
+        ],
+        tips: [
+          'Blending the cottage cheese completely is key — creates a creamy custard texture with no visible curds',
+          'Swap in any veggies you like: mushrooms, zucchini, diced turkey',
+          'Reheat in microwave 60–90 sec or enjoy cold — both are great'
+        ]
+      },
+      {
+        id: 'overnight-oats-prep-pack',
+        name: 'Overnight Oats 5-Pack',
+        type: 'meal-prep', category: 'breakfast', emoji: '🫙',
+        servings: 5, prepTime: '15 min', cookTime: '0 min',
+        calories: 360, protein: 24, carbs: 48, fat: 8,
+        fitnessGoals: ['endurance', 'general-health'],
+        timing: ['breakfast', 'pre-workout'],
+        tags: ['high-carb', 'no-cook'],
+        ingredients: [
+          { amount: '2½ cups', item: 'rolled oats (½ cup per jar)' },
+          { amount: '2½ cups', item: 'unsweetened almond milk or 2% milk (½ cup per jar)' },
+          { amount: '2½ cups', item: 'plain Greek yogurt, 2% (½ cup per jar)' },
+          { amount: '5 tbsp', item: 'chia seeds (1 tbsp per jar)' },
+          { amount: '5 tbsp', item: 'honey or maple syrup (1 tbsp per jar)' },
+          { amount: '2½ tsp', item: 'vanilla extract (½ tsp per jar)' },
+          { amount: '1¼ cups total', item: 'mixed toppings: berries, banana slices, nut butter, granola' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['2½ cups plain Greek yogurt (2%)', 'unsweetened almond milk or 2% milk'] },
+          { category: '🌾 Pantry', items: ['2½ cups rolled oats', '5 tbsp chia seeds', 'honey or maple syrup', 'vanilla extract'] },
+          { category: '🥬 Produce', items: ['fresh berries', '2–3 bananas'] },
+          { category: '🧄 Extras', items: ['nut butter (peanut, almond)', 'granola (optional)'] }
+        ],
+        instructions: [
+          'Set out 5 mason jars (16oz works great).',
+          'In each jar, add ½ cup oats, ½ cup milk, ½ cup Greek yogurt, 1 tbsp chia seeds, 1 tbsp honey, and ½ tsp vanilla.',
+          'Stir each jar well until fully combined.',
+          'Add your chosen toppings on top — berries, banana, a drizzle of nut butter, etc.',
+          'Seal jars and refrigerate overnight (minimum 4 hours).',
+          'Grab and go in the morning. Lasts 5 days refrigerated.',
+          'Stir before eating and add a splash of milk if too thick.'
+        ],
+        tips: [
+          'Oats soak overnight making them a slow-digesting carb — ideal pre-long-run breakfast',
+          'Add a scoop of protein powder to boost protein to 35g+ per jar',
+          'Banana + peanut butter + chocolate chips = crowd favorite combination',
+          'Prep all 5 Sunday night and breakfast is handled for the whole week'
+        ]
+      },
+      {
+        id: 'ground-beef-sweet-potato-hash',
+        name: 'Lean Beef & Sweet Potato Hash',
+        type: 'meal-prep', category: 'bowls', emoji: '🥔',
+        servings: 5, prepTime: '15 min', cookTime: '30 min',
+        calories: 410, protein: 36, carbs: 40, fat: 12,
+        fitnessGoals: ['muscle-gain', 'endurance'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'gluten-free'],
+        ingredients: [
+          { amount: '2 lbs', item: '93% lean ground beef' },
+          { amount: '3 medium', item: 'sweet potatoes, diced into ½-inch cubes' },
+          { amount: '1', item: 'medium onion, diced' },
+          { amount: '1', item: 'red bell pepper, diced' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '2 cups', item: 'baby spinach' },
+          { amount: '2 tbsp', item: 'olive oil' },
+          { amount: '1 tsp each', item: 'smoked paprika, garlic powder, onion powder, cumin, salt, pepper' },
+          { amount: '½ tsp', item: 'chili powder' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs 93% lean ground beef'] },
+          { category: '🥬 Produce', items: ['3 medium sweet potatoes', '1 medium onion', '1 red bell pepper', '3 garlic cloves', '2 cups baby spinach'] },
+          { category: '🌾 Pantry', items: ['olive oil'] },
+          { category: '🧄 Spices', items: ['smoked paprika', 'garlic powder', 'onion powder', 'cumin', 'chili powder', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Toss diced sweet potatoes in 1 tbsp olive oil and a pinch of salt & smoked paprika. Roast at 425°F for 20–25 min until tender and edges are caramelized.',
+          'Meanwhile, heat 1 tbsp olive oil in a large skillet over medium-high heat. Sauté onion and bell pepper 3–4 min.',
+          'Add garlic, cook 30 sec. Add ground beef and break apart, cooking until no longer pink, ~7 min.',
+          'Drain any excess fat. Season beef mixture with all remaining spices.',
+          'Add spinach to the skillet and stir until wilted, ~1 min.',
+          'Stir in roasted sweet potatoes. Taste and adjust seasoning.',
+          'Divide into 5 containers. Refrigerates 5 days.'
+        ],
+        tips: [
+          'Add a fried egg on top when serving for extra protein',
+          'Works great as breakfast too — this is a very versatile meal',
+          '93% beef keeps fat reasonable; 96% works but can get drier'
+        ]
+      },
+      {
+        id: 'high-protein-pasta-bake',
+        name: 'High-Protein Pasta Bake',
+        type: 'meal-prep', category: 'pasta-rice', emoji: '🍝',
+        servings: 6, prepTime: '15 min', cookTime: '35 min',
+        calories: 445, protein: 48, carbs: 44, fat: 10,
+        fitnessGoals: ['muscle-gain', 'endurance'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'comfort-food'],
+        ingredients: [
+          { amount: '1 lb', item: 'Barilla Protein Plus or chickpea pasta (penne or rigatoni)' },
+          { amount: '2 lbs', item: '93% lean ground turkey or beef' },
+          { amount: '1 jar (24oz)', item: 'marinara sauce, low-sugar' },
+          { amount: '1 can (15oz)', item: 'diced tomatoes' },
+          { amount: '1 cup', item: 'cottage cheese, blended smooth' },
+          { amount: '1 cup', item: 'part-skim shredded mozzarella, divided' },
+          { amount: '30g', item: 'Parmigiano Reggiano, grated' },
+          { amount: '1', item: 'medium onion, diced' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp each', item: 'Italian seasoning, garlic powder, salt, red chili flakes' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs 93% lean ground turkey or beef'] },
+          { category: '🥬 Produce', items: ['1 medium onion', '3 garlic cloves', 'fresh basil (optional)'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['1 cup 2% cottage cheese', '1 cup part-skim shredded mozzarella', '30g Parmigiano Reggiano'] },
+          { category: '🌾 Pantry', items: ['1 lb protein pasta', '1 jar (24oz) marinara sauce', '1 can (15oz) diced tomatoes'] },
+          { category: '🧄 Spices', items: ['Italian seasoning', 'garlic powder', 'red chili flakes', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Preheat oven to 375°F. Cook pasta 2 min less than package directions (it will finish in the oven). Drain.',
+          'Brown ground meat in a large oven-safe skillet with onion and garlic. Season with Italian seasoning, garlic powder, salt & chili flakes.',
+          'Stir in marinara, diced tomatoes, and blended cottage cheese. Simmer 5 min.',
+          'Fold in cooked pasta and half the mozzarella.',
+          'Top with remaining mozzarella and Parmigiano.',
+          'Bake uncovered 20–25 min until bubbly and golden.',
+          'Cool 10 min, portion into 6 containers. Refrigerates 5 days, freezes 3 months.'
+        ],
+        tips: [
+          'Blended cottage cheese replaces ricotta at a fraction of the fat — you cannot taste the difference',
+          'Protein pasta significantly increases the protein per serving vs regular pasta',
+          'Freeze individual portions for the easiest weeknight dinner ever'
+        ]
+      },
+      {
+        id: 'stuffed-peppers-meal-prep',
+        name: 'Turkey Stuffed Peppers',
+        type: 'meal-prep', category: 'protein-mains', emoji: '🫑',
+        servings: 5, prepTime: '20 min', cookTime: '35 min',
+        calories: 375, protein: 38, carbs: 32, fat: 9,
+        fitnessGoals: ['weight-loss', 'muscle-gain', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'gluten-free', 'low-fat'],
+        ingredients: [
+          { amount: '5 large', item: 'bell peppers (any color), tops cut, seeds removed' },
+          { amount: '1.5 lbs', item: '93% lean ground turkey' },
+          { amount: '1 cup cooked', item: 'brown rice or cauliflower rice' },
+          { amount: '1 can (15oz)', item: 'diced tomatoes with green chiles, drained' },
+          { amount: '1 cup', item: 'marinara sauce, divided' },
+          { amount: '½ cup', item: 'part-skim shredded mozzarella' },
+          { amount: '1', item: 'small onion, diced' },
+          { amount: '2 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp each', item: 'Italian seasoning, garlic powder, salt, pepper' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['1.5 lbs 93% lean ground turkey'] },
+          { category: '🥬 Produce', items: ['5 large bell peppers', '1 small onion', '2 garlic cloves'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['½ cup part-skim shredded mozzarella'] },
+          { category: '🌾 Pantry', items: ['1 cup brown rice', '1 can diced tomatoes with green chiles', '1 cup marinara sauce'] },
+          { category: '🧄 Spices', items: ['Italian seasoning', 'garlic powder', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Preheat oven to 375°F.',
+          'Sauté onion and garlic in a spritz of oil until soft, 3 min. Add turkey, cook through, breaking up finely.',
+          'Season with Italian seasoning, garlic powder, salt & pepper. Stir in diced tomatoes and half the marinara. Fold in cooked rice.',
+          'Place peppers cut-side up in a baking dish. Spoon ½ cup marinara across the bottom of the dish.',
+          'Fill each pepper generously with the turkey mixture. Top each with a little mozzarella.',
+          'Cover with foil and bake 30 min. Remove foil last 5 min to melt and brown cheese.',
+          'Refrigerates 5 days. Reheat covered in microwave 2–3 min.'
+        ],
+        tips: [
+          'Pre-cook peppers 5 min before stuffing if you prefer softer peppers',
+          'Cauliflower rice filling keeps calories low — great weight-loss option',
+          'Great cold too — the flavors develop even more after a day in the fridge'
+        ]
+      },
+      // ── QUICK MEALS (1–4 servings) ────────────────────────────────────────
+      {
+        id: 'smash-burger-avocado',
+        name: 'Smash Burger with Avocado Sauce',
+        type: 'quick-meal', category: 'sandwiches-wraps', emoji: '🍔',
+        servings: 2, prepTime: '5 min', cookTime: '10 min',
+        calories: 490, protein: 44, carbs: 30, fat: 22,
+        fitnessGoals: ['muscle-gain', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '12oz', item: '93% lean ground beef, divided into 6 x 2oz balls' },
+          { amount: '2', item: 'brioche or potato buns' },
+          { amount: '1 medium', item: 'avocado (~120g)' },
+          { amount: '2 slices', item: 'American or cheddar cheese (reduced-fat)' },
+          { amount: '2 tsp', item: 'yellow mustard' },
+          { amount: '20g', item: 'light mayo' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder' },
+          { amount: 'optional', item: 'pickle slices, onion, lettuce' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz 93% lean ground beef'] },
+          { category: '🥬 Produce', items: ['1 medium avocado', 'lettuce', 'onion', 'pickle slices'] },
+          { category: '🌾 Pantry', items: ['2 brioche or potato buns', 'yellow mustard', 'light mayo'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'garlic powder'] }
+        ],
+        instructions: [
+          'Mash avocado with a pinch of salt and pepper until smooth and creamy. Set aside.',
+          'Heat a cast iron skillet or heavy pan over high heat until smoking. No oil needed.',
+          'Form beef into 3 equal balls per burger. Season each with salt, pepper, and garlic powder.',
+          'Add beef balls to the screaming hot pan, immediately smash flat with a spatula — press hard for a thin patty. Cook 60–90 sec until a deep crust forms.',
+          'Flip patties, immediately add cheese. Cook 30–45 sec more. Stack 3 patties per burger.',
+          'Toast buns in the same pan 1 min.',
+          'Assemble: bottom bun + avocado sauce, 3 stacked patties, mustard, mayo, pickles, onion, top bun.',
+        ],
+        tips: [
+          'The key is screaming hot pan — the crust is everything for a smash burger',
+          'Three thin smashed patties beat one thick patty every time for flavor',
+          'Swap buns for lettuce wraps to go lower carb'
+        ]
+      },
+      {
+        id: 'buffalo-chicken-wrap',
+        name: 'Buffalo Chicken Wrap',
+        type: 'quick-meal', category: 'sandwiches-wraps', emoji: '🌯',
+        servings: 2, prepTime: '10 min', cookTime: '12 min',
+        calories: 395, protein: 46, carbs: 32, fat: 10,
+        fitnessGoals: ['weight-loss', 'muscle-gain'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'quick', 'low-fat'],
+        ingredients: [
+          { amount: '2, 5oz', item: 'boneless skinless chicken thighs' },
+          { amount: '2 large', item: 'flour tortillas (Mission burrito-size or similar)' },
+          { amount: '40g', item: 'buffalo hot sauce (Frank\'s RedHot or similar)' },
+          { amount: '30g', item: 'light ranch dressing or plain Greek yogurt ranch' },
+          { amount: '30g', item: 'coleslaw mix' },
+          { amount: '20g', item: 'shredded reduced-fat cheddar' },
+          { amount: '¼', item: 'avocado, sliced (optional)' },
+          { amount: 'to taste', item: 'salt, garlic powder, paprika' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 boneless skinless chicken thighs (5oz each)'] },
+          { category: '🥬 Produce', items: ['coleslaw mix', '1 avocado (optional)'] },
+          { category: '🌾 Pantry', items: ['2 large flour tortillas', 'buffalo hot sauce', 'light ranch dressing'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['20g reduced-fat shredded cheddar'] }
+        ],
+        instructions: [
+          'Season chicken with salt, garlic powder, and paprika. Air fry at 375°F for 12 min (or skillet 5–6 min per side). Rest 3 min, then chop or shred.',
+          'Toss chicken with buffalo sauce while still warm.',
+          'Warm tortillas in the microwave 20 sec.',
+          'Lay out tortillas. Add ranch, coleslaw mix, buffalo chicken, shredded cheddar, and avocado.',
+          'Fold sides in, roll tightly into a wrap.',
+          'Optional: toast the wrap seam-side down in a hot dry pan 1–2 min per side for a golden crust.'
+        ],
+        tips: [
+          'Greek yogurt mixed with ranch seasoning packet = high-protein ranch at a fraction of the calories',
+          'Rotisserie chicken is a great time saver here',
+          'Add a drizzle of honey on the buffalo chicken for a sweet heat twist'
+        ]
+      },
+      {
+        id: 'high-protein-mac-cheese',
+        name: 'High-Protein Mac & Cheese',
+        type: 'quick-meal', category: 'pasta-rice', emoji: '🧀',
+        servings: 2, prepTime: '5 min', cookTime: '15 min',
+        calories: 445, protein: 50, carbs: 42, fat: 10,
+        fitnessGoals: ['muscle-gain', 'endurance'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'comfort-food', 'quick'],
+        ingredients: [
+          { amount: '6oz dry', item: 'Barilla Protein Plus pasta (elbows or penne)' },
+          { amount: '1 cup', item: 'cottage cheese (2%), blended smooth' },
+          { amount: '30g', item: 'Parmigiano Reggiano, freshly grated' },
+          { amount: '30g', item: 'shredded reduced-fat cheddar' },
+          { amount: '¼ cup', item: 'reserved pasta water' },
+          { amount: '1 tsp', item: 'garlic powder' },
+          { amount: '½ tsp', item: 'onion powder' },
+          { amount: '¼ tsp each', item: 'smoked paprika, salt, pepper' },
+          { amount: 'optional', item: 'hot sauce, red chili flakes, cooked ground turkey' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['1 cup 2% cottage cheese', '30g Parmigiano Reggiano', '30g reduced-fat shredded cheddar'] },
+          { category: '🌾 Pantry', items: ['6oz Barilla Protein Plus pasta'] },
+          { category: '🧄 Spices', items: ['garlic powder', 'onion powder', 'smoked paprika', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Blend cottage cheese in a blender or with an immersion blender until completely smooth (this is crucial — no visible curds).',
+          'Cook pasta per package directions. Before draining, reserve ¼ cup pasta water.',
+          'Return drained pasta to the hot pot (off heat). Add blended cottage cheese, Parmigiano, cheddar, and spices.',
+          'Add pasta water a splash at a time, stirring vigorously, until you reach a creamy saucy consistency.',
+          'Taste and adjust seasoning. Serve immediately — add hot sauce or chili flakes to taste.'
+        ],
+        tips: [
+          'Blending the cottage cheese is the game-changer — it becomes silky smooth and indistinguishable from a cream sauce',
+          'Freshly grated Parmigiano Reggiano is significantly better than pre-grated — a small amount goes a very long way',
+          'Stir in 4oz cooked ground turkey for an even higher-protein version (~65g protein per serving)'
+        ]
+      },
+      {
+        id: 'air-fryer-chicken-thighs',
+        name: 'Crispy Air Fryer Chicken Thighs',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🍗',
+        servings: 2, prepTime: '5 min', cookTime: '14 min',
+        calories: 350, protein: 46, carbs: 4, fat: 16,
+        fitnessGoals: ['weight-loss', 'muscle-gain'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'low-carb', 'quick', 'gluten-free'],
+        ingredients: [
+          { amount: '2, 6oz', item: 'boneless skinless chicken thighs' },
+          { amount: '1 tsp each', item: 'smoked paprika, garlic powder, onion powder' },
+          { amount: '½ tsp each', item: 'salt, pepper, chili powder' },
+          { amount: '¼ tsp', item: 'cayenne (optional for heat)' },
+          { amount: 'light spray', item: 'olive oil or avocado oil spray' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 boneless skinless chicken thighs (~6oz each)'] },
+          { category: '🧄 Spices', items: ['smoked paprika', 'garlic powder', 'onion powder', 'chili powder', 'cayenne', 'salt', 'pepper'] },
+          { category: '🌾 Pantry', items: ['olive oil or avocado oil spray'] }
+        ],
+        instructions: [
+          'Pat chicken dry with paper towels — this is key for getting a crispy exterior.',
+          'Mix all spices in a small bowl. Season both sides of chicken generously.',
+          'Lightly spray chicken with oil spray.',
+          'Air fry at 375°F for 12–14 min, flipping halfway, until internal temp reaches 165°F.',
+          'Rest 3 min before cutting.',
+          'Serve alongside your choice of sides — rice, veggies, salad, or use in wraps and bowls.'
+        ],
+        tips: [
+          'Patting the chicken completely dry is the #1 tip for getting a crispy crust in the air fryer',
+          'Tenderize/flatten thick parts with a mallet or heavy pan for even cooking',
+          'This spice blend works on literally everything — batch mix a jar and keep it on your counter'
+        ]
+      },
+      {
+        id: 'breakfast-burrito',
+        name: 'Loaded Breakfast Burrito',
+        type: 'quick-meal', category: 'breakfast', emoji: '🌯',
+        servings: 2, prepTime: '5 min', cookTime: '12 min',
+        calories: 430, protein: 38, carbs: 36, fat: 15,
+        fitnessGoals: ['muscle-gain', 'general-health'],
+        timing: ['breakfast', 'pre-workout'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '4', item: 'large eggs' },
+          { amount: '4oz', item: 'turkey breakfast sausage or lean ground turkey' },
+          { amount: '2 large', item: 'flour tortillas (Mission burrito-size)' },
+          { amount: '30g', item: 'shredded reduced-fat cheddar' },
+          { amount: '4 tbsp', item: 'salsa or pico de gallo' },
+          { amount: '½', item: 'avocado (optional)' },
+          { amount: '2 tbsp', item: 'plain Greek yogurt (sour cream sub)' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder, hot sauce' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['4 large eggs', 'reduced-fat shredded cheddar', 'plain Greek yogurt'] },
+          { category: '🥩 Proteins', items: ['4oz turkey breakfast sausage or lean ground turkey'] },
+          { category: '🥬 Produce', items: ['1 avocado (optional)'] },
+          { category: '🌾 Pantry', items: ['2 large flour tortillas', 'salsa', 'hot sauce'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'garlic powder'] }
+        ],
+        instructions: [
+          'Cook turkey sausage in a nonstick skillet over medium-high heat, breaking it up, ~4 min until cooked through. Season with garlic powder. Remove from pan.',
+          'Whisk eggs with a pinch of salt & pepper. Add to the same pan over medium-low heat. Gently scramble, stirring slowly, until just set (slightly underdone — they\'ll finish in the burrito). Remove from heat.',
+          'Warm tortillas in the microwave 20 sec.',
+          'Layer on each tortilla: eggs, sausage, cheddar, salsa, and Greek yogurt.',
+          'Fold sides in, roll tightly. Optional: toast seam-side down in a dry pan 1–2 min for a crispy exterior.'
+        ],
+        tips: [
+          'Don\'t fully cook the eggs before rolling — residual heat finishes them perfectly',
+          'Make 4 at once, wrap in foil, and freeze for grab-and-go mornings (microwave 2 min from frozen)',
+          'Add spinach or sautéed peppers and onions to sneak in some vegetables'
+        ]
+      },
+      {
+        id: 'shrimp-tacos-with-slaw',
+        name: 'Shrimp Tacos with Citrus Slaw',
+        type: 'quick-meal', category: 'sandwiches-wraps', emoji: '🌮',
+        servings: 2, prepTime: '10 min', cookTime: '10 min',
+        calories: 365, protein: 34, carbs: 36, fat: 9,
+        fitnessGoals: ['weight-loss', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'low-fat'],
+        ingredients: [
+          { amount: '12oz', item: 'raw shrimp, peeled & deveined (16–20 count)' },
+          { amount: '4 small', item: 'corn or flour tortillas' },
+          { amount: '1 cup', item: 'coleslaw mix' },
+          { amount: '2 tbsp', item: 'plain Greek yogurt' },
+          { amount: '1 tbsp', item: 'light mayo' },
+          { amount: 'juice of 1', item: 'lime, divided' },
+          { amount: '1 tsp each', item: 'cumin, chili powder, garlic powder, smoked paprika' },
+          { amount: '½ tsp', item: 'salt' },
+          { amount: 'optional', item: 'avocado, fresh cilantro, jalapeño, hot sauce' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz raw shrimp (16–20 count), peeled & deveined'] },
+          { category: '🥬 Produce', items: ['1 lime', 'fresh cilantro (optional)', '1 jalapeño (optional)', '1 avocado (optional)'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['2 tbsp plain Greek yogurt', '1 tbsp light mayo', '1 cup coleslaw mix'] },
+          { category: '🌾 Pantry', items: ['4 small corn or flour tortillas', 'olive oil spray'] },
+          { category: '🧄 Spices', items: ['cumin', 'chili powder', 'garlic powder', 'smoked paprika', 'salt'] }
+        ],
+        instructions: [
+          'Make the slaw: Toss coleslaw mix with Greek yogurt, mayo, a squeeze of lime juice, pinch of salt & pepper. Set aside in fridge.',
+          'Pat shrimp dry. Toss with cumin, chili powder, garlic powder, smoked paprika, and salt.',
+          'Heat a pan or grill over high heat, spray with oil. Cook shrimp 1.5–2 min per side until pink and slightly charred. Don\'t overcrowd — they steam instead of sear.',
+          'Warm tortillas over an open flame or dry pan.',
+          'Build tacos: tortilla, slaw, shrimp, squeeze of lime. Add avocado, cilantro, and hot sauce as desired.'
+        ],
+        tips: [
+          'Shrimp cook in under 4 minutes — literally the fastest protein option',
+          'Frozen shrimp work perfectly here — just thaw in cold water for 5 min',
+          'The Greek yogurt slaw is the key — creamy, tangy, and high protein'
+        ]
+      },
+      {
+        id: 'avocado-egg-toast',
+        name: 'High-Protein Avocado Egg Toast',
+        type: 'quick-meal', category: 'breakfast', emoji: '🥑',
+        servings: 1, prepTime: '5 min', cookTime: '5 min',
+        calories: 340, protein: 22, carbs: 28, fat: 16,
+        fitnessGoals: ['general-health', 'weight-loss'],
+        timing: ['breakfast', 'any'],
+        tags: ['quick', 'no-cook'],
+        ingredients: [
+          { amount: '2 slices', item: 'whole grain or sourdough bread' },
+          { amount: '½ medium', item: 'avocado (~60g)' },
+          { amount: '2', item: 'eggs, cooked to preference (fried, poached, or scrambled)' },
+          { amount: '20g', item: 'cottage cheese or feta (optional protein boost)' },
+          { amount: 'to taste', item: 'salt, pepper, red chili flakes' },
+          { amount: 'optional', item: 'everything bagel seasoning, hot sauce, microgreens, cherry tomatoes' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['2 large eggs', 'cottage cheese or feta (optional)'] },
+          { category: '🥬 Produce', items: ['1 avocado', 'cherry tomatoes (optional)', 'microgreens (optional)'] },
+          { category: '🌾 Pantry', items: ['whole grain or sourdough bread'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'red chili flakes', 'everything bagel seasoning (optional)'] }
+        ],
+        instructions: [
+          'Toast bread to your preferred crispness.',
+          'Mash avocado in a bowl with a pinch of salt, pepper, and squeeze of lemon if available.',
+          'Spread avocado on toast. If using cottage cheese, spread a layer of it first under the avocado for a sneaky protein boost.',
+          'Cook eggs to preference — fried runny eggs on top are classic. Poached keeps it lighter.',
+          'Top with eggs, chili flakes, and any optional toppings.'
+        ],
+        tips: [
+          'Add cottage cheese under the avocado — you genuinely cannot taste it and it adds 8–10g protein',
+          'Everything bagel seasoning elevates this dramatically',
+          'Two whole eggs + the bread gives you all essential amino acids'
+        ]
+      },
+      {
+        id: 'chicken-quesadilla',
+        name: 'High-Protein Chicken Quesadilla',
+        type: 'quick-meal', category: 'sandwiches-wraps', emoji: '🫓',
+        servings: 2, prepTime: '5 min', cookTime: '15 min',
+        calories: 430, protein: 46, carbs: 30, fat: 14,
+        fitnessGoals: ['muscle-gain', 'general-health'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '10oz', item: 'boneless skinless chicken thighs, cooked & shredded (or rotisserie chicken)' },
+          { amount: '2 large', item: 'flour tortillas (Mission burrito-size)' },
+          { amount: '60g', item: 'part-skim shredded mozzarella or cheddar blend' },
+          { amount: '40g', item: 'blended cottage cheese (optional protein boost)' },
+          { amount: '3 tbsp', item: 'salsa or chipotle sauce' },
+          { amount: 'to taste', item: 'salt, cumin, chili powder, garlic powder' },
+          { amount: 'optional', item: 'Greek yogurt for dipping, sliced jalapeños, green onion' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz boneless skinless chicken thighs or rotisserie chicken'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['60g part-skim shredded mozzarella or cheddar', '40g cottage cheese (optional)'] },
+          { category: '🌾 Pantry', items: ['2 large flour tortillas', 'salsa or chipotle sauce'] },
+          { category: '🧄 Spices', items: ['cumin', 'chili powder', 'garlic powder', 'salt'] }
+        ],
+        instructions: [
+          'If cooking fresh: season and cook chicken, then shred. If using rotisserie: shred directly.',
+          'Mix cottage cheese with shredded chicken if using — it adds creaminess and protein invisibly.',
+          'Heat a large nonstick pan over medium heat.',
+          'Place one tortilla flat. On one half, layer: cheese, chicken mixture, salsa, remaining cheese. Fold the empty half over.',
+          'Cook 2–3 min until golden and crispy on the bottom. Flip carefully, cook another 2 min.',
+          'Repeat for second quesadilla. Slice into wedges and serve with Greek yogurt for dipping.'
+        ],
+        tips: [
+          'Rotisserie chicken makes this a 10-minute meal',
+          'Mixing blended cottage cheese into the chicken filling nearly doubles the protein invisibly',
+          'Press down lightly with a spatula while cooking for maximum crunch'
+        ]
+      },
+      {
+        id: 'cottage-cheese-flatbread-pizza',
+        name: 'Cottage Cheese Flatbread Pizza',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🍕',
+        servings: 2, prepTime: '5 min', cookTime: '10 min',
+        calories: 385, protein: 44, carbs: 32, fat: 9,
+        fitnessGoals: ['muscle-gain', 'weight-loss'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'low-fat'],
+        ingredients: [
+          { amount: '2', item: 'Lavash or naan flatbreads (or 2 large tortillas)' },
+          { amount: '1 cup', item: 'cottage cheese (2%), blended smooth' },
+          { amount: '60g', item: 'marinara sauce' },
+          { amount: '60g', item: 'part-skim shredded mozzarella' },
+          { amount: '20g', item: 'Parmigiano Reggiano, grated' },
+          { amount: '4oz', item: 'cooked chicken breast or turkey pepperoni (optional)' },
+          { amount: 'to taste', item: 'garlic powder, Italian seasoning, red chili flakes' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['1 cup 2% cottage cheese', '60g part-skim shredded mozzarella', '20g Parmigiano Reggiano'] },
+          { category: '🥩 Proteins', items: ['4oz cooked chicken breast or turkey pepperoni (optional)'] },
+          { category: '🌾 Pantry', items: ['2 Lavash flatbreads or naan', '60g marinara sauce'] },
+          { category: '🧄 Spices', items: ['garlic powder', 'Italian seasoning', 'red chili flakes'] }
+        ],
+        instructions: [
+          'Preheat oven to 400°F (or air fryer to 375°F).',
+          'Blend cottage cheese until completely smooth.',
+          'Spread blended cottage cheese on each flatbread as the base "sauce".',
+          'Add a thin layer of marinara on top. Sprinkle garlic powder and Italian seasoning.',
+          'Top with mozzarella, Parmigiano, and any additional toppings.',
+          'Bake 8–10 min (or air fry 5–6 min) until cheese is bubbly and edges are crispy.',
+          'Slice and top with red chili flakes.'
+        ],
+        tips: [
+          'The blended cottage cheese base is lower-fat than traditional cheese and adds significant protein',
+          'Lavash flatbread stays crispy — naan gives a more traditional pizza texture',
+          'Turkey pepperoni has 50% fewer calories than pork pepperoni with very similar taste'
+        ]
+      },
+      {
+        id: 'lemon-garlic-shrimp-rice',
+        name: 'Lemon Garlic Shrimp & Rice',
+        type: 'quick-meal', category: 'bowls', emoji: '🍤',
+        servings: 2, prepTime: '5 min', cookTime: '15 min',
+        calories: 380, protein: 36, carbs: 40, fat: 8,
+        fitnessGoals: ['weight-loss', 'endurance'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'low-fat', 'gluten-free'],
+        ingredients: [
+          { amount: '12oz', item: 'raw shrimp, peeled & deveined' },
+          { amount: '1 cup dry', item: 'white or jasmine rice (or 2 microwavable rice packets)' },
+          { amount: '4 cloves', item: 'garlic, minced' },
+          { amount: 'juice of 1', item: 'lemon + zest' },
+          { amount: '2 tbsp', item: 'butter or ghee' },
+          { amount: '1 tbsp', item: 'olive oil' },
+          { amount: '2 cups', item: 'baby spinach or asparagus' },
+          { amount: '¼ tsp each', item: 'salt, pepper, red chili flakes' },
+          { amount: 'optional', item: 'fresh parsley, Parmigiano Reggiano' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz raw shrimp, peeled & deveined'] },
+          { category: '🥬 Produce', items: ['4 garlic cloves', '1 lemon', '2 cups baby spinach or asparagus', 'fresh parsley (optional)'] },
+          { category: '🌾 Pantry', items: ['1 cup white or jasmine rice (or 2 microwavable rice packets)', 'olive oil'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['2 tbsp butter or ghee'] }
+        ],
+        instructions: [
+          'Cook rice per package (or microwave pre-cooked packets — great time saver).',
+          'Heat olive oil in a pan over high heat. Season shrimp with salt, pepper & chili flakes.',
+          'Sear shrimp 1.5 min per side until pink. Remove and set aside.',
+          'Lower heat to medium. Add butter and garlic to the same pan, sauté 1–2 min until fragrant (don\'t burn).',
+          'Add spinach or asparagus, toss in the butter sauce until wilted/tender, ~2 min.',
+          'Add shrimp back in. Squeeze lemon juice and add lemon zest. Toss everything together.',
+          'Serve over rice. Top with fresh parsley and Parmigiano if desired.'
+        ],
+        tips: [
+          'Lemon zest is the secret — adds bright citrus flavor without any liquid',
+          'Frozen shrimp work perfectly — thaw in cold water 5 min before cooking',
+          'Microwavable rice packs make this a genuine 10-minute meal'
+        ]
+      },
+      {
+        id: 'turkey-lettuce-wraps',
+        name: 'Asian Turkey Lettuce Wraps',
+        type: 'quick-meal', category: 'sandwiches-wraps', emoji: '🥬',
+        servings: 2, prepTime: '10 min', cookTime: '10 min',
+        calories: 295, protein: 34, carbs: 18, fat: 8,
+        fitnessGoals: ['weight-loss', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'low-carb', 'gluten-free'],
+        ingredients: [
+          { amount: '1 lb', item: '93% lean ground turkey' },
+          { amount: '1 head', item: 'butter or iceberg lettuce (leaves separated)' },
+          { amount: '1', item: 'red bell pepper, finely diced' },
+          { amount: '1 cup', item: 'water chestnuts, drained & diced (optional)' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp', item: 'fresh ginger, grated' },
+          { amount: '3 tbsp', item: 'low-sodium soy sauce or coconut aminos' },
+          { amount: '1 tbsp', item: 'rice vinegar' },
+          { amount: '1 tbsp', item: 'hoisin sauce' },
+          { amount: '1 tsp', item: 'sesame oil' },
+          { amount: 'optional', item: 'green onions, sesame seeds, sriracha' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['1 lb 93% lean ground turkey'] },
+          { category: '🥬 Produce', items: ['1 head butter or iceberg lettuce', '1 red bell pepper', '3 garlic cloves', 'fresh ginger', 'green onions (optional)'] },
+          { category: '🌾 Pantry', items: ['1 can water chestnuts (optional)', 'low-sodium soy sauce', 'rice vinegar', 'hoisin sauce', 'sesame oil'] }
+        ],
+        instructions: [
+          'Mix together soy sauce, rice vinegar, hoisin, and sesame oil in a small bowl. Set aside.',
+          'Heat a large skillet over medium-high heat with a spray of oil. Add garlic and ginger, stir fry 30 sec.',
+          'Add ground turkey, break apart, cook until no longer pink, ~6 min.',
+          'Add diced bell pepper and water chestnuts, cook 2 more min.',
+          'Pour sauce over everything, stir and cook 1 min until well combined and fragrant.',
+          'Serve in cold lettuce cups. Top with green onion, sesame seeds, and sriracha.'
+        ],
+        tips: [
+          'The cold lettuce vs. hot filling contrast is the whole experience — don\'t skip it',
+          'Water chestnuts add a satisfying crunch without significant calories',
+          'This hits under 300 calories per serving making it one of the best weight-loss options in the library'
+        ]
+      },
+      {
+        id: 'greek-yogurt-chicken-salad',
+        name: 'Greek Yogurt Chicken Salad',
+        type: 'quick-meal', category: 'soups-salads', emoji: '🥗',
+        servings: 2, prepTime: '10 min', cookTime: '0 min',
+        calories: 330, protein: 42, carbs: 16, fat: 8,
+        fitnessGoals: ['weight-loss', 'general-health'],
+        timing: ['lunch', 'any'],
+        tags: ['high-protein', 'quick', 'low-fat', 'no-cook'],
+        ingredients: [
+          { amount: '12oz', item: 'cooked chicken breast, shredded (rotisserie works great)' },
+          { amount: '½ cup', item: 'plain Greek yogurt (2%)' },
+          { amount: '1 tbsp', item: 'light mayo' },
+          { amount: '1 tbsp', item: 'Dijon mustard' },
+          { amount: '2 stalks', item: 'celery, finely diced' },
+          { amount: '¼', item: 'red onion, finely diced' },
+          { amount: '¼ cup', item: 'dried cranberries or red grapes, halved' },
+          { amount: '¼ cup', item: 'almonds or walnuts, roughly chopped' },
+          { amount: 'juice of ½', item: 'lemon' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz cooked chicken breast or 1 rotisserie chicken'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['½ cup plain Greek yogurt (2%)', 'light mayo'] },
+          { category: '🥬 Produce', items: ['2 celery stalks', '¼ red onion', '½ lemon'] },
+          { category: '🌾 Pantry', items: ['Dijon mustard', 'dried cranberries or red grapes', 'almonds or walnuts'] }
+        ],
+        instructions: [
+          'Shred cooked chicken into bite-sized pieces.',
+          'In a large bowl, whisk together Greek yogurt, mayo, Dijon, and lemon juice. Season with salt, pepper, and garlic powder.',
+          'Add chicken, celery, red onion, dried cranberries, and nuts. Stir to coat everything.',
+          'Taste and adjust seasoning.',
+          'Serve on whole grain toast, in a wrap, over greens, or straight from the bowl.'
+        ],
+        tips: [
+          'Greek yogurt replaces most of the mayo — still creamy but with a fraction of the calories and tons of protein',
+          'Rotisserie chicken makes this a zero-cook meal ready in 5 minutes',
+          'Great for meal prep — keeps 4 days in the fridge, great on sandwiches or salads throughout the week'
+        ]
+      },
+      {
+        id: 'honey-sriracha-salmon-bowl',
+        name: 'Honey Sriracha Salmon Bowl',
+        type: 'quick-meal', category: 'bowls', emoji: '🍱',
+        servings: 1, prepTime: '5 min', cookTime: '12 min',
+        calories: 490, protein: 42, carbs: 46, fat: 13,
+        fitnessGoals: ['endurance', 'muscle-gain', 'general-health'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'quick', 'omega-3'],
+        ingredients: [
+          { amount: '6oz', item: 'salmon fillet' },
+          { amount: '1 packet', item: 'microwavable rice or ½ cup dry rice' },
+          { amount: '1 cup', item: 'edamame or steamed broccoli' },
+          { amount: '1 tbsp', item: 'honey' },
+          { amount: '1 tbsp', item: 'sriracha (adjust to heat preference)' },
+          { amount: '1 tsp', item: 'low-sodium soy sauce' },
+          { amount: '½ tsp', item: 'garlic powder' },
+          { amount: '¼', item: 'avocado, sliced (optional)' },
+          { amount: 'optional', item: 'sesame seeds, green onion, cucumber slices' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['6oz salmon fillet'] },
+          { category: '🥬 Produce', items: ['1 cup edamame or broccoli', '¼ avocado', 'green onion (optional)', 'cucumber (optional)'] },
+          { category: '🌾 Pantry', items: ['1 microwavable rice packet', 'honey', 'sriracha', 'low-sodium soy sauce'] }
+        ],
+        instructions: [
+          'Whisk honey, sriracha, soy sauce, and garlic powder together.',
+          'Pat salmon dry, brush generously with the sauce.',
+          'Air fry at 400°F for 10–12 min until salmon flakes easily. (Oven: 400°F for 12–14 min.)',
+          'Microwave rice per packet directions. Microwave edamame or steam broccoli.',
+          'Assemble bowl: rice, veggies, salmon on top. Drizzle remaining sauce. Add avocado and garnishes.'
+        ],
+        tips: [
+          'Salmon is the best single food for endurance athletes — omega-3s reduce inflammation dramatically',
+          'Don\'t overcook salmon — it\'s done when it just starts to flake and is still slightly translucent in the thickest part',
+          'Frozen salmon fillets are just as nutritious as fresh and far cheaper'
+        ]
+      },
+      {
+        id: 'loaded-egg-white-scramble',
+        name: 'Loaded Egg White Scramble',
+        type: 'quick-meal', category: 'breakfast', emoji: '🍳',
+        servings: 1, prepTime: '5 min', cookTime: '8 min',
+        calories: 285, protein: 34, carbs: 12, fat: 10,
+        fitnessGoals: ['weight-loss', 'muscle-gain'],
+        timing: ['breakfast', 'any'],
+        tags: ['high-protein', 'quick', 'low-carb', 'low-fat', 'gluten-free'],
+        ingredients: [
+          { amount: '4', item: 'large egg whites (or ½ cup liquid egg whites)' },
+          { amount: '2', item: 'whole eggs' },
+          { amount: '¼ cup', item: 'cottage cheese (2%)' },
+          { amount: '½ cup', item: 'baby spinach' },
+          { amount: '¼ cup', item: 'cherry tomatoes, halved' },
+          { amount: '2 tbsp', item: 'shredded reduced-fat cheddar or feta' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder, hot sauce' },
+          { amount: 'light spray', item: 'olive oil or butter spray' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['4 large eggs or liquid egg whites', 'cottage cheese (2%)', 'reduced-fat shredded cheddar or feta'] },
+          { category: '🥬 Produce', items: ['baby spinach', 'cherry tomatoes'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'garlic powder', 'hot sauce'] }
+        ],
+        instructions: [
+          'Whisk egg whites and whole eggs together with cottage cheese, salt, pepper, and garlic powder.',
+          'Heat a nonstick pan over medium-low heat. Spray lightly with oil.',
+          'Add cherry tomatoes and spinach, sauté 1–2 min until spinach wilts.',
+          'Pour egg mixture over the veggies. Let it sit 15–20 sec, then gently fold with a spatula.',
+          'Continue folding slowly until eggs are just set and fluffy. Don\'t rush — low and slow makes creamy eggs.',
+          'Top with cheese and hot sauce. Eat immediately.'
+        ],
+        tips: [
+          'Cottage cheese mixed into scrambled eggs creates the creamiest texture — try it once and you\'ll never go back',
+          'The 2 whole eggs + 4 whites ratio gives great protein without excessive fat',
+          'Don\'t press the eggs down into the pan — folding keeps them light and airy'
+        ]
+      },
+      {
+        id: 'protein-smoothie-bowl',
+        name: 'Protein Smoothie Bowl',
+        type: 'quick-meal', category: 'breakfast', emoji: '🫐',
+        servings: 1, prepTime: '5 min', cookTime: '0 min',
+        calories: 375, protein: 30, carbs: 50, fat: 7,
+        fitnessGoals: ['endurance', 'general-health'],
+        timing: ['breakfast', 'pre-workout'],
+        tags: ['high-carb', 'quick', 'no-cook'],
+        ingredients: [
+          { amount: '1 cup', item: 'frozen mixed berries (blueberries, strawberries, raspberries)' },
+          { amount: '1 medium', item: 'frozen banana (peel and freeze overnight)' },
+          { amount: '¾ cup', item: 'plain Greek yogurt (0% or 2%)' },
+          { amount: '¼ cup', item: 'unsweetened almond milk or milk' },
+          { amount: '1 scoop', item: 'vanilla or unflavored protein powder (~25g protein)' },
+          { amount: 'toppings:', item: 'sliced fresh banana, granola, chia seeds, honey drizzle, nut butter' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['plain Greek yogurt (0% or 2%)', 'unsweetened almond or regular milk', 'protein powder'] },
+          { category: '🥬 Produce', items: ['frozen mixed berries', '2 bananas (1 to freeze, 1 fresh for topping)'] },
+          { category: '🌾 Pantry', items: ['granola', 'chia seeds', 'honey', 'nut butter'] }
+        ],
+        instructions: [
+          'The night before: peel a ripe banana and freeze it.',
+          'Add frozen banana, frozen berries, Greek yogurt, milk, and protein powder to a blender.',
+          'Blend on high until completely smooth. The texture should be much thicker than a regular smoothie — add milk 1 tbsp at a time only if needed. If it\'s too thin it won\'t hold the toppings.',
+          'Pour into a wide bowl.',
+          'Add toppings: sliced fresh banana, a handful of granola, a drizzle of nut butter, chia seeds, and honey.',
+          'Eat immediately with a spoon.'
+        ],
+        tips: [
+          'Frozen banana is the key to a thick, creamy base — riper = sweeter',
+          'Toppings add most of the texture and fun — don\'t skip them',
+          'Great pre-long-run meal — high carb, easy to digest, naturally energizing',
+          'Swap protein powder for cottage cheese for a whole-food protein source'
+        ]
+      },
+      {
+        id: 'quick-tuna-pasta',
+        name: 'Creamy Tuna Pasta',
+        type: 'quick-meal', category: 'pasta-rice', emoji: '🐟',
+        servings: 2, prepTime: '5 min', cookTime: '15 min',
+        calories: 405, protein: 40, carbs: 44, fat: 8,
+        fitnessGoals: ['endurance', 'muscle-gain', 'weight-loss'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'budget-friendly'],
+        ingredients: [
+          { amount: '6oz dry', item: 'Barilla Protein Plus pasta (penne or spaghetti)' },
+          { amount: '2 cans (5oz each)', item: 'tuna in water, drained' },
+          { amount: '¾ cup', item: 'cottage cheese (2%), blended smooth' },
+          { amount: '2 cloves', item: 'garlic, minced' },
+          { amount: '1 cup', item: 'cherry tomatoes, halved' },
+          { amount: '2 cups', item: 'baby spinach' },
+          { amount: 'juice of ½', item: 'lemon' },
+          { amount: '20g', item: 'Parmigiano Reggiano, grated' },
+          { amount: 'to taste', item: 'salt, pepper, red chili flakes, olive oil' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 cans (5oz each) tuna in water'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['¾ cup 2% cottage cheese', '20g Parmigiano Reggiano'] },
+          { category: '🥬 Produce', items: ['2 cloves garlic', '1 cup cherry tomatoes', '2 cups baby spinach', '1 lemon'] },
+          { category: '🌾 Pantry', items: ['6oz Barilla Protein Plus pasta', 'olive oil'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'red chili flakes'] }
+        ],
+        instructions: [
+          'Cook pasta per package directions. Reserve ¼ cup pasta water before draining.',
+          'Blend cottage cheese until smooth.',
+          'In the same pot or a large pan, heat a drizzle of olive oil over medium heat. Sauté garlic 1 min.',
+          'Add cherry tomatoes, cook 2 min until they start to burst.',
+          'Add spinach, toss until wilted. Add tuna, gently break apart.',
+          'Lower heat. Stir in blended cottage cheese, lemon juice, and Parmigiano. Add pasta water to loosen the sauce.',
+          'Add cooked pasta, toss everything together. Season with salt, pepper & chili flakes.'
+        ],
+        tips: [
+          'Canned tuna is one of the best value proteins available — use the good stuff (solid white albacore) for best texture',
+          'Blended cottage cheese makes a silky cream sauce that tastes indulgent but is very lean',
+          'Don\'t skip the lemon — it brightens the whole dish and cuts through the richness of the sauce'
+        ]
+      },
+      {
+        id: 'chipotle-chicken-flatbread',
+        name: 'Chipotle Chicken Flatbread',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🫓',
+        servings: 2, prepTime: '5 min', cookTime: '15 min',
+        calories: 390, protein: 40, carbs: 32, fat: 12,
+        fitnessGoals: ['muscle-gain', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '2', item: 'Lavash or naan flatbreads' },
+          { amount: '10oz', item: 'boneless skinless chicken thighs, cooked & sliced' },
+          { amount: '60g', item: 'part-skim shredded mozzarella' },
+          { amount: '30g', item: 'Parmigiano Reggiano, grated' },
+          { amount: '4 tbsp', item: 'chipotle sauce or buffalo sauce' },
+          { amount: '20g', item: 'light mayo or Greek yogurt' },
+          { amount: '1 tsp each', item: 'garlic powder, smoked paprika, salt' },
+          { amount: 'optional', item: 'red onion, jalapeño, cilantro, avocado' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz boneless skinless chicken thighs'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['60g part-skim shredded mozzarella', '30g Parmigiano Reggiano', 'light mayo or Greek yogurt'] },
+          { category: '🥬 Produce', items: ['red onion (optional)', 'jalapeño (optional)', 'cilantro (optional)', '1 avocado (optional)'] },
+          { category: '🌾 Pantry', items: ['2 Lavash or naan flatbreads', 'chipotle or buffalo sauce'] },
+          { category: '🧄 Spices', items: ['garlic powder', 'smoked paprika', 'salt'] }
+        ],
+        instructions: [
+          'Cook and slice chicken — season with garlic powder, smoked paprika, and salt. Air fry 375°F 12 min or skillet 5–6 min per side.',
+          'Preheat oven to 400°F.',
+          'Mix chipotle sauce with mayo/Greek yogurt. Spread on each flatbread.',
+          'Top with cheese, then sliced chicken and any additional toppings.',
+          'Bake 8–10 min until cheese is melted and edges are crispy.',
+          'Slice and add fresh avocado and cilantro if desired.'
+        ],
+        tips: [
+          'Lavash stays crispier than naan — better choice if you want a thinner base',
+          'The mayo/Greek yogurt + chipotle sauce combo is the flavor backbone — adjust heat to your preference',
+          'Add a drizzle of honey on top after baking for a sweet heat finish'
+        ]
+      },
+      {
+        id: 'sweet-potato-black-bean-burrito',
+        name: 'Sweet Potato & Black Bean Burrito',
+        type: 'quick-meal', category: 'sandwiches-wraps', emoji: '🌯',
+        servings: 2, prepTime: '10 min', cookTime: '15 min',
+        calories: 440, protein: 20, carbs: 70, fat: 8,
+        fitnessGoals: ['endurance', 'general-health'],
+        timing: ['lunch', 'dinner', 'pre-workout'],
+        tags: ['high-carb', 'vegetarian', 'quick'],
+        ingredients: [
+          { amount: '2 medium', item: 'sweet potatoes, diced small' },
+          { amount: '1 can (15oz)', item: 'black beans, drained & rinsed' },
+          { amount: '2 large', item: 'flour tortillas (burrito-size)' },
+          { amount: '½ cup', item: 'cooked rice or quinoa' },
+          { amount: '½ cup', item: 'salsa' },
+          { amount: '40g', item: 'shredded reduced-fat cheddar' },
+          { amount: '2 tbsp', item: 'plain Greek yogurt' },
+          { amount: '1 tsp each', item: 'cumin, chili powder, garlic powder, smoked paprika, salt' },
+          { amount: '1 tbsp', item: 'olive oil' }
+        ],
+        groceryList: [
+          { category: '🥬 Produce', items: ['2 medium sweet potatoes'] },
+          { category: '🌾 Pantry', items: ['1 can (15oz) black beans', '2 large flour tortillas', '½ cup rice or quinoa', '½ cup salsa', 'olive oil'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['40g reduced-fat shredded cheddar', 'plain Greek yogurt'] },
+          { category: '🧄 Spices', items: ['cumin', 'chili powder', 'garlic powder', 'smoked paprika', 'salt'] }
+        ],
+        instructions: [
+          'Dice sweet potatoes and toss with olive oil and all spices.',
+          'Roast at 425°F for 18–20 min until tender and caramelized, or microwave with a splash of water covered 5–6 min.',
+          'Warm beans in a small pan, season with a pinch of cumin and salt.',
+          'Warm tortillas in microwave 20 sec.',
+          'Build burrito: layer rice, sweet potato, beans, salsa, and cheddar down the center.',
+          'Add Greek yogurt as sour cream. Roll tightly.',
+          'Optional: toast in a dry pan 2 min per side for crispy exterior.'
+        ],
+        tips: [
+          'This is a perfect pre-long-run meal — complex carbs from sweet potato, rice, and beans for sustained energy',
+          'Add a can of tuna or 4oz chicken to boost protein to ~40g per serving',
+          'Great for vegetarians — black beans provide fiber and plant protein'
+        ]
+      }
+    ];
+
+    // ── Category metadata for display ──
+    const RECIPE_CATEGORIES = [
+      { id: 'all', label: 'All', emoji: '🍽️' },
+      { id: 'bowls', label: 'Bowls', emoji: '🥣' },
+      { id: 'sandwiches-wraps', label: 'Wraps & Sandwiches', emoji: '🌯' },
+      { id: 'pasta-rice', label: 'Pasta & Rice', emoji: '🍝' },
+      { id: 'protein-mains', label: 'Protein Mains', emoji: '🍗' },
+      { id: 'breakfast', label: 'Breakfast', emoji: '🍳' },
+      { id: 'soups-salads', label: 'Soups & Salads', emoji: '🥗' }
+    ];
+
+    const RECIPE_GOAL_FILTERS = [
+      { id: 'all', label: 'All Goals' },
+      { id: 'endurance', label: '🏃 Endurance' },
+      { id: 'muscle-gain', label: '💪 Muscle Gain' },
+      { id: 'weight-loss', label: '⚖️ Weight Loss' },
+      { id: 'general-health', label: '❤️ General Health' }
+    ];
+
+    // ── Nutrition Tab Component ────────────────────────────────────────────
+    function NutritionTab() {
+      const [sectionFilter, setSectionFilter] = React.useState('all');         // 'all' | 'meal-prep' | 'quick-meal'
+      const [categoryFilter, setCategoryFilter] = React.useState('all');
+      const [goalFilter, setGoalFilter] = React.useState('all');
+      const [selectedRecipe, setSelectedRecipe] = React.useState(null);
+      const [shoppingList, setShoppingList] = React.useState([]);             // array of recipe ids
+      const [showShoppingModal, setShowShoppingModal] = React.useState(false);
+      const [activeTab, setActiveTab] = React.useState('recipe');             // 'recipe' | 'shopping'
+
+      const filtered = RECIPES.filter(r => {
+        if (sectionFilter !== 'all' && r.type !== sectionFilter) return false;
+        if (categoryFilter !== 'all' && r.category !== categoryFilter) return false;
+        if (goalFilter !== 'all' && !r.fitnessGoals.includes(goalFilter)) return false;
+        return true;
+      });
+
+      const mealPreps = filtered.filter(r => r.type === 'meal-prep');
+      const quickMeals = filtered.filter(r => r.type === 'quick-meal');
+
+      const toggleShoppingList = (recipeId) => {
+        setShoppingList(prev =>
+          prev.includes(recipeId) ? prev.filter(id => id !== recipeId) : [...prev, recipeId]
+        );
+      };
+
+      // Aggregate grocery list from selected recipes
+      const aggregatedList = React.useMemo(() => {
+        const selected = RECIPES.filter(r => shoppingList.includes(r.id));
+        const byCategory = {};
+        selected.forEach(recipe => {
+          recipe.groceryList.forEach(group => {
+            if (!byCategory[group.category]) byCategory[group.category] = new Set();
+            group.items.forEach(item => byCategory[group.category].add(item));
+          });
+        });
+        return Object.entries(byCategory).map(([cat, items]) => ({ category: cat, items: [...items] }));
+      }, [shoppingList]);
+
+      const MacroBadge = ({ label, value, color }) => (
+        <div className={`text-center px-2 py-1.5 rounded-lg ${color}`}>
+          <div className="text-lg font-bold leading-none">{value}g</div>
+          <div className="text-xs mt-0.5 opacity-80">{label}</div>
+        </div>
+      );
+
+      const RecipeCard = ({ recipe }) => {
+        const inList = shoppingList.includes(recipe.id);
+        return (
+          <div
+            className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden cursor-pointer hover:border-orange-500 transition"
+            onClick={() => setSelectedRecipe(recipe)}
+          >
+            {/* Card header */}
+            <div className="bg-slate-700 px-4 pt-4 pb-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <span className="text-2xl leading-none shrink-0">{recipe.emoji}</span>
+                  <div className="min-w-0">
+                    <div className="font-bold text-white text-sm leading-tight">{recipe.name}</div>
+                    <div className="text-gray-400 text-xs mt-0.5">{recipe.servings} servings • {recipe.prepTime} prep • {recipe.cookTime} cook</div>
+                  </div>
+                </div>
+                <button
+                  onClick={e => { e.stopPropagation(); toggleShoppingList(recipe.id); }}
+                  className={`shrink-0 text-lg transition ${inList ? 'text-green-400' : 'text-gray-600 hover:text-gray-400'}`}
+                  title={inList ? 'Remove from shopping list' : 'Add to shopping list'}
+                >
+                  {inList ? '✅' : '🛒'}
+                </button>
+              </div>
+            </div>
+            {/* Macros strip */}
+            <div className="px-4 py-3 grid grid-cols-4 gap-2">
+              <div className="text-center px-1 py-1.5 rounded-lg bg-orange-900 bg-opacity-40">
+                <div className="text-sm font-bold text-orange-300 leading-none">{recipe.calories}</div>
+                <div className="text-xs text-orange-400 mt-0.5">cal</div>
+              </div>
+              <MacroBadge label="protein" value={recipe.protein} color="bg-blue-900 bg-opacity-40 text-blue-300" />
+              <MacroBadge label="carbs" value={recipe.carbs} color="bg-green-900 bg-opacity-40 text-green-300" />
+              <MacroBadge label="fat" value={recipe.fat} color="bg-yellow-900 bg-opacity-40 text-yellow-300" />
+            </div>
+            {/* Tags */}
+            <div className="px-4 pb-3 flex flex-wrap gap-1">
+              {recipe.tags.slice(0, 3).map(tag => (
+                <span key={tag} className="text-xs bg-slate-700 text-gray-400 rounded-full px-2 py-0.5">{tag}</span>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      // ── Recipe Detail Modal ───────────────────────────────────────────────
+      if (selectedRecipe) {
+        const inList = shoppingList.includes(selectedRecipe.id);
+        return (
+          <div className="text-white pb-4">
+            {/* Back button */}
+            <button
+              onClick={() => setSelectedRecipe(null)}
+              className="flex items-center gap-2 text-orange-400 font-semibold px-4 py-3 hover:text-orange-300 transition"
+            >
+              ← Back to recipes
+            </button>
+
+            {/* Recipe header */}
+            <div className="mx-4 bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-4">
+              <div className="bg-slate-700 px-4 py-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-4xl">{selectedRecipe.emoji}</span>
+                  <div>
+                    <h2 className="text-xl font-bold text-white leading-tight">{selectedRecipe.name}</h2>
+                    <p className="text-gray-400 text-sm">{selectedRecipe.servings} servings • {selectedRecipe.prepTime} prep + {selectedRecipe.cookTime} cook</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1 mt-2">
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${selectedRecipe.type === 'meal-prep' ? 'bg-purple-900 text-purple-300' : 'bg-blue-900 text-blue-300'}`}>
+                    {selectedRecipe.type === 'meal-prep' ? '🥡 Meal Prep' : '⚡ Quick Meal'}
+                  </span>
+                  {selectedRecipe.tags.map(tag => (
+                    <span key={tag} className="text-xs bg-slate-600 text-gray-300 rounded-full px-2.5 py-1">{tag}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Nutrition facts */}
+              <div className="px-4 py-4 border-t border-slate-600">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Nutrition per serving</h3>
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="text-center bg-orange-900 bg-opacity-30 rounded-lg py-3">
+                    <div className="text-2xl font-bold text-orange-300">{selectedRecipe.calories}</div>
+                    <div className="text-xs text-orange-400 mt-0.5">Calories</div>
+                  </div>
+                  <div className="text-center bg-blue-900 bg-opacity-30 rounded-lg py-3">
+                    <div className="text-2xl font-bold text-blue-300">{selectedRecipe.protein}g</div>
+                    <div className="text-xs text-blue-400 mt-0.5">Protein</div>
+                  </div>
+                  <div className="text-center bg-green-900 bg-opacity-30 rounded-lg py-3">
+                    <div className="text-2xl font-bold text-green-300">{selectedRecipe.carbs}g</div>
+                    <div className="text-xs text-green-400 mt-0.5">Carbs</div>
+                  </div>
+                  <div className="text-center bg-yellow-900 bg-opacity-30 rounded-lg py-3">
+                    <div className="text-2xl font-bold text-yellow-300">{selectedRecipe.fat}g</div>
+                    <div className="text-xs text-yellow-400 mt-0.5">Fat</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Add to shopping list button */}
+              <div className="px-4 pb-4">
+                <button
+                  onClick={() => toggleShoppingList(selectedRecipe.id)}
+                  className={`w-full py-2.5 rounded-lg font-semibold text-sm transition border ${
+                    inList
+                      ? 'bg-green-900 bg-opacity-30 border-green-700 text-green-400'
+                      : 'bg-slate-700 border-slate-500 text-gray-200 hover:bg-slate-600'
+                  }`}
+                >
+                  {inList ? '✅ Added to Shopping List' : '🛒 Add to Shopping List'}
+                </button>
+              </div>
+            </div>
+
+            {/* Sub-tab navigation */}
+            <div className="mx-4 flex bg-slate-800 rounded-lg p-1 mb-4 border border-slate-700">
+              {[['recipe', 'Recipe'], ['shopping', 'Grocery List']].map(([id, label]) => (
+                <button
+                  key={id}
+                  onClick={() => setActiveTab(id)}
+                  className={`flex-1 py-2 text-sm font-semibold rounded-md transition ${
+                    activeTab === id ? 'bg-orange-500 text-white' : 'text-gray-400 hover:text-gray-200'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'recipe' ? (
+              <div className="px-4 space-y-4">
+                {/* Ingredients */}
+                <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+                  <h3 className="font-bold text-white mb-3 flex items-center gap-2">
+                    <span>📋</span> Ingredients
+                    <span className="text-xs text-gray-400 font-normal ml-1">({selectedRecipe.servings} servings)</span>
+                  </h3>
+                  <div className="space-y-2">
+                    {selectedRecipe.ingredients.map((ing, i) => (
+                      <div key={i} className="flex items-start gap-3 py-1.5 border-b border-slate-700 last:border-0">
+                        <span className="text-orange-400 font-semibold text-sm shrink-0 min-w-[80px]">{ing.amount}</span>
+                        <span className="text-gray-300 text-sm">{ing.item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Instructions */}
+                <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+                  <h3 className="font-bold text-white mb-3 flex items-center gap-2"><span>👨‍🍳</span> Instructions</h3>
+                  <div className="space-y-3">
+                    {selectedRecipe.instructions.map((step, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <span className="bg-orange-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                        <p className="text-gray-300 text-sm leading-relaxed">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tips */}
+                {selectedRecipe.tips && selectedRecipe.tips.length > 0 && (
+                  <div className="bg-slate-800 border border-yellow-800 rounded-xl p-4">
+                    <h3 className="font-bold text-yellow-400 mb-3 flex items-center gap-2"><span>💡</span> Tips & Notes</h3>
+                    <div className="space-y-2">
+                      {selectedRecipe.tips.map((tip, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="text-yellow-500 shrink-0 mt-0.5">•</span>
+                          <p className="text-gray-300 text-sm leading-relaxed">{tip}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Grocery List Tab */
+              <div className="px-4 space-y-3">
+                {selectedRecipe.groceryList.map((group, gi) => (
+                  <div key={gi} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+                    <h4 className="font-bold text-white text-sm mb-2">{group.category}</h4>
+                    <div className="space-y-1.5">
+                      {group.items.map((item, ii) => (
+                        <div key={ii} className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="w-4 h-4 border border-slate-500 rounded shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      // ── Shopping List Modal ───────────────────────────────────────────────
+      if (showShoppingModal) {
+        return (
+          <div className="text-white pb-4">
+            <button
+              onClick={() => setShowShoppingModal(false)}
+              className="flex items-center gap-2 text-orange-400 font-semibold px-4 py-3 hover:text-orange-300 transition"
+            >
+              ← Back to recipes
+            </button>
+            <div className="px-4 mb-4">
+              <h2 className="text-xl font-bold text-white">🛒 Shopping List</h2>
+              <p className="text-gray-400 text-sm mt-1">{shoppingList.length} recipe{shoppingList.length !== 1 ? 's' : ''} selected</p>
+              {shoppingList.length > 0 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {RECIPES.filter(r => shoppingList.includes(r.id)).map(r => r.name).join(', ')}
+                </p>
+              )}
+            </div>
+            {shoppingList.length === 0 ? (
+              <div className="px-4 text-center py-12 text-gray-500">
+                <div className="text-4xl mb-3">🛒</div>
+                <p>No recipes selected yet.</p>
+                <p className="text-sm mt-1">Tap the 🛒 on any recipe card to add it.</p>
+              </div>
+            ) : (
+              <div className="px-4 space-y-3">
+                {aggregatedList.map((group, gi) => (
+                  <div key={gi} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+                    <h4 className="font-bold text-white text-sm mb-2">{group.category}</h4>
+                    <div className="space-y-2">
+                      {group.items.map((item, ii) => (
+                        <label key={ii} className="flex items-center gap-3 cursor-pointer group">
+                          <input type="checkbox" className="w-4 h-4 accent-orange-500 rounded" />
+                          <span className="text-gray-300 text-sm group-has-[:checked]:line-through group-has-[:checked]:text-gray-600">{item}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setShoppingList([])}
+                  className="w-full py-2.5 bg-slate-700 border border-slate-500 text-gray-400 text-sm rounded-lg hover:bg-slate-600 transition"
+                >
+                  Clear all recipes
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      // ── Main Recipe Browser ───────────────────────────────────────────────
+      return (
+        <div className="text-white pb-4">
+          {/* Header */}
+          <div className="px-4 pt-4 pb-3 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-white">Nutrition</h2>
+              <p className="text-gray-400 text-xs mt-0.5">{RECIPES.length} recipes · macros per serving</p>
+            </div>
+            <button
+              onClick={() => setShowShoppingModal(true)}
+              className={`relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold border transition ${
+                shoppingList.length > 0
+                  ? 'bg-green-900 bg-opacity-30 border-green-700 text-green-400'
+                  : 'bg-slate-700 border-slate-600 text-gray-400 hover:text-gray-200'
+              }`}
+            >
+              🛒 List
+              {shoppingList.length > 0 && (
+                <span className="bg-green-500 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">{shoppingList.length}</span>
+              )}
+            </button>
+          </div>
+
+          {/* Goal filter */}
+          <div className="px-4 mb-3 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {RECIPE_GOAL_FILTERS.map(f => (
+              <button
+                key={f.id}
+                onClick={() => setGoalFilter(f.id)}
+                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
+                  goalFilter === f.id
+                    ? 'bg-orange-500 border-orange-500 text-white'
+                    : 'border-slate-600 text-gray-400 hover:text-gray-200'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Section toggle */}
+          <div className="mx-4 flex bg-slate-800 rounded-lg p-1 mb-3 border border-slate-700">
+            {[['all', 'All Recipes'], ['meal-prep', '🥡 Meal Prep'], ['quick-meal', '⚡ Quick Meals']].map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => setSectionFilter(id)}
+                className={`flex-1 py-2 text-xs font-semibold rounded-md transition ${
+                  sectionFilter === id ? 'bg-orange-500 text-white' : 'text-gray-400 hover:text-gray-200'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Category filter */}
+          <div className="px-4 mb-4 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {RECIPE_CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setCategoryFilter(cat.id)}
+                className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
+                  categoryFilter === cat.id
+                    ? 'bg-slate-600 border-slate-400 text-white'
+                    : 'border-slate-700 text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                {cat.emoji} {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Meal Prep section */}
+          {(sectionFilter === 'all' || sectionFilter === 'meal-prep') && mealPreps.length > 0 && (
+            <div className="mb-5">
+              <div className="px-4 mb-2">
+                <h3 className="font-bold text-purple-300 flex items-center gap-2">
+                  🥡 Meal Prep
+                  <span className="text-xs font-normal text-gray-500">5+ servings · batch cook once</span>
+                </h3>
+              </div>
+              <div className="px-4 grid grid-cols-1 gap-3">
+                {mealPreps.map(r => <RecipeCard key={r.id} recipe={r} />)}
+              </div>
+            </div>
+          )}
+
+          {/* Quick Meals section */}
+          {(sectionFilter === 'all' || sectionFilter === 'quick-meal') && quickMeals.length > 0 && (
+            <div className="mb-5">
+              <div className="px-4 mb-2">
+                <h3 className="font-bold text-blue-300 flex items-center gap-2">
+                  ⚡ Quick Meals
+                  <span className="text-xs font-normal text-gray-500">1–4 servings · ready fast</span>
+                </h3>
+              </div>
+              <div className="px-4 grid grid-cols-1 gap-3">
+                {quickMeals.map(r => <RecipeCard key={r.id} recipe={r} />)}
+              </div>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {filtered.length === 0 && (
+            <div className="text-center py-16 px-4 text-gray-500">
+              <div className="text-4xl mb-3">🔍</div>
+              <p className="font-semibold">No recipes match your filters</p>
+              <p className="text-sm mt-1">Try changing the goal or category filters</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     // Navigation Bar
     function NavBar({ currentTab, onTabChange }) {
       const tabs = [
-        { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+        { id: 'dashboard', label: '📊 Train', icon: '📊' },
         { id: 'plan', label: '📋 Plan', icon: '📋' },
+        { id: 'nutrition', label: '🥗 Nutrition', icon: '🥗' },
         { id: 'progress', label: '📈 Progress', icon: '📈' }
       ];
 
@@ -4432,6 +6075,7 @@
 
             {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} onNextWeek={handleNextWeek} viewedWeekIdx={viewedWeekIdx} onSetViewedWeek={setViewedWeekIdx} />}
             {currentTab === 'plan' && <PlanView plan={plan} logs={logs} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onResetPlan={handleResetPlan} />}
+            {currentTab === 'nutrition' && <NutritionTab />}
             {currentTab === 'progress' && <ProgressView logs={logs} plan={plan} injuries={injuries} onLogInjury={() => setInjuryModalOpen(true)} />}
           </div>
 
