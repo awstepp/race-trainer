@@ -4946,6 +4946,754 @@
       }
     ];
 
+    // ── Weekly-unlock recipes (one new recipe per Sunday) ─────────────────
+    // releaseDate = the Sunday it becomes visible. Dates are YYYY-MM-DD.
+    const WEEKLY_RECIPES = [
+      {
+        id: 'garlic-butter-steak-bites',
+        releaseDate: '2026-04-05',
+        name: 'Garlic Butter Steak Bites & Potatoes',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🥩',
+        servings: 2, prepTime: '10 min', cookTime: '15 min',
+        calories: 510, protein: 46, carbs: 32, fat: 20,
+        fitnessGoals: ['muscle-gain', 'general-health'],
+        timing: ['dinner', 'post-workout'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '12oz', item: 'sirloin steak, cut into 1-inch cubes' },
+          { amount: '2 medium', item: 'Yukon gold potatoes, diced small' },
+          { amount: '3 tbsp', item: 'butter or ghee, divided' },
+          { amount: '4 cloves', item: 'garlic, minced' },
+          { amount: '1 tbsp', item: 'fresh rosemary or thyme (or ½ tsp dried)' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder, smoked paprika' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz sirloin steak'] },
+          { category: '🥬 Produce', items: ['2 Yukon gold potatoes', '4 garlic cloves', 'fresh rosemary or thyme'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['3 tbsp butter or ghee'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'garlic powder', 'smoked paprika'] }
+        ],
+        instructions: [
+          'Parboil diced potatoes in salted water 5 min until just tender. Drain and pat dry.',
+          'Season steak cubes generously with salt, pepper, garlic powder, and smoked paprika.',
+          'Heat a cast iron skillet over high heat until smoking. Add 1 tbsp butter. Sear steak bites in a single layer 1–2 min per side for a deep crust. Work in batches — don\'t crowd the pan. Remove and set aside.',
+          'In the same skillet, add 1 tbsp butter. Add potatoes, press flat, cook 3–4 min until golden and crispy. Flip, cook 2 more min.',
+          'Lower heat to medium. Add remaining butter, garlic, and herbs. Let sizzle 30 sec. Add steak back in, toss everything in the garlic butter for 1 min.',
+          'Serve immediately — this is best straight from the pan.'
+        ],
+        tips: [
+          'The screaming-hot pan + dry steak = the crust that makes this dish',
+          'Filet, ribeye, or New York strip all work — sirloin is the best value',
+          'Add a squeeze of lemon over the finished dish to cut through the richness'
+        ]
+      },
+      {
+        id: 'pesto-chicken-pasta',
+        releaseDate: '2026-04-12',
+        name: 'Creamy Pesto Chicken Pasta',
+        type: 'quick-meal', category: 'pasta-rice', emoji: '🌿',
+        servings: 2, prepTime: '5 min', cookTime: '18 min',
+        calories: 475, protein: 48, carbs: 44, fat: 13,
+        fitnessGoals: ['endurance', 'muscle-gain'],
+        timing: ['dinner', 'post-workout'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '6oz dry', item: 'Barilla Protein Plus pasta (penne or rotini)' },
+          { amount: '10oz', item: 'boneless skinless chicken breast, sliced thin' },
+          { amount: '¾ cup', item: 'cottage cheese (2%), blended smooth' },
+          { amount: '3 tbsp', item: 'basil pesto (store-bought)' },
+          { amount: '1 cup', item: 'cherry tomatoes, halved' },
+          { amount: '20g', item: 'Parmigiano Reggiano, grated' },
+          { amount: '¼ cup', item: 'reserved pasta water' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder, red chili flakes' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz boneless skinless chicken breast'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['¾ cup 2% cottage cheese', '20g Parmigiano Reggiano', 'basil pesto'] },
+          { category: '🥬 Produce', items: ['1 cup cherry tomatoes'] },
+          { category: '🌾 Pantry', items: ['6oz Barilla Protein Plus pasta'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'garlic powder', 'red chili flakes'] }
+        ],
+        instructions: [
+          'Cook pasta per package directions. Reserve ¼ cup pasta water before draining.',
+          'Blend cottage cheese until silky smooth.',
+          'Season sliced chicken with salt, pepper, garlic powder. Cook in a hot oiled skillet 3–4 min per side until cooked through. Slice into strips.',
+          'In the same pan over low heat, stir together blended cottage cheese, pesto, and Parmigiano. Add pasta water to loosen to a sauce consistency.',
+          'Add cherry tomatoes and cooked pasta, toss to coat. Add chicken on top.',
+          'Season with chili flakes. Serve immediately.'
+        ],
+        tips: [
+          'Blended cottage cheese + pesto is one of the best high-protein cream sauce hacks',
+          'Don\'t overheat the sauce — gentle heat keeps it creamy',
+          'Sun-dried tomatoes make an excellent swap for cherry tomatoes'
+        ]
+      },
+      {
+        id: 'korean-ground-beef-bowls',
+        releaseDate: '2026-04-19',
+        name: 'Korean Ground Beef Bowls',
+        type: 'quick-meal', category: 'bowls', emoji: '🍚',
+        servings: 2, prepTime: '5 min', cookTime: '12 min',
+        calories: 430, protein: 38, carbs: 40, fat: 12,
+        fitnessGoals: ['muscle-gain', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '12oz', item: '93% lean ground beef' },
+          { amount: '1 cup dry', item: 'jasmine rice (or 2 microwavable rice packets)' },
+          { amount: '3 tbsp', item: 'low-sodium soy sauce' },
+          { amount: '1 tbsp', item: 'honey or brown sugar' },
+          { amount: '1 tsp', item: 'sesame oil' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp', item: 'fresh ginger, grated (or ¼ tsp ground)' },
+          { amount: '½ tsp', item: 'red pepper flakes' },
+          { amount: 'optional toppings:', item: 'sliced green onion, sesame seeds, cucumber, fried egg, sriracha' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz 93% lean ground beef'] },
+          { category: '🥬 Produce', items: ['3 garlic cloves', 'fresh ginger', 'green onions (optional)', 'cucumber (optional)'] },
+          { category: '🌾 Pantry', items: ['1 cup jasmine rice', 'low-sodium soy sauce', 'honey', 'sesame oil'] },
+          { category: '🧄 Spices', items: ['red pepper flakes', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Cook rice per package directions (or microwave pre-cooked packets).',
+          'Whisk together soy sauce, honey, sesame oil, garlic, ginger, and red pepper flakes.',
+          'Brown ground beef in a skillet over medium-high heat, breaking apart, ~6 min.',
+          'Drain excess fat. Pour sauce over beef and toss over medium heat 2 min until beef is glazed and sauce thickens slightly.',
+          'Serve beef over rice with any toppings you like — green onion, sesame seeds, a fried egg, cucumber slices, and sriracha are all excellent.'
+        ],
+        tips: [
+          'A fried egg on top takes this from a 7/10 to a 10/10 meal',
+          'Microwavable rice packs make this a genuine 12-minute dinner',
+          'Gochujang (Korean chili paste) is a great swap for sriracha for more depth'
+        ]
+      },
+      {
+        id: 'sheet-pan-salmon-asparagus',
+        releaseDate: '2026-04-26',
+        name: 'Sheet Pan Salmon & Asparagus',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🐟',
+        servings: 2, prepTime: '8 min', cookTime: '15 min',
+        calories: 420, protein: 44, carbs: 12, fat: 22,
+        fitnessGoals: ['weight-loss', 'endurance', 'general-health'],
+        timing: ['dinner', 'lunch'],
+        tags: ['high-protein', 'low-carb', 'omega-3', 'quick', 'gluten-free'],
+        ingredients: [
+          { amount: '2 x 6oz', item: 'salmon fillets' },
+          { amount: '1 bunch', item: 'asparagus, trimmed' },
+          { amount: '2 tbsp', item: 'olive oil, divided' },
+          { amount: 'juice of 1', item: 'lemon + zest' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp', item: 'Dijon mustard' },
+          { amount: '1 tbsp', item: 'honey' },
+          { amount: 'to taste', item: 'salt, pepper, smoked paprika, dill (optional)' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 salmon fillets (6oz each)'] },
+          { category: '🥬 Produce', items: ['1 bunch asparagus', '3 garlic cloves', '1 lemon'] },
+          { category: '🌾 Pantry', items: ['olive oil', 'Dijon mustard', 'honey'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'smoked paprika', 'dried dill (optional)'] }
+        ],
+        instructions: [
+          'Preheat oven to 425°F. Line a sheet pan with foil.',
+          'Whisk together 1 tbsp olive oil, lemon juice, lemon zest, garlic, Dijon, and honey.',
+          'Toss asparagus with remaining 1 tbsp olive oil, salt & pepper on the sheet pan. Push to the sides.',
+          'Place salmon fillets in the center. Brush generously with the honey-Dijon glaze. Season with smoked paprika and dill.',
+          'Roast 12–15 min until salmon flakes easily and asparagus is tender with slight char.',
+          'Serve immediately — one pan, no mess.'
+        ],
+        tips: [
+          'This is the simplest high-quality dinner in the library — 8 minutes of work total',
+          'Add baby potatoes to the sheet pan (par-cook them first 5 min) for a complete meal',
+          'The honey-Dijon-lemon glaze works on any fish — try it with cod or tilapia'
+        ]
+      },
+      {
+        id: 'chicken-caesar-wrap',
+        releaseDate: '2026-05-03',
+        name: 'High-Protein Chicken Caesar Wrap',
+        type: 'quick-meal', category: 'sandwiches-wraps', emoji: '🥗',
+        servings: 2, prepTime: '10 min', cookTime: '12 min',
+        calories: 400, protein: 44, carbs: 30, fat: 12,
+        fitnessGoals: ['weight-loss', 'muscle-gain'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'low-fat'],
+        ingredients: [
+          { amount: '10oz', item: 'boneless skinless chicken breast' },
+          { amount: '2 large', item: 'flour tortillas (burrito-size)' },
+          { amount: '2 cups', item: 'romaine lettuce, chopped' },
+          { amount: '20g', item: 'Parmigiano Reggiano, shaved or grated' },
+          { amount: '3 tbsp', item: 'light Caesar dressing' },
+          { amount: '1 tbsp', item: 'plain Greek yogurt (to thin the dressing)' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder, lemon juice' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz boneless skinless chicken breast'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['20g Parmigiano Reggiano', 'light Caesar dressing', 'plain Greek yogurt'] },
+          { category: '🥬 Produce', items: ['1 romaine heart', '1 lemon'] },
+          { category: '🌾 Pantry', items: ['2 large flour tortillas'] }
+        ],
+        instructions: [
+          'Season chicken with salt, pepper, and garlic powder. Cook in a skillet or air fryer (375°F, 12 min) until cooked through. Slice or shred.',
+          'Mix Caesar dressing with Greek yogurt — this stretches the dressing and adds protein.',
+          'Toss romaine with the dressing mixture. Add half the Parmigiano.',
+          'Warm tortillas 20 sec in microwave.',
+          'Layer dressed romaine, sliced chicken, and remaining Parmigiano down the center of each tortilla.',
+          'Fold and roll tightly. Slice on a diagonal. Optionally toast in a dry pan 1 min per side.'
+        ],
+        tips: [
+          'Rotisserie chicken makes this a zero-cook, 5-minute lunch',
+          'Greek yogurt in the dressing nearly doubles the protein of the sauce invisibly',
+          'A squeeze of fresh lemon over the chicken before wrapping brightens everything'
+        ]
+      },
+      {
+        id: 'spicy-shrimp-fried-rice',
+        releaseDate: '2026-05-10',
+        name: 'Spicy Shrimp Fried Rice',
+        type: 'quick-meal', category: 'pasta-rice', emoji: '🍳',
+        servings: 2, prepTime: '5 min', cookTime: '12 min',
+        calories: 385, protein: 36, carbs: 38, fat: 9,
+        fitnessGoals: ['weight-loss', 'endurance'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'low-fat'],
+        ingredients: [
+          { amount: '2 cups', item: 'cooked rice, day-old (or 2 microwavable packets, cooled)' },
+          { amount: '10oz', item: 'raw shrimp, peeled & deveined' },
+          { amount: '2', item: 'large eggs' },
+          { amount: '1 cup', item: 'frozen peas & carrots mix' },
+          { amount: '3 tbsp', item: 'low-sodium soy sauce' },
+          { amount: '1 tbsp', item: 'sriracha (adjust to taste)' },
+          { amount: '1 tsp', item: 'sesame oil' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '2 stalks', item: 'green onion, sliced' },
+          { amount: '1 tbsp', item: 'olive or avocado oil' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz raw shrimp, peeled & deveined', '2 large eggs'] },
+          { category: '🥬 Produce', items: ['3 garlic cloves', '2 green onion stalks'] },
+          { category: '🌾 Pantry', items: ['2 cups cooked rice or 2 microwavable packets', '1 cup frozen peas & carrots', 'low-sodium soy sauce', 'sriracha', 'sesame oil', 'oil'] }
+        ],
+        instructions: [
+          'Cold or day-old rice is key — it fries instead of steaming. If using fresh, spread it on a sheet pan and let it cool 20 min.',
+          'Heat a large wok or wide skillet over high heat until smoking hot. Add oil.',
+          'Sear shrimp 1 min per side until pink. Remove and set aside.',
+          'Add garlic, stir 15 sec. Add frozen veggies, cook 2 min.',
+          'Push everything to the side. Crack eggs into the empty space, scramble until just set, then mix into the rice.',
+          'Add rice. Stir-fry 3–4 min, tossing constantly over high heat.',
+          'Add shrimp back. Pour soy sauce, sriracha, and sesame oil over everything. Toss 1 min. Top with green onion.'
+        ],
+        tips: [
+          'The secret to great fried rice is HIGH heat and not touching it for 30-second intervals so it fries, not steams',
+          'Day-old rice is far superior — make rice the night before for this reason',
+          'Add a drizzle of chili oil at the end for restaurant-level depth'
+        ]
+      },
+      {
+        id: 'stuffed-sweet-potatoes-turkey',
+        releaseDate: '2026-05-17',
+        name: 'Turkey-Stuffed Sweet Potatoes',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🍠',
+        servings: 2, prepTime: '5 min', cookTime: '20 min',
+        calories: 410, protein: 36, carbs: 46, fat: 9,
+        fitnessGoals: ['weight-loss', 'endurance', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'gluten-free', 'low-fat'],
+        ingredients: [
+          { amount: '2 large', item: 'sweet potatoes' },
+          { amount: '10oz', item: '93% lean ground turkey' },
+          { amount: '½ cup', item: 'black beans, drained' },
+          { amount: '½ cup', item: 'salsa' },
+          { amount: '30g', item: 'shredded reduced-fat cheddar' },
+          { amount: '2 tbsp', item: 'plain Greek yogurt' },
+          { amount: '1 tsp each', item: 'cumin, chili powder, garlic powder, salt' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz 93% lean ground turkey'] },
+          { category: '🥬 Produce', items: ['2 large sweet potatoes', 'fresh cilantro (optional)', '1 lime (optional)'] },
+          { category: '🌾 Pantry', items: ['½ cup black beans', '½ cup salsa'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['30g reduced-fat shredded cheddar', '2 tbsp plain Greek yogurt'] },
+          { category: '🧄 Spices', items: ['cumin', 'chili powder', 'garlic powder', 'salt'] }
+        ],
+        instructions: [
+          'Microwave sweet potatoes: pierce each with a fork several times, place on a paper towel, microwave 8–10 min flipping halfway, until fully tender. (Oven: 425°F, 45 min.)',
+          'Brown ground turkey in a skillet over medium-high heat. Season with cumin, chili powder, garlic powder, and salt.',
+          'Stir in black beans and salsa. Simmer 2 min until heated through.',
+          'Slice sweet potatoes open and fluff the insides with a fork.',
+          'Top each potato with the turkey-bean mixture, cheddar, and a dollop of Greek yogurt.',
+          'Add cilantro and a squeeze of lime if desired.'
+        ],
+        tips: [
+          'Microwaving sweet potatoes takes 10 min vs 45 in the oven — a total game-changer for weeknights',
+          'The sweet potato base is loaded with beta-carotene, potassium, and complex carbs — perfect for endurance athletes',
+          'Add hot sauce or jalapeños for heat'
+        ]
+      },
+      {
+        id: 'tuna-poke-bowl',
+        releaseDate: '2026-05-24',
+        name: 'Tuna Poke Bowl',
+        type: 'quick-meal', category: 'bowls', emoji: '🐟',
+        servings: 1, prepTime: '10 min', cookTime: '0 min',
+        calories: 455, protein: 40, carbs: 46, fat: 10,
+        fitnessGoals: ['endurance', 'general-health', 'weight-loss'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'no-cook', 'omega-3', 'gluten-free'],
+        ingredients: [
+          { amount: '6oz', item: 'sushi-grade ahi tuna, diced (or canned tuna in water)' },
+          { amount: '1 packet', item: 'microwavable rice or ¾ cup cooked rice' },
+          { amount: '½', item: 'avocado, diced' },
+          { amount: '½ cup', item: 'edamame, shelled' },
+          { amount: '¼', item: 'cucumber, sliced thin' },
+          { amount: '2 tbsp', item: 'low-sodium soy sauce or coconut aminos' },
+          { amount: '1 tsp', item: 'sesame oil' },
+          { amount: '1 tsp', item: 'sriracha' },
+          { amount: '1 tsp', item: 'rice vinegar' },
+          { amount: 'optional toppings:', item: 'sesame seeds, green onion, pickled ginger, seaweed snacks' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['6oz sushi-grade ahi tuna (or canned tuna)'] },
+          { category: '🥬 Produce', items: ['½ avocado', '¼ cucumber', 'green onion (optional)'] },
+          { category: '🌾 Pantry', items: ['1 rice packet', 'edamame (frozen, shelled)', 'low-sodium soy sauce', 'sesame oil', 'sriracha', 'rice vinegar', 'sesame seeds (optional)'] }
+        ],
+        instructions: [
+          'Microwave rice per packet instructions. Allow to cool slightly.',
+          'Whisk together soy sauce, sesame oil, sriracha, and rice vinegar to make the ponzu-style sauce.',
+          'If using fresh tuna: dice into ½-inch cubes and toss with 1 tbsp of the sauce. If using canned: drain and flake.',
+          'Microwave edamame per package (~2 min).',
+          'Build the bowl: rice base, tuna, avocado, edamame, cucumber, arranged in sections.',
+          'Drizzle remaining sauce over the bowl. Add any toppings.'
+        ],
+        tips: [
+          'Canned albacore tuna works perfectly here and costs a fraction of the price of fresh',
+          'This is one of the fastest, most nutritionally dense meals in the entire library',
+          'The sauce is the backbone — taste it and adjust the sriracha/soy ratio to your preference'
+        ]
+      },
+      {
+        id: 'high-protein-pancakes',
+        releaseDate: '2026-05-31',
+        name: 'High-Protein Pancakes',
+        type: 'quick-meal', category: 'breakfast', emoji: '🥞',
+        servings: 2, prepTime: '5 min', cookTime: '10 min',
+        calories: 355, protein: 32, carbs: 36, fat: 9,
+        fitnessGoals: ['muscle-gain', 'general-health', 'endurance'],
+        timing: ['breakfast', 'pre-workout'],
+        tags: ['high-protein', 'quick'],
+        ingredients: [
+          { amount: '1 cup', item: 'rolled oats (blended into flour) or oat flour' },
+          { amount: '1 cup', item: 'plain Greek yogurt (2%)' },
+          { amount: '2', item: 'large eggs' },
+          { amount: '1 tsp', item: 'baking powder' },
+          { amount: '1 tsp', item: 'vanilla extract' },
+          { amount: '1 tbsp', item: 'honey or maple syrup' },
+          { amount: 'pinch', item: 'salt and cinnamon' },
+          { amount: 'toppings:', item: 'fresh berries, sliced banana, Greek yogurt, honey drizzle, nut butter' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['1 cup plain Greek yogurt (2%)', '2 large eggs'] },
+          { category: '🌾 Pantry', items: ['1 cup rolled oats or oat flour', 'baking powder', 'vanilla extract', 'honey or maple syrup'] },
+          { category: '🥬 Produce', items: ['fresh berries', '1 banana'] },
+          { category: '🧄 Spices', items: ['salt', 'cinnamon'] }
+        ],
+        instructions: [
+          'If using whole oats: blend in a blender until a fine flour forms.',
+          'In a bowl, whisk together oat flour, baking powder, salt, and cinnamon.',
+          'In another bowl, whisk eggs, Greek yogurt, vanilla, and honey.',
+          'Fold wet ingredients into dry until just combined. Don\'t overmix — small lumps are fine. Batter will be thick.',
+          'Heat a nonstick pan over medium heat, spray with oil. Drop ~¼ cup batter per pancake.',
+          'Cook 2–3 min until bubbles form and edges look set. Flip carefully, cook 1–2 min more.',
+          'Serve with toppings of choice.'
+        ],
+        tips: [
+          'Greek yogurt is what makes these thick, fluffy, and high protein — no protein powder needed',
+          'Add blueberries directly into the batter before cooking for classic pancakes',
+          'These are excellent pre-long-run — oats provide sustained carbs, eggs & yogurt provide protein'
+        ]
+      },
+      {
+        id: 'turkey-meatball-pasta',
+        releaseDate: '2026-06-07',
+        name: 'Turkey Meatball Pasta',
+        type: 'quick-meal', category: 'pasta-rice', emoji: '🍝',
+        servings: 2, prepTime: '10 min', cookTime: '20 min',
+        calories: 495, protein: 52, carbs: 46, fat: 11,
+        fitnessGoals: ['muscle-gain', 'endurance'],
+        timing: ['dinner', 'post-workout'],
+        tags: ['high-protein', 'comfort-food'],
+        ingredients: [
+          { amount: '12oz', item: '93% lean ground turkey' },
+          { amount: '6oz dry', item: 'Barilla Protein Plus spaghetti or penne' },
+          { amount: '¼ cup', item: 'cottage cheese (2%), blended (meatball binder)' },
+          { amount: '1 egg white', item: 'or 1 whole egg' },
+          { amount: '2 tbsp', item: 'Parmigiano Reggiano, grated (+ more for serving)' },
+          { amount: '1 tsp each', item: 'Italian seasoning, garlic powder, onion powder, salt' },
+          { amount: '1 cup', item: 'marinara sauce (your favorite)' },
+          { amount: '½ cup', item: 'cottage cheese, blended (for sauce creaminess)' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz 93% lean ground turkey'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['¾ cup 2% cottage cheese (total)', '1 egg or egg white', 'Parmigiano Reggiano'] },
+          { category: '🌾 Pantry', items: ['6oz Barilla Protein Plus pasta', '1 cup marinara sauce'] },
+          { category: '🧄 Spices', items: ['Italian seasoning', 'garlic powder', 'onion powder', 'salt', 'red chili flakes'] }
+        ],
+        instructions: [
+          'Mix ground turkey, ¼ cup blended cottage cheese, egg white, Parmigiano, and all seasonings. Roll into ~16 small meatballs.',
+          'Cook pasta per package directions. Reserve ¼ cup pasta water.',
+          'Heat olive oil in a skillet over medium-high. Sear meatballs 2 min per side until browned. They don\'t need to be cooked through yet.',
+          'Add marinara and ¼ cup pasta water. Simmer covered 8 min until meatballs are cooked through.',
+          'Stir in the remaining ½ cup blended cottage cheese into the sauce for creaminess.',
+          'Serve meatballs and sauce over pasta with extra Parmigiano.'
+        ],
+        tips: [
+          'Cottage cheese in the meatball mix adds moisture and protein while keeping them extremely tender',
+          'Make a double batch of meatballs and freeze half — they reheat perfectly in sauce',
+          'Adding blended cottage cheese to marinara creates a vodka-sauce-like texture without the cream'
+        ]
+      },
+      {
+        id: 'chicken-tikka-masala',
+        releaseDate: '2026-06-14',
+        name: 'Lightened Chicken Tikka Masala',
+        type: 'meal-prep', category: 'bowls', emoji: '🫕',
+        servings: 5, prepTime: '15 min', cookTime: '30 min',
+        calories: 370, protein: 44, carbs: 22, fat: 11,
+        fitnessGoals: ['weight-loss', 'muscle-gain', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'low-fat', 'gluten-free'],
+        ingredients: [
+          { amount: '2 lbs', item: 'boneless skinless chicken thighs, cubed' },
+          { amount: '1 can (14oz)', item: 'crushed tomatoes' },
+          { amount: '1 cup', item: 'plain Greek yogurt (2%), divided' },
+          { amount: '1 medium', item: 'onion, diced' },
+          { amount: '4 cloves', item: 'garlic, minced' },
+          { amount: '1 tbsp', item: 'fresh ginger, grated' },
+          { amount: '2 tbsp', item: 'tomato paste' },
+          { amount: '1 tbsp', item: 'olive oil' },
+          { amount: '2 tsp each', item: 'garam masala, cumin, smoked paprika' },
+          { amount: '1 tsp each', item: 'turmeric, coriander, salt' },
+          { amount: '½ tsp', item: 'cayenne pepper' },
+          { amount: '2 cups dry', item: 'basmati rice for serving' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 lbs boneless skinless chicken thighs'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['1 cup plain Greek yogurt (2%)'] },
+          { category: '🥬 Produce', items: ['1 medium onion', '4 garlic cloves', 'fresh ginger', 'fresh cilantro (optional)'] },
+          { category: '🌾 Pantry', items: ['1 can (14oz) crushed tomatoes', '2 tbsp tomato paste', '2 cups basmati rice', 'olive oil'] },
+          { category: '🧄 Spices', items: ['garam masala', 'cumin', 'smoked paprika', 'turmeric', 'coriander', 'cayenne', 'salt'] }
+        ],
+        instructions: [
+          'Marinate chicken in ½ cup yogurt, 1 tsp garam masala, ½ tsp turmeric, and a pinch of salt for at least 15 min (overnight is best).',
+          'Heat olive oil in a large skillet over medium-high. Cook chicken in batches until golden, ~3 min per side. Remove and set aside.',
+          'In the same pan, sauté onion 5 min until soft. Add garlic and ginger, cook 1 min.',
+          'Add tomato paste and all remaining spices, stir and cook 2 min until fragrant.',
+          'Add crushed tomatoes and ½ cup water. Simmer 10 min.',
+          'Return chicken to the pan. Simmer 10 more min until cooked through and sauce is thick.',
+          'Remove from heat. Stir in remaining ½ cup Greek yogurt (don\'t boil after adding yogurt — it will curdle).',
+          'Serve over basmati rice. Portion into 5 containers.'
+        ],
+        tips: [
+          'Greek yogurt replaces heavy cream at a fraction of the calories without compromising creaminess',
+          'The longer you marinate, the more tender and flavorful the chicken',
+          'This reheats beautifully — flavors actually improve after a day in the fridge'
+        ]
+      },
+      {
+        id: 'egg-muffins-meal-prep',
+        releaseDate: '2026-06-21',
+        name: 'Egg Muffin Meal Prep',
+        type: 'meal-prep', category: 'breakfast', emoji: '🧁',
+        servings: 6, prepTime: '10 min', cookTime: '22 min',
+        calories: 175, protein: 18, carbs: 4, fat: 9,
+        fitnessGoals: ['weight-loss', 'muscle-gain', 'general-health'],
+        timing: ['breakfast', 'any'],
+        tags: ['high-protein', 'low-carb', 'gluten-free', 'quick'],
+        ingredients: [
+          { amount: '6', item: 'large eggs' },
+          { amount: '1 cup', item: 'liquid egg whites' },
+          { amount: '4oz', item: 'turkey sausage or diced lean ham' },
+          { amount: '½ cup', item: 'bell pepper, finely diced' },
+          { amount: '½ cup', item: 'spinach, roughly chopped' },
+          { amount: '¼ cup', item: 'shredded reduced-fat cheddar' },
+          { amount: '1 tsp each', item: 'garlic powder, salt, pepper' },
+          { amount: 'spray', item: 'non-stick cooking spray' }
+        ],
+        groceryList: [
+          { category: '🥛 Dairy & Refrigerated', items: ['6 large eggs', '1 cup liquid egg whites', '¼ cup reduced-fat shredded cheddar'] },
+          { category: '🥩 Proteins', items: ['4oz turkey sausage or lean ham'] },
+          { category: '🥬 Produce', items: ['1 bell pepper', '1 cup baby spinach'] },
+          { category: '🧄 Spices', items: ['garlic powder', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Preheat oven to 350°F. Spray a 12-cup muffin tin generously with non-stick spray.',
+          'Cook turkey sausage, crumble into small pieces.',
+          'Whisk together eggs, egg whites, garlic powder, salt & pepper.',
+          'Distribute bell pepper, spinach, and sausage evenly among the 12 muffin cups.',
+          'Pour egg mixture over the fillings, filling each cup about ¾ full.',
+          'Top each cup with a little cheddar.',
+          'Bake 20–22 min until set in the center and lightly golden.',
+          'Cool 5 min then remove from tin with a butter knife. Refrigerates 5 days, freezes 2 months.'
+        ],
+        tips: [
+          'Silicone muffin trays release far more easily than metal — worth the investment',
+          'Microwave straight from the fridge in 45–60 sec — the ultimate grab-and-go breakfast',
+          'Customize with any fillings: mushrooms, feta, sun-dried tomatoes, jalapeños',
+          'Two muffins = ~175 cal, 18g protein — stack them for a bigger breakfast'
+        ]
+      },
+      {
+        id: 'salmon-patties',
+        releaseDate: '2026-06-28',
+        name: 'Crispy Salmon Patties',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🐟',
+        servings: 2, prepTime: '10 min', cookTime: '10 min',
+        calories: 370, protein: 40, carbs: 18, fat: 14,
+        fitnessGoals: ['general-health', 'weight-loss', 'endurance'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'omega-3', 'quick'],
+        ingredients: [
+          { amount: '2 cans (5oz each)', item: 'canned salmon, drained (pink or sockeye)' },
+          { amount: '1', item: 'large egg' },
+          { amount: '¼ cup', item: 'panko breadcrumbs or rolled oats (ground)' },
+          { amount: '2 tbsp', item: 'light mayo or Greek yogurt' },
+          { amount: '1 tbsp', item: 'Dijon mustard' },
+          { amount: '2 stalks', item: 'green onion, thinly sliced' },
+          { amount: 'juice of ½', item: 'lemon' },
+          { amount: '1 tsp each', item: 'garlic powder, smoked paprika, salt, pepper' },
+          { amount: '1 tbsp', item: 'olive oil for cooking' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['2 cans (5oz each) canned salmon'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['1 large egg', 'light mayo or Greek yogurt', 'Dijon mustard'] },
+          { category: '🥬 Produce', items: ['2 green onion stalks', '1 lemon'] },
+          { category: '🌾 Pantry', items: ['panko breadcrumbs or rolled oats', 'olive oil'] },
+          { category: '🧄 Spices', items: ['garlic powder', 'smoked paprika', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Drain salmon thoroughly and flake into a bowl, removing any large bones.',
+          'Mix in egg, panko, mayo, Dijon, green onion, lemon juice, and all spices.',
+          'Form into 4 patties (~¾ inch thick). For best results, refrigerate 10 min before cooking.',
+          'Heat olive oil in a nonstick skillet over medium-high heat. Cook patties 3–4 min per side until golden and crispy.',
+          'Serve on a bed of greens, in a bun, or with rice and veggies. Tartar sauce or Greek yogurt sauce alongside is excellent.'
+        ],
+        tips: [
+          'Canned salmon is one of the most underrated pantry proteins — cheap, shelf-stable, and full of omega-3s',
+          'Chilling the formed patties before cooking helps them hold their shape much better',
+          'A simple sauce: Greek yogurt + lemon juice + dill + garlic powder = perfect accompaniment'
+        ]
+      },
+      {
+        id: 'grilled-chicken-power-salad',
+        releaseDate: '2026-07-05',
+        name: 'Grilled Chicken Power Salad',
+        type: 'quick-meal', category: 'soups-salads', emoji: '🥗',
+        servings: 2, prepTime: '10 min', cookTime: '12 min',
+        calories: 395, protein: 46, carbs: 22, fat: 14,
+        fitnessGoals: ['weight-loss', 'general-health'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'low-carb', 'quick', 'gluten-free'],
+        ingredients: [
+          { amount: '10oz', item: 'boneless skinless chicken breast' },
+          { amount: '4 cups', item: 'mixed greens or romaine, chopped' },
+          { amount: '1 cup', item: 'cherry tomatoes, halved' },
+          { amount: '½', item: 'English cucumber, diced' },
+          { amount: '¼', item: 'red onion, thinly sliced' },
+          { amount: '½', item: 'avocado, sliced' },
+          { amount: '2 tbsp', item: 'sunflower seeds or pumpkin seeds' },
+          { amount: '30g', item: 'reduced-fat feta cheese, crumbled' },
+          { amount: '3 tbsp', item: 'balsamic vinaigrette (light) or Greek dressing' },
+          { amount: 'to taste', item: 'salt, pepper, garlic powder, Italian seasoning' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz boneless skinless chicken breast'] },
+          { category: '🥬 Produce', items: ['4 cups mixed greens or romaine', '1 cup cherry tomatoes', '1 English cucumber', '¼ red onion', '1 avocado', '1 lemon'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['30g reduced-fat feta', 'balsamic vinaigrette or Greek dressing'] },
+          { category: '🌾 Pantry', items: ['sunflower or pumpkin seeds'] },
+          { category: '🧄 Spices', items: ['salt', 'pepper', 'garlic powder', 'Italian seasoning'] }
+        ],
+        instructions: [
+          'Season chicken with salt, pepper, garlic powder, and Italian seasoning. Cook in a skillet or air fryer (375°F, 12 min) until cooked through. Slice thinly.',
+          'Arrange greens in two bowls. Top with cherry tomatoes, cucumber, red onion, avocado, and feta.',
+          'Add sliced chicken on top.',
+          'Sprinkle seeds over the salad for crunch.',
+          'Drizzle dressing and serve immediately.'
+        ],
+        tips: [
+          'Massage the greens lightly with a few drops of olive oil and lemon before adding toppings — it makes a surprisingly big difference in texture',
+          'Batch cook the chicken (air fry a full pound at once) for salads throughout the week',
+          'Seeds add healthy fats and crunch without the calorie density of croutons'
+        ]
+      },
+      {
+        id: 'shrimp-broccoli-stir-fry',
+        releaseDate: '2026-07-12',
+        name: 'Shrimp & Broccoli Stir-Fry',
+        type: 'quick-meal', category: 'bowls', emoji: '🥦',
+        servings: 2, prepTime: '8 min', cookTime: '10 min',
+        calories: 345, protein: 38, carbs: 28, fat: 7,
+        fitnessGoals: ['weight-loss', 'general-health', 'endurance'],
+        timing: ['lunch', 'dinner'],
+        tags: ['high-protein', 'quick', 'low-fat', 'gluten-free'],
+        ingredients: [
+          { amount: '12oz', item: 'raw shrimp, peeled & deveined' },
+          { amount: '3 cups', item: 'broccoli florets' },
+          { amount: '1 packet', item: 'microwavable rice or ¾ cup cooked rice' },
+          { amount: '3 tbsp', item: 'low-sodium soy sauce' },
+          { amount: '1 tbsp', item: 'oyster sauce (or extra soy sauce)' },
+          { amount: '1 tsp', item: 'sesame oil' },
+          { amount: '1 tsp', item: 'cornstarch mixed with 1 tbsp water' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp', item: 'fresh ginger, grated' },
+          { amount: 'optional:', item: 'red pepper flakes, sesame seeds, green onion' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz raw shrimp, peeled & deveined'] },
+          { category: '🥬 Produce', items: ['3 cups broccoli florets', '3 garlic cloves', 'fresh ginger'] },
+          { category: '🌾 Pantry', items: ['1 microwavable rice packet', 'low-sodium soy sauce', 'oyster sauce', 'sesame oil', 'cornstarch'] }
+        ],
+        instructions: [
+          'Microwave rice per packet. Mix soy sauce, oyster sauce, sesame oil, and cornstarch slurry in a small bowl.',
+          'Heat a wok or large skillet over high heat until very hot. Spray with oil.',
+          'Stir-fry broccoli 3–4 min until bright green and slightly charred. Add garlic and ginger, toss 30 sec.',
+          'Add shrimp, spread in a single layer, cook 1 min without touching, then stir-fry 1 more min.',
+          'Pour sauce over everything, toss over high heat 1 min until shrimp are cooked and sauce coats everything.',
+          'Serve over rice, garnish with sesame seeds and green onion.'
+        ],
+        tips: [
+          'The cornstarch slurry is what gives restaurant stir-fry its glossy, clingy sauce',
+          'High heat is essential — if the pan isn\'t smoking, your stir-fry will steam instead',
+          'Blanch broccoli 2 min in boiling water first if you prefer softer florets'
+        ]
+      },
+      {
+        id: 'chicken-fajita-pasta',
+        releaseDate: '2026-07-19',
+        name: 'Chicken Fajita Pasta',
+        type: 'quick-meal', category: 'pasta-rice', emoji: '🌶️',
+        servings: 2, prepTime: '10 min', cookTime: '20 min',
+        calories: 465, protein: 48, carbs: 46, fat: 11,
+        fitnessGoals: ['muscle-gain', 'endurance'],
+        timing: ['dinner', 'post-workout'],
+        tags: ['high-protein', 'quick', 'comfort-food'],
+        ingredients: [
+          { amount: '10oz', item: 'boneless skinless chicken breast, sliced thin' },
+          { amount: '6oz dry', item: 'Barilla Protein Plus pasta (penne or rigatoni)' },
+          { amount: '1', item: 'red bell pepper, sliced' },
+          { amount: '1', item: 'green bell pepper, sliced' },
+          { amount: '½', item: 'onion, sliced' },
+          { amount: '¾ cup', item: 'cottage cheese (2%), blended smooth' },
+          { amount: '4 tbsp', item: 'chipotle sauce or fajita seasoning + 2 tbsp sour cream substitute' },
+          { amount: '20g', item: 'Parmigiano Reggiano' },
+          { amount: '¼ cup', item: 'reserved pasta water' },
+          { amount: '2 tsp each', item: 'cumin, chili powder, smoked paprika, garlic powder' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz boneless skinless chicken breast'] },
+          { category: '🥬 Produce', items: ['1 red bell pepper', '1 green bell pepper', '½ onion'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['¾ cup 2% cottage cheese', '20g Parmigiano Reggiano', 'chipotle sauce'] },
+          { category: '🌾 Pantry', items: ['6oz Barilla Protein Plus pasta', 'olive oil'] },
+          { category: '🧄 Spices', items: ['cumin', 'chili powder', 'smoked paprika', 'garlic powder', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Cook pasta per package directions, reserving ¼ cup pasta water before draining.',
+          'Season chicken with cumin, chili powder, smoked paprika, garlic powder, salt & pepper.',
+          'Cook chicken in a hot oiled skillet 3–4 min per side. Remove and slice.',
+          'In the same pan, sauté bell peppers and onion over high heat 4–5 min until charred at edges.',
+          'Lower heat. Add blended cottage cheese, chipotle sauce, Parmigiano, and pasta water. Stir into a sauce.',
+          'Add pasta and chicken, toss to coat. Serve immediately.'
+        ],
+        tips: [
+          'The charred bell peppers are what give this its authentic fajita flavor — don\'t rush them',
+          'Add a squeeze of lime and fresh cilantro over the finished dish',
+          'Great cold the next day as leftovers'
+        ]
+      },
+      {
+        id: 'bbq-chicken-rice-bowl',
+        releaseDate: '2026-07-26',
+        name: 'Smoky BBQ Chicken Rice Bowl',
+        type: 'quick-meal', category: 'bowls', emoji: '🍖',
+        servings: 2, prepTime: '5 min', cookTime: '15 min',
+        calories: 430, protein: 44, carbs: 44, fat: 7,
+        fitnessGoals: ['endurance', 'muscle-gain'],
+        timing: ['lunch', 'dinner', 'post-workout'],
+        tags: ['high-protein', 'quick', 'low-fat'],
+        ingredients: [
+          { amount: '10oz', item: 'boneless skinless chicken thighs' },
+          { amount: '2 packets', item: 'microwavable rice or 1 cup dry rice' },
+          { amount: '¼ cup', item: 'BBQ sauce (low-sugar)' },
+          { amount: '1 cup', item: 'frozen corn' },
+          { amount: '½ can', item: 'black beans, drained' },
+          { amount: '30g', item: 'reduced-fat shredded cheddar' },
+          { amount: '2 tbsp', item: 'plain Greek yogurt' },
+          { amount: '1 tsp each', item: 'smoked paprika, garlic powder, onion powder, salt' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['10oz boneless skinless chicken thighs'] },
+          { category: '🥛 Dairy & Refrigerated', items: ['30g reduced-fat shredded cheddar', '2 tbsp plain Greek yogurt'] },
+          { category: '🌾 Pantry', items: ['2 microwavable rice packets', 'low-sugar BBQ sauce', 'frozen corn', '1 can black beans'] },
+          { category: '🧄 Spices', items: ['smoked paprika', 'garlic powder', 'onion powder', 'salt'] }
+        ],
+        instructions: [
+          'Season chicken with smoked paprika, garlic powder, onion powder, and salt.',
+          'Air fry at 375°F 12 min (or skillet 5–6 min per side). Brush with BBQ sauce the last 2 min of cooking.',
+          'Microwave rice per packets. Microwave corn 2 min. Warm black beans in a pan.',
+          'Slice or chop BBQ chicken.',
+          'Build bowls: rice, corn, black beans, BBQ chicken on top. Drizzle with extra BBQ sauce.',
+          'Top with cheddar and a dollop of Greek yogurt.'
+        ],
+        tips: [
+          'Brushing BBQ sauce on in the last 2 min (not the whole cook) prevents burning and keeps the flavor concentrated',
+          'Add coleslaw mix on top for crunch — it\'s a great textural contrast with the warm rice',
+          'Low-sugar BBQ sauce cuts calories significantly without sacrificing flavor'
+        ]
+      },
+      {
+        id: 'chicken-veggie-skewers',
+        releaseDate: '2026-08-02',
+        name: 'Grilled Chicken & Veggie Skewers',
+        type: 'quick-meal', category: 'protein-mains', emoji: '🍢',
+        servings: 2, prepTime: '15 min', cookTime: '14 min',
+        calories: 340, protein: 42, carbs: 16, fat: 11,
+        fitnessGoals: ['weight-loss', 'general-health', 'endurance'],
+        timing: ['dinner', 'lunch'],
+        tags: ['high-protein', 'low-carb', 'gluten-free'],
+        ingredients: [
+          { amount: '12oz', item: 'boneless skinless chicken thighs, cut into 1.5-inch cubes' },
+          { amount: '1', item: 'red bell pepper, cut into chunks' },
+          { amount: '1', item: 'zucchini, cut into thick rounds' },
+          { amount: '1', item: 'red onion, cut into chunks' },
+          { amount: '1 cup', item: 'cherry tomatoes' },
+          { amount: '3 tbsp', item: 'olive oil' },
+          { amount: 'juice of 1', item: 'lemon' },
+          { amount: '3 cloves', item: 'garlic, minced' },
+          { amount: '1 tsp each', item: 'Italian seasoning, smoked paprika, garlic powder, salt' }
+        ],
+        groceryList: [
+          { category: '🥩 Proteins', items: ['12oz boneless skinless chicken thighs'] },
+          { category: '🥬 Produce', items: ['1 red bell pepper', '1 zucchini', '1 red onion', '1 cup cherry tomatoes', '1 lemon', '3 garlic cloves'] },
+          { category: '🌾 Pantry', items: ['olive oil', '8-10 wooden skewers (soaked in water 30 min)'] },
+          { category: '🧄 Spices', items: ['Italian seasoning', 'smoked paprika', 'garlic powder', 'salt', 'pepper'] }
+        ],
+        instructions: [
+          'Soak wooden skewers in water 30 min to prevent burning.',
+          'Whisk olive oil, lemon juice, garlic, and all seasonings for the marinade.',
+          'Toss chicken and vegetables in the marinade for at least 15 min.',
+          'Thread chicken and vegetables alternating on skewers.',
+          'Grill over medium-high heat 6–7 min per side until chicken is cooked through and veggies are charred.',
+          'Serve with tzatziki, Greek yogurt sauce, or over rice/couscous.'
+        ],
+        tips: [
+          'Cut everything to similar sizes for even cooking',
+          'Don\'t rush the char — the caramelized edges on the vegetables is where the flavor lives',
+          'These work great on a grill pan or under the broiler if you don\'t have an outdoor grill'
+        ]
+      }
+    ];
+
+    // Merge all recipes into one array
+    const ALL_RECIPES = [...RECIPES, ...WEEKLY_RECIPES];
+
     // ── Category metadata for display ──
     const RECIPE_CATEGORIES = [
       { id: 'all', label: 'All', emoji: '🍽️' },
