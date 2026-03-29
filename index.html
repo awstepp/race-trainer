@@ -2348,10 +2348,14 @@
         );
       }
       if (user) {
+        const initials = (user.displayName || user.email || '?').charAt(0).toUpperCase();
         return (
           <div className="flex items-center gap-2 text-sm">
-            <img src={user.photoURL || ''} alt="" className="w-6 h-6 rounded-full" />
-            <span className="text-gray-400 hidden sm:inline">{user.displayName || user.email}</span>
+            {user.photoURL
+              ? <img src={user.photoURL} alt="" className="w-6 h-6 rounded-full" />
+              : <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold shrink-0">{initials}</div>
+            }
+            <span className="text-gray-400 hidden sm:inline max-w-[120px] truncate">{user.displayName || user.email}</span>
             {syncing && <span className="text-orange-400 animate-pulse-custom text-xs">syncing…</span>}
             <button onClick={onSignOut} className="text-gray-500 hover:text-gray-300 text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600">Sign out</button>
           </div>
@@ -6206,11 +6210,219 @@
     }
 
     // Main App
-    function LandingScreen({ onStartFresh, onSignIn, onSetupFirebase, syncing, firebaseEnabled }) {
-      const handleGoogleClick = () => firebaseEnabled ? onSignIn() : onSetupFirebase();
+    // ── Email Auth Flow ────────────────────────────────────────────────────
+    // Handles sign-up, sign-in, and forgot-password screens for email/password auth.
+    function EmailAuthFlow({ initialMode, onSignIn, onSignUp, onResetPassword, onBack }) {
+      const [view, setView] = React.useState(initialMode || 'signup'); // 'signup' | 'signin' | 'forgot'
+      const [email, setEmail] = React.useState('');
+      const [password, setPassword] = React.useState('');
+      const [confirmPassword, setConfirmPassword] = React.useState('');
+      const [showPassword, setShowPassword] = React.useState(false);
+      const [error, setError] = React.useState('');
+      const [loading, setLoading] = React.useState(false);
+      const [resetSent, setResetSent] = React.useState(false);
+
+      const switchView = (v) => { setView(v); setError(''); setResetSent(false); };
+
+      const handleSubmit = async () => {
+        setError('');
+        if (view === 'signup') {
+          if (!email || !password || !confirmPassword) { setError('Please fill in all fields.'); return; }
+          if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
+          if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
+          setLoading(true);
+          const err = await onSignUp(email.trim(), password);
+          setLoading(false);
+          if (err) setError(err);
+        } else if (view === 'signin') {
+          if (!email || !password) { setError('Please fill in all fields.'); return; }
+          setLoading(true);
+          const err = await onSignIn(email.trim(), password);
+          setLoading(false);
+          if (err) setError(err);
+        } else if (view === 'forgot') {
+          if (!email) { setError('Please enter your email address.'); return; }
+          setLoading(true);
+          const err = await onResetPassword(email.trim());
+          setLoading(false);
+          if (err) { setError(err); return; }
+          setResetSent(true);
+        }
+      };
+
+      const GoogleSVG = () => (
+        <svg width="18" height="18" viewBox="0 0 48 48" className="shrink-0">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+      );
+
+      // ── Forgot Password Screen ──────────────────────────────────────────
+      if (view === 'forgot') {
+        return (
+          <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+            <div className="max-w-sm w-full">
+              <button onClick={() => switchView('signin')}
+                className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm mb-8 transition">
+                ← Back to sign in
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-1">Reset your password</h2>
+              <p className="text-gray-400 text-sm mb-6">We'll send a reset link to your email address.</p>
+              {resetSent ? (
+                <div className="bg-green-900 bg-opacity-40 border border-green-700 rounded-xl p-4 text-green-300 text-sm text-center space-y-1">
+                  <div className="text-2xl">✅</div>
+                  <p className="font-semibold">Reset email sent!</p>
+                  <p className="text-green-400">Check your inbox and follow the link to reset your password.</p>
+                </div>
+              ) : (
+                <>
+                  {error && (
+                    <div className="bg-red-900 bg-opacity-30 border border-red-800 rounded-lg px-3 py-2 text-red-400 text-sm mb-3">{error}</div>
+                  )}
+                  <input
+                    type="email" value={email} onChange={e => setEmail(e.target.value)}
+                    placeholder="Email address"
+                    className="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 mb-3 text-sm"
+                    onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                  />
+                  <button onClick={handleSubmit} disabled={loading}
+                    className="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition disabled:opacity-60 text-sm">
+                    {loading
+                      ? <span className="flex items-center justify-center gap-2"><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Sending…</span>
+                      : 'Send reset email'}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // ── Sign Up / Sign In Screen ────────────────────────────────────────
       return (
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-          <div className="max-w-sm w-full space-y-10">
+          <div className="max-w-sm w-full">
+            {/* Back */}
+            <button onClick={onBack}
+              className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm mb-8 transition">
+              ← Back
+            </button>
+
+            {/* Heading */}
+            <h2 className="text-2xl font-bold text-white mb-1">
+              {view === 'signup' ? 'Create your account' : 'Welcome back'}
+            </h2>
+            <p className="text-gray-400 text-sm mb-6">
+              {view === 'signup'
+                ? 'Your training data syncs automatically across all devices.'
+                : 'Sign in to access your training plan and history.'}
+            </p>
+
+            {/* Sign-up / sign-in toggle */}
+            <div className="flex bg-slate-800 rounded-xl p-1 mb-5 border border-slate-700">
+              {[['signup', 'Create account'], ['signin', 'Sign in']].map(([id, label]) => (
+                <button key={id} onClick={() => switchView(id)}
+                  className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition ${view === id ? 'bg-orange-500 text-white shadow' : 'text-gray-400 hover:text-gray-200'}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="bg-red-900 bg-opacity-30 border border-red-800 rounded-lg px-3 py-2 text-red-400 text-sm mb-4">{error}</div>
+            )}
+
+            {/* Email field */}
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+              placeholder="Email address"
+              className="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 mb-3 text-sm"
+              onKeyDown={e => e.key === 'Enter' && view === 'signin' && handleSubmit()}
+            />
+
+            {/* Password field */}
+            <div className="relative mb-3">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3.5 pr-14 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 text-sm"
+                onKeyDown={e => e.key === 'Enter' && view === 'signin' && handleSubmit()}
+              />
+              <button onClick={() => setShowPassword(p => !p)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 text-xs font-semibold transition">
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+
+            {/* Confirm password (sign-up only) */}
+            {view === 'signup' && (
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+                placeholder="Confirm password"
+                className="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 mb-3 text-sm"
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              />
+            )}
+
+            {/* Forgot password link */}
+            {view === 'signin' && (
+              <div className="text-right mb-4">
+                <button onClick={() => switchView('forgot')}
+                  className="text-orange-400 hover:text-orange-300 text-sm transition">
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
+            {/* Submit */}
+            <button onClick={handleSubmit} disabled={loading}
+              className="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition disabled:opacity-60 mt-1 text-sm">
+              {loading
+                ? <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    {view === 'signup' ? 'Creating account…' : 'Signing in…'}
+                  </span>
+                : view === 'signup' ? 'Create account' : 'Sign in'}
+            </button>
+
+            <p className="text-xs text-gray-600 text-center mt-5 leading-relaxed">
+              {view === 'signup'
+                ? 'By creating an account you agree to sync your training data securely via Firebase.'
+                : 'Secure authentication powered by Firebase.'}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Landing Screen ─────────────────────────────────────────────────────
+    function LandingScreen({ onStartFresh, onSignIn, onEmailSignIn, onEmailSignUp, onResetPassword, onSetupFirebase, syncing, firebaseEnabled }) {
+      const [showEmailFlow, setShowEmailFlow] = React.useState(false);
+      const [emailFlowMode, setEmailFlowMode] = React.useState('signup');
+
+      const handleGoogleClick = () => firebaseEnabled ? onSignIn() : onSetupFirebase();
+
+      const openEmail = (mode) => { setEmailFlowMode(mode); setShowEmailFlow(true); };
+
+      if (showEmailFlow) {
+        return (
+          <EmailAuthFlow
+            initialMode={emailFlowMode}
+            onSignIn={onEmailSignIn}
+            onSignUp={onEmailSignUp}
+            onResetPassword={onResetPassword}
+            onBack={() => setShowEmailFlow(false)}
+          />
+        );
+      }
+
+      return (
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+          <div className="max-w-sm w-full space-y-8">
 
             {/* Branding */}
             <div className="text-center">
@@ -6219,9 +6431,9 @@
               <p className="text-gray-400 mt-2 text-base">Your personal race training companion</p>
             </div>
 
-            {/* Sign-in options */}
+            {/* Auth options */}
             <div className="space-y-3">
-              {/* Google button — always visible */}
+              {/* Google */}
               <button
                 onClick={handleGoogleClick}
                 disabled={syncing}
@@ -6245,24 +6457,47 @@
                 )}
               </button>
 
+              {/* Divider */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 border-t border-slate-700" />
                 <span className="text-gray-600 text-xs uppercase tracking-widest">or</span>
                 <div className="flex-1 border-t border-slate-700" />
               </div>
 
+              {/* Email */}
               <button
-                onClick={onStartFresh}
-                disabled={syncing}
-                className="w-full px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition disabled:opacity-60"
+                onClick={() => openEmail('signup')}
+                disabled={syncing || !firebaseEnabled}
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-slate-800 border border-slate-600 text-white rounded-xl font-semibold hover:bg-slate-700 hover:border-slate-500 transition disabled:opacity-60"
               >
-                Create New Training Plan
+                <span className="text-lg leading-none">✉️</span>
+                <span>Continue with email</span>
               </button>
             </div>
 
-            <p className="text-center text-gray-500 text-xs">
-              Have an existing account? Sign in with Google to restore your plan and history.
+            {/* Already have account */}
+            <p className="text-center text-gray-500 text-sm">
+              Already have an account?{' '}
+              <button
+                onClick={() => openEmail('signin')}
+                disabled={syncing || !firebaseEnabled}
+                className="text-orange-400 hover:text-orange-300 font-semibold transition disabled:opacity-40"
+              >
+                Sign in
+              </button>
             </p>
+
+            {/* Skip / no account */}
+            <div className="text-center pt-2">
+              <button
+                onClick={onStartFresh}
+                disabled={syncing}
+                className="text-gray-600 hover:text-gray-400 text-xs transition disabled:opacity-40"
+              >
+                Continue without an account →
+              </button>
+            </div>
+
           </div>
         </div>
       );
@@ -6671,6 +6906,55 @@
         if (firebaseAuth) firebaseAuth.signOut();
         setAuthUser(null);
       };
+
+      // ── Email / password auth handlers ──────────────────────────────────
+      const handleEmailSignUp = async (email, password) => {
+        if (!firebaseAuth) return 'Authentication is not available right now.';
+        try {
+          await firebaseAuth.createUserWithEmailAndPassword(email, password);
+          return null; // success — onAuthStateChanged takes over
+        } catch (err) {
+          const msgs = {
+            'auth/email-already-in-use': 'An account with this email already exists. Try signing in instead.',
+            'auth/invalid-email':         'Please enter a valid email address.',
+            'auth/weak-password':         'Password is too weak — use at least 6 characters.',
+            'auth/operation-not-allowed': 'Email sign-up is not enabled. Please contact support.',
+          };
+          return msgs[err.code] || `Sign-up failed: ${err.message}`;
+        }
+      };
+
+      const handleEmailSignIn = async (email, password) => {
+        if (!firebaseAuth) return 'Authentication is not available right now.';
+        try {
+          await firebaseAuth.signInWithEmailAndPassword(email, password);
+          return null; // success
+        } catch (err) {
+          const msgs = {
+            'auth/user-not-found':        'No account found with this email. Create one above.',
+            'auth/wrong-password':        'Incorrect password. Try again or use "Forgot password".',
+            'auth/invalid-credential':    'Incorrect email or password.',
+            'auth/invalid-email':         'Please enter a valid email address.',
+            'auth/user-disabled':         'This account has been disabled. Please contact support.',
+            'auth/too-many-requests':     'Too many failed attempts — try again in a few minutes.',
+          };
+          return msgs[err.code] || `Sign-in failed: ${err.message}`;
+        }
+      };
+
+      const handlePasswordReset = async (email) => {
+        if (!firebaseAuth) return 'Authentication is not available right now.';
+        try {
+          await firebaseAuth.sendPasswordResetEmail(email);
+          return null; // success
+        } catch (err) {
+          const msgs = {
+            'auth/user-not-found': 'No account found with this email address.',
+            'auth/invalid-email':  'Please enter a valid email address.',
+          };
+          return msgs[err.code] || `Could not send reset email: ${err.message}`;
+        }
+      };
       // ───────────────────────────────────────────────────────────────────
 
       const buildPlanFromConfig = (cfg) => {
@@ -6833,6 +7117,9 @@
             <LandingScreen
               onStartFresh={() => setShowSetup(true)}
               onSignIn={handleGoogleSignIn}
+              onEmailSignIn={handleEmailSignIn}
+              onEmailSignUp={handleEmailSignUp}
+              onResetPassword={handlePasswordReset}
               onSetupFirebase={() => setFbSetupOpen(true)}
               syncing={syncing}
               firebaseEnabled={FIREBASE_ENABLED}
