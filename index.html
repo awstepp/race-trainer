@@ -3371,6 +3371,8 @@
 
     // Dashboard
     function Dashboard({ plan, logs, injuries, onLogWorkout, onSwapWorkout, onGPSTrack, onModifyPlan, onLogInjury, onResetPlan, adaptationState, onNextWeek, viewedWeekIdx, onSetViewedWeek }) {
+      const [showRouteFinder, setShowRouteFinder] = useState(false);
+
       if (!plan || !plan.weekWorkouts || plan.weekWorkouts.length === 0) {
         return (
           <div className="text-white p-8 text-center space-y-4">
@@ -3382,6 +3384,11 @@
             </button>
           </div>
         );
+      }
+
+      // ── Route Finder overlay ───────────────────────────────────────────
+      if (showRouteFinder) {
+        return <RouteFinder plan={plan} onBack={() => setShowRouteFinder(false)} />;
       }
 
       const today = new Date();
@@ -3698,6 +3705,24 @@
               </div>
             );
           })()}
+
+          {/* Route Finder card */}
+          <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+            <button
+              onClick={() => setShowRouteFinder(true)}
+              className="w-full flex items-center gap-4 px-4 py-4 hover:bg-slate-750 transition text-left group"
+            >
+              <div className="w-12 h-12 bg-blue-900 bg-opacity-60 border border-blue-800 rounded-xl flex items-center justify-center text-2xl shrink-0 group-hover:border-blue-600 transition">
+                🗺️
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-white text-sm">Route Finder</div>
+                <div className="text-gray-400 text-xs mt-0.5">Generate a running route near you based on today's target distance</div>
+              </div>
+              <span className="text-gray-500 group-hover:text-gray-300 transition text-sm shrink-0">→</span>
+            </button>
+          </div>
+
         </div>
       );
     }
