@@ -3714,7 +3714,7 @@
                   <h2 className="text-white font-bold text-lg">📋 This Week's Workouts</h2>
                   <div className="text-right">
                     <div className="text-orange-400 font-semibold text-xs">🏁 {daysToRace > 0 ? `${daysToRace} days to race` : daysToRace === 0 ? 'Race day!' : 'Race passed'}</div>
-                    <div className="text-gray-500 text-xs capitalize mt-0.5">Week {plan.weeks[currentWeekIdx].weekNum}/{plan.totalWeeks} · {plan.weeks[currentWeekIdx].mileage} mi · {phase}</div>
+                    <div className="text-gray-500 text-xs capitalize mt-0.5">Week {plan.weeks[currentWeekIdx].weekNum}/{plan.totalWeeks} · {Math.round(weekWorkouts.reduce((s,w)=>s+(w.miles||0),0)*10)/10 || plan.weeks[currentWeekIdx].mileage} mi · {phase}</div>
                   </div>
                 </div>
 
@@ -3941,7 +3941,11 @@
                   <span className="text-sm font-normal text-gray-400 capitalize">{week.phase} phase</span>
                 </h3>
                 <div className="flex gap-3 text-xs mb-3 text-gray-500">
-                  <span className="text-white font-semibold">{week.mileage} mi</span>
+                  {(() => {
+                    const ws = weekWorkouts;
+                    const totalMi = Math.round(ws.reduce((s,w)=>s+(w.miles||0),0)*10)/10;
+                    return <span className="text-white font-semibold">{totalMi > 0 ? totalMi : week.mileage} mi</span>;
+                  })()}
                   {(() => {
                     const ws = weekWorkouts;
                     const hardMi  = ws.filter(w => ['tempo','intervals','hills'].includes(w.type)).reduce((s,w)=>s+(w.miles||0),0);
