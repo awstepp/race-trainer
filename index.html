@@ -2865,7 +2865,11 @@
           .filter(l => ['easy','long','recovery'].includes(l.wType) && l.paceMin > 0)
           .map(l => l.paceMin * 60 + (l.paceSec || 0));
         const avgEasyPace = easyPaces.length > 0 ? easyPaces.reduce((a,b)=>a+b,0)/easyPaces.length : null;
-        return { weekNum: week.weekNum, planned: week.mileage, actual: totalMiles, avgEasyPace };
+        // Use sum of per-workout target miles so the chart matches what the user sees on workout cards
+        const workoutPlanned = Math.round(
+          (plan.weekWorkouts?.[weekIdx] || []).reduce((s, wo) => s + (wo.miles || 0), 0) * 10
+        ) / 10;
+        return { weekNum: week.weekNum, planned: workoutPlanned || week.mileage, actual: totalMiles, avgEasyPace };
       });
 
       const hasData = weeklyData.some(w => w.actual > 0);
@@ -4073,7 +4077,11 @@
           const actual = Object.entries(logs)
             .filter(([k, l]) => k.startsWith(`${w}-`) && (parseFloat(l.milesVal) || 0) > 0)
             .reduce((s, [, l]) => s + (parseFloat(l.milesVal) || 0), 0);
-          return { week: wk.weekNum, planned: wk.mileage, actual: Math.round(actual * 10) / 10 };
+          // Use sum of per-workout target miles so the chart matches what the user sees on workout cards
+          const workoutPlanned = Math.round(
+            (plan.weekWorkouts?.[w] || []).reduce((s, wo) => s + (wo.miles || 0), 0) * 10
+          ) / 10;
+          return { week: wk.weekNum, planned: workoutPlanned || wk.mileage, actual: Math.round(actual * 10) / 10 };
         });
       })();
 
