@@ -3021,12 +3021,12 @@
 
     // ── Route Finder ───────────────────────────────────────────────────────
     // Generates loop or out-and-back running routes using GPS + OSRM routing.
-    // No API key required — uses free OpenStreetMap tiles and OSRM public foot API.
+    // Elevation via OpenTopoData (SRTM). Green-space routing via OSM Overpass.
+    // No API key required for any of these services.
 
-    // Helper: miles → meters
     const milesToMeters = (mi) => mi * 1609.34;
 
-    // Helper: offset a lat/lng by meters in a given compass bearing (degrees)
+    // Offset lat/lng by distMeters along a compass bearing (degrees clockwise from N)
     function offsetLatLng(lat, lng, distMeters, bearingDeg) {
       const latPerMeter = 1 / 111320;
       const lngPerMeter = 1 / (111320 * Math.cos(lat * Math.PI / 180));
@@ -3037,56 +3037,109 @@
       ];
     }
 
-    // Loop route: 3 intermediate waypoints on a circle, radius = dist / 2π
-    // variant (0-2) rotates the whole pattern 30° for path diversity
+    // Loop: 3 waypoints on a circle of radius = dist/2π (circumference ≈ dist)
     function generateLoopWaypoints(lat, lng, distMeters, directionDeg, variant) {
       const radius = distMeters / (2 * Math.PI);
-      const numPts = 3;
       const baseDir = directionDeg + variant * 30;
-      const waypoints = [[lat, lng]];
-      for (let i = 0; i < numPts; i++) {
-        const bearing = baseDir + (360 * i) / numPts;
-        waypoints.push(offsetLatLng(lat, lng, radius, bearing));
-      }
-      waypoints.push([lat, lng]); // close the loop
-      return waypoints;
+      const pts = [[lat, lng]];
+      for (let i = 0; i < 3; i++) pts.push(offsetLatLng(lat, lng, radius, baseDir + 120 * i));
+      pts.push([lat, lng]);
+      return pts;
     }
 
-    // Out-and-back: go dist/2 in the chosen direction, return via slightly
-    // offset waypoint so OSRM picks a parallel return street when possible.
+    // Out-and-back: midpoint at dist/2 in chosen direction, slight lateral shift on return
     function generateOutAndBackWaypoints(lat, lng, distMeters, directionDeg, variant) {
       const half = distMeters / 2;
       const turn = offsetLatLng(lat, lng, half, directionDeg);
-      // Lateral offset for return path: shift ~5% of half-distance perpendicular
-      const lateralOffset = half * 0.05 * (variant === 0 ? 1 : variant === 1 ? -1 : 0);
-      const perpDir = directionDeg + 90;
-      const returnVia = offsetLatLng(turn[0], turn[1], lateralOffset, perpDir);
-      return [
-        [lat, lng],   // start
-        turn,         // turnaround
-        returnVia,    // slight detour on the way back to encourage a different return street
-        [lat, lng],   // finish
-      ];
+      const shift = half * 0.05 * (variant === 0 ? 1 : variant === 1 ? -1 : 0);
+      const returnVia = offsetLatLng(turn[0], turn[1], shift, directionDeg + 90);
+      return [[lat, lng], turn, returnVia, [lat, lng]];
     }
 
-    // Call OSRM foot routing endpoints in order, return first successful result.
-    // routing.openstreetmap.de is the correct public server with the foot profile
-    // (router.project-osrm.org only serves the driving profile publicly).
+    // OSRM foot routing — routing.openstreetmap.de has the correct foot profile.
+    // (router.project-osrm.org public demo only serves the car profile.)
     async function fetchOSRMRoute(waypoints) {
       const coordStr = waypoints.map(([wLat, wLng]) => `${wLng.toFixed(6)},${wLat.toFixed(6)}`).join(';');
-      const params   = 'overview=full&geometries=geojson&steps=false&continue_straight=false';
-      const endpoints = [
+      const params = 'overview=full&geometries=geojson&steps=false&continue_straight=false';
+      const urls = [
         `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${coordStr}?${params}`,
-        `https://routing.openstreetmap.de/routed-bike/route/v1/bike/${coordStr}?${params}`, // bike as last resort
+        `https://routing.openstreetmap.de/routed-bike/route/v1/bike/${coordStr}?${params}`,
       ];
-      for (const url of endpoints) {
+      for (const url of urls) {
         try {
-          const res  = await fetch(url, { signal: AbortSignal.timeout(12000) });
-          const data = await res.json();
-          if (data.code === 'Ok' && data.routes?.length) return data.routes[0];
-        } catch (_) { /* try next */ }
+          const res = await fetch(url, { signal: AbortSignal.timeout(12000) });
+          const d = await res.json();
+          if (d.code === 'Ok' && d.routes?.length) return d.routes[0];
+        } catch (_) {}
       }
       return null;
+    }
+
+    // Elevation gain/loss via OpenTopoData SRTM (30m resolution, free, no key).
+    // Samples up to 60 points from the route geometry, returns { gainFt, lossFt }.
+    async function fetchElevationProfile(geometry) {
+      try {
+        const coords = geometry.coordinates; // [lng, lat] pairs
+        const step = Math.max(1, Math.floor(coords.length / 60));
+        const pts = [];
+        for (let i = 0; i < coords.length; i += step) pts.push(coords[i]);
+        if (pts[pts.length - 1] !== coords[coords.length - 1]) pts.push(coords[coords.length - 1]);
+
+        const locStr = pts.map(([lng, lat]) => `${lat.toFixed(5)},${lng.toFixed(5)}`).join('|');
+        const res = await fetch(
+          `https://api.opentopodata.org/v1/srtm30m?locations=${encodeURIComponent(locStr)}`,
+          { signal: AbortSignal.timeout(10000) }
+        );
+        const data = await res.json();
+        if (data.status !== 'OK' || !data.results?.length) return null;
+
+        let gainM = 0, lossM = 0;
+        const elevs = data.results.map(r => r.elevation ?? 0);
+        for (let i = 1; i < elevs.length; i++) {
+          const diff = elevs[i] - elevs[i - 1];
+          if (diff > 0.5) gainM += diff;       // ignore sub-meter noise
+          else if (diff < -0.5) lossM += Math.abs(diff);
+        }
+        return {
+          gainFt: Math.round(gainM * 3.281),
+          lossFt: Math.round(lossM * 3.281),
+          profile: elevs.map((e, i) => ({ x: i / (elevs.length - 1), elev: e * 3.281 })),
+        };
+      } catch (_) { return null; }
+    }
+
+    // Query OSM Overpass for the nearest park / green space within searchRadiusM.
+    // Returns { lat, lng } of its centroid, or null if none found.
+    async function fetchNearbyGreenSpace(lat, lng, searchRadiusM) {
+      // Query parks, recreation grounds, nature reserves, and named footway paths
+      const query = `
+        [out:json][timeout:12];
+        (
+          way["leisure"~"^(park|garden|recreation_ground|nature_reserve)$"](around:${searchRadiusM},${lat},${lng});
+          relation["leisure"~"^(park|garden|recreation_ground)$"](around:${searchRadiusM},${lat},${lng});
+        );
+        out center;
+      `.trim();
+      try {
+        const res = await fetch('https://overpass-api.de/api/interpreter', {
+          method: 'POST',
+          body: query,
+          signal: AbortSignal.timeout(12000),
+        });
+        const data = await res.json();
+        if (!data.elements?.length) return null;
+
+        // Pick closest element with a center
+        let best = null, bestDist = Infinity;
+        for (const el of data.elements) {
+          const cLat = el.center?.lat ?? el.lat;
+          const cLng = el.center?.lon ?? el.lon;
+          if (cLat == null || cLng == null) continue;
+          const d = Math.hypot(cLat - lat, cLng - lng);
+          if (d < bestDist) { bestDist = d; best = [cLat, cLng]; }
+        }
+        return best ? { lat: best[0], lng: best[1] } : null;
+      } catch (_) { return null; }
     }
 
     function RouteFinder({ plan, onBack }) {
