@@ -2950,15 +2950,22 @@
               {/* Actual mileage bars */}
               {weeklyData.map((w, i) => {
                 if (w.actual <= 0) return null;
-                const x = PL + i * bSlot + bSlot/2 - bW/2;
+                const cx = PL + i * bSlot + bSlot/2;
+                const x = cx - bW/2;
                 const bH2 = (w.actual/maxM)*cH;
                 const y = PT + cH - bH2;
                 const fill = w.actual >= w.planned*1.05 ? '#4ade80' : w.actual < w.planned*0.8 ? '#f87171' : '#fb923c';
+                const labelY = Math.max(y - 2, PT + 8);
                 return (
                   <g key={i}>
                     <rect x={x} y={y} width={bW} height={bH2} fill={fill} rx="1" opacity="0.85"/>
+                    {weeklyData.length <= 8 && (
+                      <text x={cx} y={labelY} textAnchor="middle" fontSize="6" fill="#9ca3af">
+                        {w.planned.toFixed(1)}/{w.actual.toFixed(1)}
+                      </text>
+                    )}
                     {weeklyData.length <= 16 && (
-                      <text x={PL + i*bSlot + bSlot/2} y={H-PB+11} textAnchor="middle" fontSize="7.5" fill="#64748b">W{w.weekNum}</text>
+                      <text x={cx} y={H-PB+11} textAnchor="middle" fontSize="7.5" fill="#64748b">W{w.weekNum}</text>
                     )}
                   </g>
                 );
