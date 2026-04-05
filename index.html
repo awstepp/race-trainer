@@ -3020,66 +3020,102 @@
     }
 
     // ── Route Finder ───────────────────────────────────────────────────────
-    // Generates loop running routes using the user's GPS location + OSRM routing.
-    // No API key required — uses free OpenStreetMap tiles and OSRM public API.
+    // Generates loop or out-and-back running routes using GPS + OSRM routing.
+    // No API key required — uses free OpenStreetMap tiles and OSRM public foot API.
 
-    // Helper: convert miles to meters
+    // Helper: miles → meters
     const milesToMeters = (mi) => mi * 1609.34;
 
-    // Helper: generate N waypoints on a circle around (lat, lng).
-    // radius = distanceMeters / (2π) so the total circumference ≈ target distance.
-    // directionDeg rotates the entire pattern (0 = routes go North first, 90 = East, etc.)
-    // variant shifts the starting angle slightly for route diversity.
+    // Helper: offset a lat/lng by meters in a given compass bearing (degrees)
+    function offsetLatLng(lat, lng, distMeters, bearingDeg) {
+      const latPerMeter = 1 / 111320;
+      const lngPerMeter = 1 / (111320 * Math.cos(lat * Math.PI / 180));
+      const rad = bearingDeg * Math.PI / 180;
+      return [
+        lat + Math.cos(rad) * distMeters * latPerMeter,
+        lng + Math.sin(rad) * distMeters * lngPerMeter,
+      ];
+    }
+
+    // Loop route: 3 intermediate waypoints on a circle, radius = dist / 2π
+    // variant (0-2) rotates the whole pattern 30° for path diversity
     function generateLoopWaypoints(lat, lng, distMeters, directionDeg, variant) {
       const radius = distMeters / (2 * Math.PI);
-      const latPerMeter  = 1 / 111320;
-      const lngPerMeter  = 1 / (111320 * Math.cos(lat * Math.PI / 180));
-      const numPts = 3; // 3 intermediate waypoints make a good loop shape
-      const baseAngle = (directionDeg + variant * 30) * Math.PI / 180;
-      const waypoints = [[lat, lng]]; // start
+      const numPts = 3;
+      const baseDir = directionDeg + variant * 30;
+      const waypoints = [[lat, lng]];
       for (let i = 0; i < numPts; i++) {
-        const angle = baseAngle + (2 * Math.PI * i) / numPts;
-        waypoints.push([
-          lat + Math.cos(angle) * radius * latPerMeter,
-          lng + Math.sin(angle) * radius * lngPerMeter,
-        ]);
+        const bearing = baseDir + (360 * i) / numPts;
+        waypoints.push(offsetLatLng(lat, lng, radius, bearing));
       }
-      waypoints.push([lat, lng]); // end = start (close the loop)
+      waypoints.push([lat, lng]); // close the loop
       return waypoints;
     }
 
-    function RouteFinder({ plan, onBack }) {
-      const { useRef, useState, useEffect } = React;
-      const mapRef        = useRef(null);
-      const mapInstance   = useRef(null);
-      const routeLayer    = useRef(null);
-      const markerLayer   = useRef(null);
+    // Out-and-back: go dist/2 in the chosen direction, return via slightly
+    // offset waypoint so OSRM picks a parallel return street when possible.
+    function generateOutAndBackWaypoints(lat, lng, distMeters, directionDeg, variant) {
+      const half = distMeters / 2;
+      const turn = offsetLatLng(lat, lng, half, directionDeg);
+      // Lateral offset for return path: shift ~5% of half-distance perpendicular
+      const lateralOffset = half * 0.05 * (variant === 0 ? 1 : variant === 1 ? -1 : 0);
+      const perpDir = directionDeg + 90;
+      const returnVia = offsetLatLng(turn[0], turn[1], lateralOffset, perpDir);
+      return [
+        [lat, lng],   // start
+        turn,         // turnaround
+        returnVia,    // slight detour on the way back to encourage a different return street
+        [lat, lng],   // finish
+      ];
+    }
 
-      const [locState,   setLocState]   = useState('idle');     // idle | locating | located | error
-      const [location,   setLocation]   = useState(null);       // { lat, lng, address }
-      const [routeState, setRouteState] = useState('idle');     // idle | loading | loaded | error
-      const [routeInfo,  setRouteInfo]  = useState(null);       // { distanceMiles, durationMin, geometry }
-      const [direction,  setDirection]  = useState(0);          // degrees: 0=N 45=NE 90=E …
-      const [variant,    setVariant]    = useState(0);          // 0-2, different route shapes
+    // Call OSRM foot routing endpoints in order, return first successful result.
+    // routing.openstreetmap.de is the correct public server with the foot profile
+    // (router.project-osrm.org only serves the driving profile publicly).
+    async function fetchOSRMRoute(waypoints) {
+      const coordStr = waypoints.map(([wLat, wLng]) => `${wLng.toFixed(6)},${wLat.toFixed(6)}`).join(';');
+      const params   = 'overview=full&geometries=geojson&steps=false&continue_straight=false';
+      const endpoints = [
+        `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${coordStr}?${params}`,
+        `https://routing.openstreetmap.de/routed-bike/route/v1/bike/${coordStr}?${params}`, // bike as last resort
+      ];
+      for (const url of endpoints) {
+        try {
+          const res  = await fetch(url, { signal: AbortSignal.timeout(12000) });
+          const data = await res.json();
+          if (data.code === 'Ok' && data.routes?.length) return data.routes[0];
+        } catch (_) { /* try next */ }
+      }
+      return null;
+    }
+
+    function RouteFinder({ plan, onBack }) {
+      const { useRef, useState, useEffect, useCallback } = React;
+      const mapRef      = useRef(null);
+      const mapInstance = useRef(null);
+      const routeLayer  = useRef(null);
+      const markerGroup = useRef(null);
+
+      const [locState,   setLocState]   = useState('idle');
+      const [location,   setLocation]   = useState(null);
+      const [routeState, setRouteState] = useState('idle');
+      const [routeInfo,  setRouteInfo]  = useState(null);
+      const [direction,  setDirection]  = useState(0);
+      const [variant,    setVariant]    = useState(0);
+      const [isLoop,     setIsLoop]     = useState(true);   // ← default: loop
       const [distance,   setDistance]   = useState(() => {
-        // Pre-fill from today's workout distance if available
         if (!plan?.weekWorkouts) return 3;
-        const today = new Date().getDay();
-        const weekIdx = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
-        const todayWorkout = plan.weekWorkouts[weekIdx]?.[today];
-        if (todayWorkout?.miles) return Math.round(todayWorkout.miles * 10) / 10;
-        return 3;
+        const todayIdx = new Date().getDay();
+        const weekIdx  = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
+        const w = plan.weekWorkouts[weekIdx]?.[todayIdx];
+        return w?.miles ? Math.round(w.miles * 10) / 10 : 3;
       });
 
       const DIRECTIONS = [
-        { label: 'N',  deg: 0   },
-        { label: 'NE', deg: 45  },
-        { label: 'E',  deg: 90  },
-        { label: 'SE', deg: 135 },
-        { label: 'S',  deg: 180 },
-        { label: 'SW', deg: 225 },
-        { label: 'W',  deg: 270 },
-        { label: 'NW', deg: 315 },
+        { label: 'N', deg: 0 }, { label: 'NE', deg: 45 },
+        { label: 'E', deg: 90 }, { label: 'SE', deg: 135 },
+        { label: 'S', deg: 180 }, { label: 'SW', deg: 225 },
+        { label: 'W', deg: 270 }, { label: 'NW', deg: 315 },
       ];
 
       // ── Leaflet map init ──────────────────────────────────────────────────
@@ -3087,42 +3123,78 @@
         if (!mapRef.current || mapInstance.current) return;
         if (typeof L === 'undefined') return;
         mapInstance.current = L.map(mapRef.current, {
-          center: [34.0522, -118.2437], // default: LA
-          zoom: 13,
-          zoomControl: true,
-          attributionControl: true,
+          center: [34.0522, -118.2437], zoom: 13,
+          zoomControl: true, attributionControl: true,
         });
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
           maxZoom: 19,
         }).addTo(mapInstance.current);
         return () => {
-          if (mapInstance.current) {
-            mapInstance.current.remove();
-            mapInstance.current = null;
-          }
+          if (mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; }
         };
       }, []);
 
-      // ── Re-generate route when inputs change (after location acquired) ──
+      // ── Core route builder ───────────────────────────────────────────────
+      const buildRoute = useCallback(async (lat, lng, distMiles, dirDeg, vari, loop) => {
+        setRouteState('loading');
+        const distM     = milesToMeters(distMiles);
+        const waypoints = loop
+          ? generateLoopWaypoints(lat, lng, distM, dirDeg, vari)
+          : generateOutAndBackWaypoints(lat, lng, distM, dirDeg, vari);
+
+        const route = await fetchOSRMRoute(waypoints);
+        if (!route) { setRouteState('error'); return; }
+
+        const actualMiles    = route.distance / 1609.34;
+        const paceMinPerMile = 10; // default 10 min/mile; good middle-ground estimate
+        setRouteInfo({
+          distanceMiles: actualMiles,
+          durationMin:   actualMiles * paceMinPerMile,
+          geometry:      route.geometry,
+          isLoop:        loop,
+        });
+
+        if (mapInstance.current) {
+          if (routeLayer.current)  mapInstance.current.removeLayer(routeLayer.current);
+          if (markerGroup.current) mapInstance.current.removeLayer(markerGroup.current);
+
+          routeLayer.current = L.geoJSON(route.geometry, {
+            style: { color: '#f97316', weight: 5, opacity: 0.88, lineCap: 'round', lineJoin: 'round' },
+          }).addTo(mapInstance.current);
+
+          const mg = L.layerGroup().addTo(mapInstance.current);
+          // Start pin
+          L.circleMarker([lat, lng], {
+            radius: 9, fillColor: '#f97316', color: '#fff', weight: 3, fillOpacity: 1,
+          }).bindPopup(loop ? '📍 Start / Finish' : '📍 Start').addTo(mg);
+          // Turnaround pin for out-and-back
+          if (!loop) {
+            const [tLat, tLng] = waypoints[1];
+            L.circleMarker([tLat, tLng], {
+              radius: 7, fillColor: '#3b82f6', color: '#fff', weight: 2, fillOpacity: 1,
+            }).bindPopup('🔄 Turnaround').addTo(mg);
+          }
+          markerGroup.current = mg;
+          mapInstance.current.fitBounds(routeLayer.current.getBounds(), { padding: [30, 30] });
+        }
+        setRouteState('loaded');
+      }, []);
+
+      // Re-generate whenever any control changes (only after first location acquired)
       useEffect(() => {
         if (location && routeState !== 'idle') {
-          buildRoute(location.lat, location.lng, distance, direction, variant);
+          buildRoute(location.lat, location.lng, distance, direction, variant, isLoop);
         }
-      }, [direction, variant, distance]);
+      }, [direction, variant, distance, isLoop]);
 
       // ── Get GPS location ─────────────────────────────────────────────────
       const requestLocation = () => {
-        if (!navigator.geolocation) {
-          setLocState('error');
-          return;
-        }
+        if (!navigator.geolocation) { setLocState('error'); return; }
         setLocState('locating');
         navigator.geolocation.getCurrentPosition(
           async (pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            // Reverse-geocode for a friendly neighborhood name
+            const { latitude: lat, longitude: lng } = pos.coords;
             let address = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
             try {
               const r = await fetch(
@@ -3136,73 +3208,16 @@
             } catch (_) {}
             setLocation({ lat, lng, address });
             setLocState('located');
-            // Pan map to user
-            if (mapInstance.current) {
-              mapInstance.current.setView([lat, lng], 14);
-            }
-            buildRoute(lat, lng, distance, direction, variant);
+            if (mapInstance.current) mapInstance.current.setView([lat, lng], 14);
+            buildRoute(lat, lng, distance, direction, variant, isLoop);
           },
           () => setLocState('error'),
           { enableHighAccuracy: true, timeout: 12000 }
         );
       };
 
-      // ── Fetch route from OSRM ────────────────────────────────────────────
-      const buildRoute = async (lat, lng, distMiles, dirDeg, vari) => {
-        setRouteState('loading');
-        try {
-          const waypoints = generateLoopWaypoints(lat, lng, milesToMeters(distMiles), dirDeg, vari);
-          // OSRM expects lon,lat order
-          const coordStr = waypoints.map(([wLat, wLng]) => `${wLng},${wLat}`).join(';');
-          const url = `https://router.project-osrm.org/route/v1/foot/${coordStr}?overview=full&geometries=geojson&steps=false`;
-          const res = await fetch(url);
-          const data = await res.json();
-
-          if (data.code !== 'Ok' || !data.routes?.length) {
-            setRouteState('error');
-            return;
-          }
-
-          const route = data.routes[0];
-          const actualMiles = route.distance / 1609.34;
-          // Estimate duration: OSRM walking pace is ~5 km/h; runners are faster
-          // Use plan pace if available, else 10 min/mile default
-          const paceMinPerMile = 10;
-          const estMinutes = actualMiles * paceMinPerMile;
-
-          setRouteInfo({
-            distanceMiles: actualMiles,
-            durationMin: estMinutes,
-            geometry: route.geometry,
-          });
-
-          // Draw on Leaflet map
-          if (mapInstance.current) {
-            if (routeLayer.current) mapInstance.current.removeLayer(routeLayer.current);
-            if (markerLayer.current) mapInstance.current.removeLayer(markerLayer.current);
-
-            routeLayer.current = L.geoJSON(route.geometry, {
-              style: { color: '#f97316', weight: 5, opacity: 0.85, lineCap: 'round', lineJoin: 'round' }
-            }).addTo(mapInstance.current);
-
-            // Start/finish marker
-            markerLayer.current = L.circleMarker([lat, lng], {
-              radius: 9, fillColor: '#f97316', color: '#ffffff',
-              weight: 3, fillOpacity: 1
-            }).bindPopup('📍 Start / Finish').addTo(mapInstance.current);
-
-            mapInstance.current.fitBounds(routeLayer.current.getBounds(), { padding: [30, 30] });
-          }
-
-          setRouteState('loaded');
-        } catch (err) {
-          setRouteState('error');
-        }
-      };
-
       const formatDuration = (min) => {
-        const h = Math.floor(min / 60);
-        const m = Math.round(min % 60);
+        const h = Math.floor(min / 60), m = Math.round(min % 60);
         return h > 0 ? `${h}h ${m}m` : `${m} min`;
       };
 
@@ -3212,24 +3227,40 @@
 
           {/* Header */}
           <div className="px-4 pt-4 pb-3 flex items-center gap-3">
-            <button onClick={onBack} className="text-gray-400 hover:text-white transition text-lg leading-none">←</button>
+            <button onClick={onBack} className="text-gray-400 hover:text-white transition text-lg">←</button>
             <div>
               <h2 className="text-xl font-bold text-white leading-tight">Route Finder</h2>
-              {location && (
-                <p className="text-gray-400 text-xs mt-0.5">📍 Near {location.address}</p>
-              )}
+              {location && <p className="text-gray-400 text-xs mt-0.5">📍 Near {location.address}</p>}
             </div>
           </div>
 
           {/* Map */}
-          <div
-            ref={mapRef}
-            style={{ height: '280px', width: '100%', zIndex: 0 }}
-            className="bg-slate-800"
-          />
+          <div ref={mapRef} style={{ height: '280px', width: '100%', zIndex: 0 }} className="bg-slate-800" />
 
-          {/* Controls card */}
-          <div className="mx-4 mt-4 bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-4">
+          {/* Controls */}
+          <div className="mx-4 mt-4 bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-5">
+
+            {/* Route type toggle — Loop vs Out & Back */}
+            <div>
+              <p className="text-sm font-semibold text-gray-300 mb-2">Route type</p>
+              <div className="flex bg-slate-700 rounded-xl p-1 gap-1">
+                <button
+                  onClick={() => setIsLoop(true)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition ${isLoop ? 'bg-orange-500 text-white shadow' : 'text-gray-400 hover:text-gray-200'}`}
+                >
+                  <span>🔄</span> Loop
+                </button>
+                <button
+                  onClick={() => setIsLoop(false)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition ${!isLoop ? 'bg-orange-500 text-white shadow' : 'text-gray-400 hover:text-gray-200'}`}
+                >
+                  <span>↔️</span> Out &amp; Back
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1.5 text-center">
+                {isLoop ? 'Returns to start via a different path — great for exploring' : 'Run to a point and retrace back — easier navigation'}
+              </p>
+            </div>
 
             {/* Distance slider */}
             <div>
@@ -3238,8 +3269,7 @@
                 <span className="text-orange-400 font-bold text-sm">{distance} mi</span>
               </div>
               <input
-                type="range" min="0.5" max="26.2" step="0.5"
-                value={distance}
+                type="range" min="0.5" max="26.2" step="0.5" value={distance}
                 onChange={e => setDistance(parseFloat(e.target.value))}
                 className="w-full accent-orange-500"
               />
@@ -3248,20 +3278,15 @@
               </div>
             </div>
 
-            {/* Direction picker */}
+            {/* Direction */}
             <div>
-              <p className="text-sm font-semibold text-gray-300 mb-2">Head toward</p>
+              <p className="text-sm font-semibold text-gray-300 mb-2">
+                {isLoop ? 'Head out toward' : 'Turnaround direction'}
+              </p>
               <div className="grid grid-cols-8 gap-1">
                 {DIRECTIONS.map(d => (
-                  <button
-                    key={d.deg}
-                    onClick={() => setDirection(d.deg)}
-                    className={`py-1.5 rounded text-xs font-bold transition ${
-                      direction === d.deg
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-slate-700 text-gray-400 hover:bg-slate-600 hover:text-white'
-                    }`}
-                  >
+                  <button key={d.deg} onClick={() => setDirection(d.deg)}
+                    className={`py-2 rounded text-xs font-bold transition ${direction === d.deg ? 'bg-orange-500 text-white' : 'bg-slate-700 text-gray-400 hover:bg-slate-600 hover:text-white'}`}>
                     {d.label}
                   </button>
                 ))}
@@ -3270,18 +3295,11 @@
 
             {/* Route variant */}
             <div>
-              <p className="text-sm font-semibold text-gray-300 mb-2">Route shape</p>
+              <p className="text-sm font-semibold text-gray-300 mb-2">Route option</p>
               <div className="flex gap-2">
                 {[0, 1, 2].map(v => (
-                  <button
-                    key={v}
-                    onClick={() => setVariant(v)}
-                    className={`flex-1 py-2 rounded-lg text-xs font-semibold transition ${
-                      variant === v
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
-                    }`}
-                  >
+                  <button key={v} onClick={() => setVariant(v)}
+                    className={`flex-1 py-2 rounded-lg text-xs font-semibold transition ${variant === v ? 'bg-orange-500 text-white' : 'bg-slate-700 text-gray-400 hover:bg-slate-600'}`}>
                     Option {v + 1}
                   </button>
                 ))}
@@ -3290,9 +3308,14 @@
 
           </div>
 
-          {/* Route info card */}
+          {/* Route info */}
           {routeState === 'loaded' && routeInfo && (
             <div className="mx-4 mt-3 bg-slate-800 border border-slate-700 rounded-xl p-4">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${routeInfo.isLoop ? 'bg-orange-900 text-orange-300' : 'bg-blue-900 text-blue-300'}`}>
+                  {routeInfo.isLoop ? '🔄 Loop' : '↔️ Out & Back'}
+                </span>
+              </div>
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div className="text-xl font-bold text-orange-400">{routeInfo.distanceMiles.toFixed(2)}</div>
@@ -3308,59 +3331,53 @@
                 </div>
               </div>
               <p className="text-xs text-gray-500 text-center mt-3">
-                Route snapped to real roads via OpenStreetMap · Tap the map to explore
+                Snapped to real roads · Tap map to explore · {!routeInfo.isLoop && '🔵 = turnaround point'}
               </p>
             </div>
           )}
 
-          {/* CTA — get location or show status */}
-          <div className="px-4 mt-4 pb-6">
+          {/* CTA */}
+          <div className="px-4 mt-4 pb-8">
             {locState === 'idle' && (
-              <button
-                onClick={requestLocation}
-                className="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2"
-              >
+              <button onClick={requestLocation}
+                className="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2">
                 <span>📍</span> Use My Location &amp; Generate Route
               </button>
             )}
-
             {locState === 'locating' && (
               <div className="w-full py-4 bg-slate-700 rounded-xl flex items-center justify-center gap-3 text-gray-300 text-sm">
                 <span className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
                 Getting your location…
               </div>
             )}
-
             {locState === 'error' && (
               <div className="space-y-3">
                 <div className="bg-red-900 bg-opacity-30 border border-red-800 rounded-xl p-3 text-red-400 text-sm text-center">
-                  Could not access location. Please allow location access in your browser settings and try again.
+                  Could not access your location. Please allow location access in your browser/device settings and try again.
                 </div>
                 <button onClick={requestLocation} className="w-full py-3 bg-slate-700 text-gray-300 rounded-xl text-sm hover:bg-slate-600 transition font-semibold">
                   Try Again
                 </button>
               </div>
             )}
-
             {locState === 'located' && (
               <div className="space-y-3">
                 {routeState === 'loading' && (
                   <div className="w-full py-3 bg-slate-700 rounded-xl flex items-center justify-center gap-3 text-gray-300 text-sm">
                     <span className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-                    Building route…
+                    Building route on real streets…
                   </div>
                 )}
                 {routeState === 'error' && (
-                  <div className="bg-red-900 bg-opacity-30 border border-red-800 rounded-xl p-3 text-red-400 text-sm text-center">
-                    Could not generate a route here. Try a different direction or distance.
+                  <div className="bg-amber-900 bg-opacity-30 border border-amber-800 rounded-xl p-3 text-amber-300 text-sm text-center">
+                    Could not build a route here — try a different direction, distance, or route option.
                   </div>
                 )}
                 <button
-                  onClick={() => buildRoute(location.lat, location.lng, distance, direction, variant)}
+                  onClick={() => buildRoute(location.lat, location.lng, distance, direction, variant, isLoop)}
                   disabled={routeState === 'loading'}
-                  className="w-full py-3 bg-slate-700 border border-slate-600 text-gray-200 rounded-xl text-sm hover:bg-slate-600 transition font-semibold disabled:opacity-50"
-                >
-                  🔄 Refresh Route
+                  className="w-full py-3 bg-slate-700 border border-slate-600 text-gray-200 rounded-xl text-sm hover:bg-slate-600 transition font-semibold disabled:opacity-50">
+                  🔄 Generate New Route
                 </button>
               </div>
             )}
