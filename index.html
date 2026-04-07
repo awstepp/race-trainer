@@ -3222,7 +3222,7 @@
       } catch (_) { return null; }
     }
 
-    function RouteFinder({ plan, onBack }) {
+    function RouteFinder({ plan, logs, currentWeekIdx, onSaveLog, onBack }) {
       const { useRef, useState, useEffect, useCallback } = React;
       const mapRef      = useRef(null);
       const mapInstance = useRef(null);
@@ -3260,6 +3260,9 @@
       const [offRoute,       setOffRoute]       = useState(false);
       const [nextTurn,       setNextTurn]       = useState(null); // {text,icon,name,distM}
       const [routeProgress,  setRouteProgress]  = useState(0);   // 0–1
+      // Workout linking + completion
+      const [linkedWorkout,  setLinkedWorkout]  = useState(null); // {weekIdx,dayIdx,workout}
+      const [completionData, setCompletionData] = useState(null); // {distM,elapsedSec,paceSec}
       const [distance,       setDistance]       = useState(() => {
         if (!plan?.weekWorkouts) return 3;
         const todayIdx = new Date().getDay();
@@ -3871,7 +3874,7 @@
     }
 
     // Dashboard
-    function Dashboard({ plan, logs, injuries, onLogWorkout, onSwapWorkout, onGPSTrack, onModifyPlan, onLogInjury, onResetPlan, adaptationState, onNextWeek, viewedWeekIdx, onSetViewedWeek }) {
+    function Dashboard({ plan, logs, injuries, onLogWorkout, onSwapWorkout, onGPSTrack, onModifyPlan, onLogInjury, onResetPlan, adaptationState, onNextWeek, viewedWeekIdx, onSetViewedWeek, onDirectLog }) {
       const [showRouteFinder, setShowRouteFinder] = useState(false);
 
       if (!plan || !plan.weekWorkouts || plan.weekWorkouts.length === 0) {
@@ -3889,7 +3892,16 @@
 
       // ── Route Finder overlay ───────────────────────────────────────────
       if (showRouteFinder) {
-        return <RouteFinder plan={plan} onBack={() => setShowRouteFinder(false)} />;
+        const cwi = getCurrentWeekIdx(plan.raceDate, plan.totalWeeks, plan.weekStartOffset || 0);
+        return (
+          <RouteFinder
+            plan={plan}
+            logs={logs}
+            currentWeekIdx={cwi}
+            onSaveLog={onDirectLog}
+            onBack={() => setShowRouteFinder(false)}
+          />
+        );
       }
 
       const today = new Date();
@@ -7892,6 +7904,12 @@
         setLogs(prev => ({ ...prev, [key]: logData }));
       };
 
+      // Direct log save (used by Route Finder after a tracked run — no modal needed)
+      const handleDirectLog = (weekIdx, dayIdx, logData) => {
+        const key = `${weekIdx}-${dayIdx}`;
+        setLogs(prev => ({ ...prev, [key]: logData }));
+      };
+
       // User chose "Adapt my plan" in the week-complete modal
       const handleWeekAdapt = () => {
         if (!weekCompleteModal) return;
@@ -8056,7 +8074,7 @@
               </div>
             </div>
 
-            {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} onNextWeek={handleNextWeek} viewedWeekIdx={viewedWeekIdx} onSetViewedWeek={setViewedWeekIdx} />}
+            {currentTab === 'dashboard' && <Dashboard plan={plan} logs={logs} injuries={injuries} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onModifyPlan={handleModifyPlan} onLogInjury={() => setInjuryModalOpen(true)} onResetPlan={handleResetPlan} adaptationState={plan?.adaptationState} onNextWeek={handleNextWeek} viewedWeekIdx={viewedWeekIdx} onSetViewedWeek={setViewedWeekIdx} onDirectLog={handleDirectLog} />}
             {currentTab === 'plan' && <PlanView plan={plan} logs={logs} onLogWorkout={handleLogWorkout} onSwapWorkout={handleSwapWorkout} onGPSTrack={handleGPSTrack} onResetPlan={handleResetPlan} />}
             {currentTab === 'nutrition' && <NutritionTab plan={plan} />}
             {currentTab === 'progress' && <ProgressView logs={logs} plan={plan} injuries={injuries} onLogInjury={() => setInjuryModalOpen(true)} />}
