@@ -3948,95 +3948,91 @@
               </div>
             )}
           </div>}
-        </div>
 
-        {/* ── Completion modal ─────────────────────────────────────────── */}
-        {completionData && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-60 animate-fadeIn">
-            <div className="w-full max-w-md bg-slate-800 rounded-t-3xl shadow-2xl pb-safe animate-slideUp overflow-hidden">
-              {/* Header */}
-              <div className="bg-gradient-to-r from-green-700 to-emerald-600 px-5 pt-6 pb-5 text-center">
-                <div className="text-4xl mb-1">🏅</div>
-                <h2 className="text-white text-xl font-bold">Run Complete!</h2>
-                {linkedWorkout && (
-                  <p className="text-green-200 text-sm mt-0.5">
-                    {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run' })[linkedWorkout.workout.type] || linkedWorkout.workout.type} · Week {linkedWorkout.weekIdx + 1}
-                  </p>
-                )}
-              </div>
+          {/* ── Completion modal ─────────────────────────────────────────── */}
+          {completionData && (
+            <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-60 animate-fadeIn">
+              <div className="w-full max-w-md bg-slate-800 rounded-t-3xl shadow-2xl pb-safe animate-slideUp overflow-hidden">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-green-700 to-emerald-600 px-5 pt-6 pb-5 text-center">
+                  <div className="text-4xl mb-1">🏅</div>
+                  <h2 className="text-white text-xl font-bold">Run Complete!</h2>
+                  {linkedWorkout && (
+                    <p className="text-green-200 text-sm mt-0.5">
+                      {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run' })[linkedWorkout.workout.type] || linkedWorkout.workout.type} · Week {linkedWorkout.weekIdx + 1}
+                    </p>
+                  )}
+                </div>
 
-              {/* Stats row */}
-              <div className="grid grid-cols-3 gap-0 divide-x divide-slate-700 border-b border-slate-700">
-                {/* Distance */}
-                <div className="flex flex-col items-center py-4 px-2">
-                  <span className="text-2xl font-bold text-white leading-tight">
-                    {(completionData.distM / 1609.34).toFixed(2)}
-                  </span>
-                  <span className="text-xs text-gray-400 mt-0.5">miles</span>
-                </div>
-                {/* Time */}
-                <div className="flex flex-col items-center py-4 px-2">
-                  <span className="text-2xl font-bold text-white leading-tight">
-                    {(() => {
-                      const s = completionData.elapsedSec;
-                      const h = Math.floor(s / 3600);
-                      const m = Math.floor((s % 3600) / 60);
-                      const sec = s % 60;
-                      return h > 0
-                        ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
-                        : `${m}:${String(sec).padStart(2,'0')}`;
-                    })()}
-                  </span>
-                  <span className="text-xs text-gray-400 mt-0.5">time</span>
-                </div>
-                {/* Pace */}
-                <div className="flex flex-col items-center py-4 px-2">
-                  <span className="text-2xl font-bold text-white leading-tight">
-                    {completionData.paceSec > 0
-                      ? `${Math.floor(completionData.paceSec / 60)}:${String(completionData.paceSec % 60).padStart(2,'0')}`
-                      : '–'}
-                  </span>
-                  <span className="text-xs text-gray-400 mt-0.5">min/mi</span>
-                </div>
-              </div>
-
-              {/* Comparison row (only when linked) */}
-              {linkedWorkout && (() => {
-                const actualMi = completionData.distM / 1609.34;
-                const targetMi = linkedWorkout.workout.miles;
-                const diff = actualMi - targetMi;
-                const pct = Math.round(Math.abs(diff) / targetMi * 100);
-                return (
-                  <div className={`flex items-center justify-center gap-2 py-3 text-sm font-semibold border-b border-slate-700 ${diff >= -0.05 ? 'text-green-400' : 'text-amber-400'}`}>
-                    {diff >= -0.05
-                      ? <><span>✅</span><span>Goal hit! {targetMi} mi target</span></>
-                      : <><span>⚠️</span><span>{pct}% short of {targetMi} mi goal</span></>}
+                {/* Stats row */}
+                <div className="grid grid-cols-3 gap-0 divide-x divide-slate-700 border-b border-slate-700">
+                  <div className="flex flex-col items-center py-4 px-2">
+                    <span className="text-2xl font-bold text-white leading-tight">
+                      {(completionData.distM / 1609.34).toFixed(2)}
+                    </span>
+                    <span className="text-xs text-gray-400 mt-0.5">miles</span>
                   </div>
-                );
-              })()}
+                  <div className="flex flex-col items-center py-4 px-2">
+                    <span className="text-2xl font-bold text-white leading-tight">
+                      {(() => {
+                        const s = completionData.elapsedSec;
+                        const h = Math.floor(s / 3600);
+                        const m = Math.floor((s % 3600) / 60);
+                        const sec = s % 60;
+                        return h > 0
+                          ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
+                          : `${m}:${String(sec).padStart(2,'0')}`;
+                      })()}
+                    </span>
+                    <span className="text-xs text-gray-400 mt-0.5">time</span>
+                  </div>
+                  <div className="flex flex-col items-center py-4 px-2">
+                    <span className="text-2xl font-bold text-white leading-tight">
+                      {completionData.paceSec > 0
+                        ? `${Math.floor(completionData.paceSec / 60)}:${String(completionData.paceSec % 60).padStart(2,'0')}`
+                        : '–'}
+                    </span>
+                    <span className="text-xs text-gray-400 mt-0.5">min/mi</span>
+                  </div>
+                </div>
 
-              {/* Action buttons */}
-              <div className="px-5 py-4 space-y-3">
-                {linkedWorkout ? (
+                {/* Comparison row (only when linked) */}
+                {linkedWorkout && (() => {
+                  const actualMi = completionData.distM / 1609.34;
+                  const targetMi = linkedWorkout.workout.miles;
+                  const diff = actualMi - targetMi;
+                  const pct = Math.round(Math.abs(diff) / targetMi * 100);
+                  return (
+                    <div className={`flex items-center justify-center gap-2 py-3 text-sm font-semibold border-b border-slate-700 ${diff >= -0.05 ? 'text-green-400' : 'text-amber-400'}`}>
+                      {diff >= -0.05
+                        ? <><span>✅</span><span>Goal hit! {targetMi} mi target</span></>
+                        : <><span>⚠️</span><span>{pct}% short of {targetMi} mi goal</span></>}
+                    </div>
+                  );
+                })()}
+
+                {/* Action buttons */}
+                <div className="px-5 py-4 space-y-3">
+                  {linkedWorkout ? (
+                    <button
+                      onClick={confirmLogWorkout}
+                      className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold rounded-2xl transition text-base flex items-center justify-center gap-2">
+                      <span className="text-lg">✓</span>
+                      Log {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run' })[linkedWorkout.workout.type] || 'Run'}
+                    </button>
+                  ) : (
+                    <div className="text-center text-gray-400 text-sm py-2">Great run! No workout was linked.</div>
+                  )}
                   <button
-                    onClick={confirmLogWorkout}
-                    className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold rounded-2xl transition text-base flex items-center justify-center gap-2">
-                    <span className="text-lg">✓</span>
-                    Log {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run' })[linkedWorkout.workout.type] || 'Run'}
+                    onClick={() => setCompletionData(null)}
+                    className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-gray-300 font-semibold rounded-2xl transition text-sm">
+                    Dismiss
                   </button>
-                ) : (
-                  <div className="text-center text-gray-400 text-sm py-2">No workout linked — great run!</div>
-                )}
-                <button
-                  onClick={() => { setCompletionData(null); }}
-                  className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-gray-300 font-semibold rounded-2xl transition text-sm">
-                  Dismiss
-                </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </React.Fragment>
+          )}
+        </div>
       );
     }
 
