@@ -602,16 +602,21 @@
       const dayTypes  = getWeekTemplate(phase, raceType, includeStrength, schedulePrefs);
       const dayWorkouts = [];
 
+      // ── Normalize workout miles so they sum to the weekly target ─────────────
+      // week.mileage is the authoritative volume target (already accounts for phase,
+      // taper, cutback weeks, and fitness). phaseScaling was a redundant multiplier
+      // that caused workouts to consistently under-sum the target. Instead, we
+      // distribute miles proportionally using volumeFracs normalized to 1.0, then
+      // scale the whole week by mileageMult (the only per-user adaptive adjustment).
+      const weekTarget = mileage * mileageMult;
+
+      // Sum of volumeFracs across running workout days only (strength/rest/race = 0)
+      const isRunType = (t) => t !== 'rest' && t !== 'race' && !t.startsWith('strength');
+      const fracSum = dayTypes.reduce((s, t) => s + (isRunType(t) ? (getWorkoutBaseInfo(t, raceType).volumeFrac || 0) : 0), 0);
+
       for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
         const typeKey  = dayTypes[dayIdx];
         const baseInfo = getWorkoutBaseInfo(typeKey, raceType);
-
-        // Base miles → scale by phase scalar then by adaptive mileage multiplier
-        let miles = mileage * baseInfo.volumeFrac;
-        miles = adjustedPace(miles, phaseScaling);  // phase-based tweak
-        miles = miles * mileageMult;                // user-performance-based tweak
-        // Cap long run at race-appropriate distance (never assign a 14-mile long run for a half)
-        if (typeKey === 'long') miles = Math.min(miles, PEAK_LONG_RUN[raceType] || miles);
         let pace = paces[typeKey] || 0;
 
         if (typeKey === 'strength_lower' || typeKey === 'strength_core' || typeKey === 'strength_plyo') {
@@ -622,6 +627,10 @@
             routineKey: getStrengthKey(typeKey)
           });
         } else {
+          // Distribute miles proportionally from weekTarget; normalize fracs to sum to 1.0
+          let miles = fracSum > 0 ? (baseInfo.volumeFrac / fracSum) * weekTarget : 0;
+          // Cap long run at race-appropriate distance (never assign a 20-mile long run for a 5K)
+          if (typeKey === 'long') miles = Math.min(miles, PEAK_LONG_RUN[raceType] || miles);
           const roundedMiles = Math.round(miles * 10) / 10;
           const structure = getWorkoutStructure(typeKey, phase, raceType, roundedMiles, paces);
           dayWorkouts.push({
