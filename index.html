@@ -3568,20 +3568,101 @@
       return (
         <div className="text-white animate-fadeIn">
 
-          {/* Header */}
-          <div className="px-4 pt-4 pb-3 flex items-center gap-3">
-            <button onClick={onBack} className="text-gray-400 hover:text-white transition text-lg">←</button>
-            <div>
-              <h2 className="text-xl font-bold text-white leading-tight">Route Finder</h2>
-              {location && <p className="text-gray-400 text-xs mt-0.5">📍 Near {location.address}</p>}
+          {/* ── TRACKING MODE header + overlays ── */}
+          {tracking ? (
+            <div className="bg-slate-950 border-b border-slate-800 px-4 pt-3 pb-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" />
+                <span className="font-bold text-white text-sm">Live Tracking</span>
+              </div>
+              <span className="text-xs text-gray-400 truncate max-w-[160px]">📍 {location?.address || ''}</span>
             </div>
-          </div>
+          ) : (
+            /* ── Normal mode header ── */
+            <div className="px-4 pt-4 pb-3 flex items-center gap-3">
+              <button onClick={onBack} className="text-gray-400 hover:text-white transition text-lg">←</button>
+              <div>
+                <h2 className="text-xl font-bold text-white leading-tight">Route Finder</h2>
+                {location && <p className="text-gray-400 text-xs mt-0.5">📍 Near {location.address}</p>}
+              </div>
+            </div>
+          )}
 
-          {/* Map */}
-          <div ref={mapRef} style={{ height: '280px', width: '100%', zIndex: 0 }} className="bg-slate-800" />
+          {/* ── Turn-by-turn card (tracking only) ── */}
+          {tracking && (
+            <div className="mx-3 mt-2 mb-1">
+              {nextTurn ? (
+                <div className="bg-slate-800 border border-slate-600 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-lg">
+                  <div className="text-4xl shrink-0 w-10 text-center leading-none">{nextTurn.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white font-bold text-base leading-tight">{nextTurn.text}</div>
+                    {nextTurn.name && <div className="text-gray-400 text-xs mt-0.5 truncate">{nextTurn.name}</div>}
+                  </div>
+                  <div className="shrink-0 text-right pl-2">
+                    <div className="text-orange-400 font-extrabold text-lg leading-tight">{fmtDistM(nextTurn.distM)}</div>
+                    <div className="text-gray-500 text-xs">ahead</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 flex items-center gap-3">
+                  <div className="text-3xl">🏁</div>
+                  <div className="text-white font-bold">Follow the route back to start</div>
+                </div>
+              )}
+              {offRoute && (
+                <div className="mt-2 bg-amber-900 bg-opacity-60 border border-amber-700 rounded-xl px-3 py-2 flex items-center gap-2 text-amber-300 text-sm font-semibold">
+                  <span className="text-lg">⚠️</span> You appear to be off route — retrace your steps or follow the orange line
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* Controls */}
-          <div className="mx-4 mt-4 bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-5">
+          {/* Map — always mounted, height changes with tracking mode */}
+          <div ref={mapRef} style={{ height: tracking ? '370px' : '280px', width: '100%', zIndex: 0, transition: 'height 0.3s' }} className="bg-slate-800" />
+
+          {/* ── Tracking stats HUD (tracking only) ── */}
+          {tracking && (
+            <div className="bg-slate-900 border-t border-slate-700 px-4 pt-4 pb-6">
+              {/* Stats row */}
+              <div className="grid grid-cols-3 gap-2 text-center mb-4">
+                <div>
+                  <div className="text-3xl font-bold text-white font-mono tabular-nums">{fmtTimeSec(trackElapsed)}</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-wide mt-1">Time</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-orange-400 font-mono tabular-nums">{(trackDistM/1609.34).toFixed(2)}</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-wide mt-1">Miles</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-blue-400 font-mono tabular-nums">{fmtPaceSec(trackPaceSec)}</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-wide mt-1">Pace/mi</div>
+                </div>
+              </div>
+
+              {/* Distance remaining + progress bar */}
+              {routeInfo && (
+                <div className="mb-4">
+                  <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                    <span className="font-semibold text-orange-400">{(trackDistM/1609.34).toFixed(2)} mi covered</span>
+                    <span>{Math.max(0, routeInfo.distanceMiles - trackDistM/1609.34).toFixed(2)} mi remaining</span>
+                  </div>
+                  <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                    <div className="h-full bg-orange-500 rounded-full transition-all duration-500"
+                         style={{ width: `${Math.min(100, routeProgress * 100).toFixed(1)}%` }} />
+                  </div>
+                </div>
+              )}
+
+              {/* Stop button */}
+              <button onClick={stopTracking}
+                className="w-full py-4 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold rounded-2xl transition text-base flex items-center justify-center gap-2">
+                <span className="text-lg">⏹</span> Stop Run
+              </button>
+            </div>
+          )}
+
+          {/* Controls — hidden during tracking */}
+          {!tracking && <div className="mx-4 mt-4 bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-5">
 
             {/* Loop / Out & Back */}
             <div>
@@ -3670,10 +3751,10 @@
               )}
             </div>
 
-          </div>
+          </div>}
 
-          {/* Route info + elevation */}
-          {routeState === 'loaded' && routeInfo && (
+          {/* Route info + elevation — hidden during tracking */}
+          {!tracking && routeState === 'loaded' && routeInfo && (
             <div className="mx-4 mt-3 bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-3">
 
               {/* Badges */}
@@ -3730,11 +3811,17 @@
                 {!routeInfo.isLoop && ' · 🔵 = turnaround'}
                 {routeInfo.viapark && ' · 🟢 = park'}
               </p>
+
+              {/* Start Live Run button */}
+              <button onClick={startTracking}
+                className="w-full mt-1 py-3.5 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2">
+                <span className="text-lg">▶</span> Start Live Run
+              </button>
             </div>
           )}
 
-          {/* CTA */}
-          <div className="px-4 mt-4 pb-8">
+          {/* CTA — hidden during tracking */}
+          {!tracking && <div className="px-4 mt-4 pb-8">
             {locState === 'idle' && (
               <button onClick={requestLocation}
                 className="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2">
@@ -3778,7 +3865,7 @@
                 </button>
               </div>
             )}
-          </div>
+          </div>}
         </div>
       );
     }
