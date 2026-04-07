@@ -3500,6 +3500,12 @@
       }, [routeInfo, location]);
 
       const stopTracking = useCallback(() => {
+        // Snapshot stats before clearing refs
+        const finalDistM   = trackDistRef.current;
+        const finalElapsed = trackElapsedRef.current;
+        const finalPace    = finalDistM > 50 && finalElapsed > 10
+          ? Math.round(finalElapsed / (finalDistM / 1609.34)) : 0;
+
         if (trackWatchRef.current !== null) { navigator.geolocation.clearWatch(trackWatchRef.current); trackWatchRef.current = null; }
         if (trackTimerRef.current) { clearInterval(trackTimerRef.current); trackTimerRef.current = null; }
         const map = mapInstance.current;
@@ -3511,6 +3517,11 @@
         setOffRoute(false);
         setNextTurn(null);
         setRouteProgress(0);
+
+        // Show completion card if a workout was linked and meaningful distance was run
+        if (finalDistM > 50) {
+          setCompletionData({ distM: finalDistM, elapsedSec: finalElapsed, paceSec: finalPace });
+        }
       }, []);
 
       // ── Get GPS location ─────────────────────────────────────────────────
@@ -3666,6 +3677,57 @@
 
           {/* Controls — hidden during tracking */}
           {!tracking && <div className="mx-4 mt-4 bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-5">
+
+            {/* ── Workout selector ── */}
+            {(() => {
+              const cwi = currentWeekIdx ?? 0;
+              const weekWorkouts = plan?.weekWorkouts?.[cwi] || [];
+              const runWorkouts = weekWorkouts
+                .map((wo, dayIdx) => ({ wo, dayIdx }))
+                .filter(({ wo, dayIdx }) =>
+                  wo.miles > 0 &&
+                  wo.type !== 'rest' && wo.type !== 'race' && !wo.type?.startsWith('strength') &&
+                  !(logs?.[`${cwi}-${dayIdx}`])   // not already logged
+                );
+              if (!runWorkouts.length) return null;
+              const typeLabels = { easy:'Easy Run', tempo:'Tempo', intervals:'Intervals', hills:'Hills', long:'Long Run', recovery:'Recovery' };
+              const typeIcons  = { easy:'🏃', tempo:'🎯', intervals:'⚡', hills:'⛰️', long:'🚀', recovery:'🌊' };
+              return (
+                <div>
+                  <p className="text-sm font-semibold text-gray-300 mb-2">Link a workout <span className="font-normal text-gray-500">(optional)</span></p>
+                  <div className="flex flex-col gap-2">
+                    {runWorkouts.map(({ wo, dayIdx }) => {
+                      const isLinked = linkedWorkout?.dayIdx === dayIdx && linkedWorkout?.weekIdx === cwi;
+                      return (
+                        <button key={dayIdx}
+                          onClick={() => {
+                            if (isLinked) { setLinkedWorkout(null); }
+                            else {
+                              setLinkedWorkout({ weekIdx: cwi, dayIdx, workout: wo });
+                              setDistance(Math.round(wo.miles * 10) / 10 || distance);
+                            }
+                          }}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition text-left w-full ${isLinked ? 'border-orange-500 bg-orange-900 bg-opacity-20' : 'border-slate-600 hover:border-slate-500'}`}>
+                          <span className="text-xl shrink-0">{typeIcons[wo.type] || '🏃'}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className={`text-sm font-semibold leading-tight ${isLinked ? 'text-orange-300' : 'text-white'}`}>
+                              {typeLabels[wo.type] || wo.type}
+                            </div>
+                            <div className="text-xs text-gray-400 mt-0.5">{wo.miles} mi target</div>
+                          </div>
+                          {isLinked && <span className="text-orange-400 text-xs font-bold shrink-0">✓ Linked</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {linkedWorkout && (
+                    <p className="text-xs text-orange-400 mt-2 text-center">
+                      Distance auto-set to {linkedWorkout.workout.miles} mi · will auto-log after your run
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Loop / Out & Back */}
             <div>
