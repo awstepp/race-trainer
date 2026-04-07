@@ -3329,12 +3329,30 @@
         if (!route) { setRouteState('error'); setRouteMsg(''); return; }
 
         const actualMiles = route.distance / 1609.34;
+
+        // Process OSRM steps into turn-by-turn instructions with cumulative distances
+        let stepCumDist = 0;
+        const steps = (route.legs || []).flatMap(leg => leg.steps || []).map(step => {
+          const d = stepCumDist;
+          stepCumDist += (step.distance || 0);
+          const [sLng, sLat] = step.maneuver?.location || [0, 0];
+          return {
+            text:        maneuverToText(step.maneuver?.type, step.maneuver?.modifier),
+            icon:        maneuverIcon(step.maneuver?.type, step.maneuver?.modifier),
+            name:        step.name || '',
+            lat: sLat, lng: sLng,
+            startDistM:  d,
+            type:        step.maneuver?.type,
+          };
+        });
+
         setRouteInfo({
           distanceMiles: actualMiles,
-          durationMin:   actualMiles * 10, // 10 min/mile default
+          durationMin:   actualMiles * 10,
           geometry:      route.geometry,
           isLoop:        loop,
           viapark:       !!parkWpt,
+          steps,
         });
         setRouteMsg('');
 
@@ -3381,6 +3399,116 @@
           buildRoute(location.lat, location.lng, distance, direction, variant, isLoop, runnerFriendly);
         }
       }, [direction, variant, distance, isLoop, runnerFriendly]);
+
+      // ── Live tracking functions ───────────────────────────────────────────
+      const fmtTimeSec = (s) => { const m = Math.floor(s/60); return `${m}:${String(s%60).padStart(2,'0')}`; };
+      const fmtPaceSec = (s) => { if (!s) return '--:--'; const m = Math.floor(s/60); return `${m}:${String(s%60).padStart(2,'0')}`; };
+      const fmtDistM   = (m) => { if (m < 160) return `${Math.round(m)} m`; return `${(m/1609.34).toFixed(2)} mi`; };
+
+      // GPS update handler – stored in ref so watchPosition callback never goes stale
+      onGPSUpdateRef.current = (pos) => {
+        const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+        const map = mapInstance.current;
+
+        // Live pulsing position marker
+        const iconHtml = `<div style="width:20px;height:20px;border-radius:50%;background:#3b82f6;border:3px solid #fff;box-shadow:0 0 0 8px rgba(59,130,246,0.25)"></div>`;
+        const liveIcon = L.divIcon({ html: iconHtml, className:'', iconSize:[20,20], iconAnchor:[10,10] });
+        if (!liveMarkerRef.current) {
+          liveMarkerRef.current = L.marker([lat, lng], { icon: liveIcon, zIndexOffset: 1000 }).addTo(map);
+        } else {
+          liveMarkerRef.current.setLatLng([lat, lng]);
+        }
+        if (map) map.panTo([lat, lng], { animate: true, duration: 0.4 });
+
+        // Accumulate distance (ignore GPS jumps > 200 m)
+        const last = trackLastPosRef.current;
+        if (last) {
+          const seg = haversineM(last.lat, last.lng, lat, lng);
+          if (seg < 200) {
+            trackDistRef.current += seg;
+            setTrackDistM(trackDistRef.current);
+            const elapsed = trackElapsedRef.current;
+            if (trackDistRef.current > 50 && elapsed > 10) {
+              setTrackPaceSec(Math.round(elapsed / (trackDistRef.current / 1609.34)));
+            }
+          }
+        }
+        trackLastPosRef.current = { lat, lng };
+
+        // Route analysis
+        const coords = routeCoordsRef.current;
+        if (coords?.length && map) {
+          const { distToRoute, distAlongRoute, totalRouteLen } = nearestOnPolyline(lat, lng, coords);
+          setOffRoute(distToRoute > 60);
+          setRouteProgress(Math.min(1, distAlongRoute / (totalRouteLen || 1)));
+
+          // Split route into completed (gray) / remaining (orange)
+          if (routeLayer.current) routeLayer.current.setStyle({ opacity: 0 });
+          const { completed, remaining } = splitPolylineAtDist(coords, distAlongRoute);
+          if (completedLayerRef.current) map.removeLayer(completedLayerRef.current);
+          if (remainLayerRef.current) map.removeLayer(remainLayerRef.current);
+          if (completed.length > 1)
+            completedLayerRef.current = L.polyline(completed.map(([g,a])=>[a,g]), { color:'#6b7280', weight:4, opacity:0.55 }).addTo(map);
+          if (remaining.length > 1)
+            remainLayerRef.current = L.polyline(remaining.map(([g,a])=>[a,g]), { color:'#f97316', weight:6, opacity:0.92 }).addTo(map);
+
+          // Next turn
+          const steps = routeStepsRef.current;
+          const nextStep = steps.find(s => (s.startDistM || 0) > distAlongRoute - 15);
+          if (nextStep) {
+            const distToTurn = Math.max(0, (nextStep.startDistM || 0) - distAlongRoute);
+            setNextTurn({ ...nextStep, distM: distToTurn });
+          } else {
+            setNextTurn(null);
+          }
+        }
+      };
+
+      const startTracking = useCallback(() => {
+        if (!routeInfo?.geometry) return;
+        routeCoordsRef.current  = routeInfo.geometry.coordinates;
+        routeStepsRef.current   = (routeInfo.steps || []).filter(s => s.type !== 'continue' || true);
+        setTracking(true);
+        setTrackElapsed(0);
+        setTrackDistM(0);
+        setTrackPaceSec(0);
+        setOffRoute(false);
+        setRouteProgress(0);
+        setNextTurn(routeStepsRef.current[0] ? { ...routeStepsRef.current[0], distM: routeStepsRef.current[0].startDistM || 0 } : null);
+        trackElapsedRef.current = 0;
+        trackDistRef.current    = 0;
+        trackLastPosRef.current = null;
+
+        trackTimerRef.current = setInterval(() => {
+          trackElapsedRef.current += 1;
+          setTrackElapsed(t => t + 1);
+        }, 1000);
+
+        if (navigator.geolocation) {
+          trackWatchRef.current = navigator.geolocation.watchPosition(
+            (pos) => onGPSUpdateRef.current(pos),
+            () => {},
+            { enableHighAccuracy: true, maximumAge: 1500, timeout: 10000 }
+          );
+        }
+        if (mapInstance.current && location) {
+          mapInstance.current.setView([location.lat, location.lng], 16, { animate: true });
+        }
+      }, [routeInfo, location]);
+
+      const stopTracking = useCallback(() => {
+        if (trackWatchRef.current !== null) { navigator.geolocation.clearWatch(trackWatchRef.current); trackWatchRef.current = null; }
+        if (trackTimerRef.current) { clearInterval(trackTimerRef.current); trackTimerRef.current = null; }
+        const map = mapInstance.current;
+        if (liveMarkerRef.current && map) { map.removeLayer(liveMarkerRef.current); liveMarkerRef.current = null; }
+        if (completedLayerRef.current && map) { map.removeLayer(completedLayerRef.current); completedLayerRef.current = null; }
+        if (remainLayerRef.current && map) { map.removeLayer(remainLayerRef.current); remainLayerRef.current = null; }
+        if (routeLayer.current) routeLayer.current.setStyle({ color: '#f97316', opacity: 0.88 });
+        setTracking(false);
+        setOffRoute(false);
+        setNextTurn(null);
+        setRouteProgress(0);
+      }, []);
 
       // ── Get GPS location ─────────────────────────────────────────────────
       const requestLocation = () => {
