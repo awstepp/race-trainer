@@ -226,8 +226,8 @@
     function estimateVDOT(raceType, goalTimeMins) {
       // Riegel's formula equivalent: convert goal time to equivalent 5K time,
       // then map to a VDOT table (polynomial fit to Daniels' published values).
-      const raceDistKm = { '5k': 5, '10k': 10, 'half': 21.0975, 'marathon': 42.195 }[raceType];
-      const raceDistMi = { '5k': 3.107, '10k': 6.214, 'half': 13.109, 'marathon': 26.219 }[raceType];
+      const raceDistKm = { '5k': 5, '10k': 10, 'half': 21.0975, 'marathon': 42.195, 'diablo50k_beg': 50, 'diablo50k_int': 50 }[raceType];
+      const raceDistMi = { '5k': 3.107, '10k': 6.214, 'half': 13.109, 'marathon': 26.219, 'diablo50k_beg': 31.07, 'diablo50k_int': 31.07 }[raceType];
 
       // Velocity in m/min
       const distMeters = raceDistKm * 1000;
@@ -276,7 +276,7 @@
     }
 
     function calcPaces(raceType, goalTime, fitnessLevel, fitnessAssessment) {
-      const raceDistMi = { '5k': 3.107, '10k': 6.214, 'half': 13.109, 'marathon': 26.219 }[raceType];
+      const raceDistMi = { '5k': 3.107, '10k': 6.214, 'half': 13.109, 'marathon': 26.219, 'diablo50k_beg': 31.07, 'diablo50k_int': 31.07 }[raceType];
       const racePaceSec = (goalTime * 60) / raceDistMi; // sec/mile at goal pace
 
       // ── Step 1: Estimate VDOT from goal time ──────────────────────────────
@@ -302,7 +302,8 @@
       }
 
       // For 5K/10K goal races: use interval pace for race day, not marathon pace
-      const raceZonePace = (raceType === 'marathon') ? zonePaces.marathon :
+      const raceZonePace = (isDiablo(raceType))      ? racePaceSec :        // ultra: goal pace is correct
+                           (raceType === 'marathon') ? zonePaces.marathon :
                            (raceType === 'half')     ? (zonePaces.marathon + zonePaces.tempo) / 2 :
                            racePaceSec; // for 5K/10K, goal pace IS close to interval pace
 
@@ -678,14 +679,29 @@
 
     // Returns the ordered list of workout types to fill available training days (excluding long run).
     // Order matters: harder workouts are placed first so they land earlier in the week.
-    function getPhaseWorkoutQueue(phase, raceType, daysAvailable, includeStrength) {
+    function getPhaseWorkoutQueue(phase, raceType, daysAvailable, includeStrength, weekIdx) {
       // Strength slots: 0–1 depending on days available and toggle
       const canStrength = includeStrength && daysAvailable >= 4;
       const strengthSlot = canStrength
         ? (phase === 'speed' ? 'strength_plyo' : phase === 'build' ? 'strength_core' : 'strength_lower')
         : null;
 
+      // For Diablo 50K plans, inject fuelStop in build/speed phases
+      const giTier = isDiablo(raceType) ? getDiabloGITier(weekIdx ?? 0, raceType) : null;
+      const includeFuelStop = giTier && giTier.level > 0 && (phase === 'build' || phase === 'speed');
+
       // Phase-specific hard + easy workout order (long run is placed separately)
+      if (isDiablo(raceType)) {
+        const queues = {
+          raceWeek: ['easy', 'recovery', ...(strengthSlot ? [strengthSlot] : [])],
+          taper:    ['easy', 'tempo', 'recovery', ...(strengthSlot ? [strengthSlot] : [])],
+          speed:    [includeFuelStop ? 'fuelStop' : 'easy', 'tempo', 'hills', 'easy', ...(strengthSlot ? [strengthSlot] : [])],
+          build:    [includeFuelStop ? 'fuelStop' : 'easy', 'hills', 'easy', 'easy', ...(strengthSlot ? [strengthSlot] : [])],
+          base:     ['easy', 'tempo', 'recovery', 'easy', ...(strengthSlot ? [strengthSlot] : [])],
+        };
+        return (queues[phase] || queues.base).slice(0, daysAvailable);
+      }
+
       const queues = {
         raceWeek: ['intervals', 'easy', 'recovery', ...(strengthSlot ? [strengthSlot] : [])],
         taper:    ['intervals', 'easy', 'recovery', ...(strengthSlot ? [strengthSlot] : [])],
@@ -777,7 +793,8 @@
         hills:     { description: 'Hill repeats — strength & power',    volumeFrac: 0.10, intensity: 'hard'  },
         long:      { description: 'Long run — easy, aerobic base',      volumeFrac: 0.35, intensity: 'easy'  },
         recovery:  { description: 'Recovery run — very easy pace',      volumeFrac: 0.10, intensity: 'easy'  },
-        race:      { description: `${RACE_TYPES[raceType].label} race`, volumeFrac: 0,    intensity: 'race'  }
+        race:      { description: `${RACE_TYPES[raceType].label} race`, volumeFrac: 0,    intensity: 'race'  },
+        fuelStop:  { description: 'Fuel stop run — GI training with mid-run fast food', volumeFrac: 0.20, intensity: 'easy'  },
       };
       return info[typeKey] || { description: '', volumeFrac: 0, intensity: 'easy' };
     }
