@@ -629,7 +629,8 @@
         race:      basePaces.race   // never adapt the goal race pace
       };
 
-      const dayTypes  = getWeekTemplate(phase, raceType, includeStrength, schedulePrefs);
+      const weekIdx   = weekData.weekNum - 1; // 0-based
+      const dayTypes  = getWeekTemplate(phase, raceType, includeStrength, schedulePrefs, weekIdx);
       const dayWorkouts = [];
 
       // ── Normalize workout miles so they sum to the weekly target ─────────────
@@ -647,7 +648,8 @@
       for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
         const typeKey  = dayTypes[dayIdx];
         const baseInfo = getWorkoutBaseInfo(typeKey, raceType);
-        let pace = paces[typeKey] || 0;
+        // fuelStop runs at easy pace (stop-and-go with eating breaks)
+        let pace = paces[typeKey] || (typeKey === 'fuelStop' ? paces.easy : 0);
 
         if (typeKey === 'strength_lower' || typeKey === 'strength_core' || typeKey === 'strength_plyo') {
           dayWorkouts.push({
@@ -712,9 +714,19 @@
       return (queues[phase] || queues.base).slice(0, daysAvailable);
     }
 
-    function getWeekTemplate(phase, raceType, includeStrength = true, schedulePrefs = null) {
+    function getWeekTemplate(phase, raceType, includeStrength = true, schedulePrefs = null, weekIdx = 0) {
       // ── Default (no schedule prefs) — legacy fixed template ────────────────
       if (!schedulePrefs) {
+        if (isDiablo(raceType)) {
+          const giTier = getDiabloGITier(weekIdx, raceType);
+          const fs = giTier.level > 0 ? 'fuelStop' : 'easy';
+          const str = includeStrength ? 'strength_core' : 'easy';
+          if (phase === 'raceWeek') return ['rest', 'easy', 'recovery', 'rest', 'long', 'easy', 'race'];
+          if (phase === 'taper')    return ['rest', 'easy', 'tempo', 'rest', 'long', 'easy', 'rest'];
+          if (phase === 'speed')    return [str, 'easy', fs, 'recovery', 'long', 'tempo', 'rest'];
+          if (phase === 'build')    return [str, 'easy', fs, 'hills', 'long', 'easy', 'rest'];
+          return ['rest', 'easy', 'easy', 'recovery', 'long', 'easy', 'rest'];
+        }
         if (!includeStrength) {
           if (phase === 'raceWeek') return ['rest', 'easy', 'intervals', 'recovery', 'long', 'easy', 'race'];
           if (phase === 'taper')    return ['rest', 'easy', 'intervals', 'recovery', 'long', 'easy', 'rest'];
@@ -759,7 +771,7 @@
 
         // Fill remaining days with phase-appropriate workout queue
         const daysAvailable = otherDays.length;
-        const queue = getPhaseWorkoutQueue(phase, raceType, daysAvailable, includeStrength);
+        const queue = getPhaseWorkoutQueue(phase, raceType, daysAvailable, includeStrength, weekIdx);
 
         otherDays.forEach((d, i) => {
           template[d] = queue[i] || 'easy';
