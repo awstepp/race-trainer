@@ -4091,7 +4091,7 @@
                   <h2 className="text-white text-xl font-bold">Run Complete!</h2>
                   {linkedWorkout && (
                     <p className="text-green-200 text-sm mt-0.5">
-                      {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run' })[linkedWorkout.workout.type] || linkedWorkout.workout.type} · Week {linkedWorkout.weekIdx + 1}
+                      {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run', fuelStop:'Fuel Stop Run 🌶️' })[linkedWorkout.workout.type] || linkedWorkout.workout.type} · Week {linkedWorkout.weekIdx + 1}
                     </p>
                   )}
                 </div>
@@ -4150,7 +4150,7 @@
                       onClick={confirmLogWorkout}
                       className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold rounded-2xl transition text-base flex items-center justify-center gap-2">
                       <span className="text-lg">✓</span>
-                      Log {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run' })[linkedWorkout.workout.type] || 'Run'}
+                      Log {({ easy:'Easy Run', tempo:'Tempo Run', intervals:'Intervals', hills:'Hill Repeats', long:'Long Run', recovery:'Recovery Run', fuelStop:'Fuel Stop Run' })[linkedWorkout.workout.type] || 'Run'}
                     </button>
                   ) : (
                     <div className="text-center text-gray-400 text-sm py-2">Great run! No workout was linked.</div>
