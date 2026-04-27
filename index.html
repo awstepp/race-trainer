@@ -83,7 +83,9 @@
       '5k': { label: '5K', weeks: 8, threshold: 7 },
       '10k': { label: '10K', weeks: 10, threshold: 7 },
       'half': { label: 'Half Marathon', weeks: 12, threshold: 8 },
-      'marathon': { label: 'Marathon', weeks: 16, threshold: 9 }
+      'marathon': { label: 'Marathon', weeks: 16, threshold: 9 },
+      'diablo50k_beg': { label: 'Diablo 50K — Beginner (20 wk)', weeks: 20, threshold: 14, isUltra: true, diabloLevel: 'beg', phaseNames: { base: 'Ignition', build: 'Heat Up', speed: 'Full Burn', taper: 'Taper', raceWeek: 'Race Week' } },
+      'diablo50k_int': { label: 'Diablo 50K — Intermediate (16 wk)', weeks: 16, threshold: 11, isUltra: true, diabloLevel: 'int', phaseNames: { base: 'Ignition', build: 'Heat Up', speed: 'Full Burn', taper: 'Taper', raceWeek: 'Race Week' } },
     };
 
     const WORKOUT_TYPES = {
@@ -97,8 +99,35 @@
       race: { label: 'Race', textColor: 'text-yellow-400', dotColor: '#fbbf24', icon: '🏁' },
       strength_lower: { label: 'Strength: Lower Body', textColor: 'text-emerald-400', dotColor: '#10b981', icon: '🦵' },
       strength_core: { label: 'Strength: Core & Hips', textColor: 'text-teal-400', dotColor: '#14b8a6', icon: '💪' },
-      strength_plyo: { label: 'Strength: Plyometrics', textColor: 'text-lime-400', dotColor: '#84cc16', icon: '🚀' }
+      strength_plyo: { label: 'Strength: Plyometrics', textColor: 'text-lime-400', dotColor: '#84cc16', icon: '🚀' },
+      fuelStop: { label: 'Fuel Stop Run', textColor: 'text-red-400', dotColor: '#dc2626', icon: '🌶️' }
     };
+
+    // ── Diablo 50K GI coaching progression ───────────────────────────────────
+    const DIABLO_GI_COACHING = {
+      none:    { level: 0, tag: '', text: '' },
+      mild:    { level: 1, tag: 'GI Level 1 — Mild', text: 'Practice eating plain foods mid-run: plain crackers, dry pretzels, or white bread. Stop briefly at the fuel location, eat ~100 cal, then continue. Focus on gut comfort, not speed.' },
+      medium:  { level: 2, tag: 'GI Level 2 — Medium', text: 'Introduce real fast food mid-run: small item from your target chain (e.g. a soft taco or small burger). Walk while eating. Time your fuel stop to occur at ~40–50% of total distance. Note any GI symptoms.' },
+      full:    { level: 3, tag: 'GI Level 3 — Full Diablo', text: 'Full race simulation: eat a full chain meal (1–2 items, 300–500 cal) mid-run. Practice your exact race-day order. Confirm tolerance before taper. This is your gut stress test.' },
+    };
+
+    // Returns the GI coaching tier for a given weekIdx and raceType
+    function getDiabloGITier(weekIdx, raceType) {
+      const isBeg = raceType === 'diablo50k_beg';
+      const fuelStart = isBeg ? 7 : 4;   // 0-indexed: week 8 beg / week 5 int
+      const mediumStart = isBeg ? 10 : 7;
+      const fullStart   = isBeg ? 15 : 11;
+      const taperStart  = isBeg ? 17 : 13;
+      if (weekIdx < fuelStart)    return DIABLO_GI_COACHING.none;
+      if (weekIdx >= taperStart)  return DIABLO_GI_COACHING.mild; // lighter during taper
+      if (weekIdx >= fullStart)   return DIABLO_GI_COACHING.full;
+      if (weekIdx >= mediumStart) return DIABLO_GI_COACHING.medium;
+      return DIABLO_GI_COACHING.mild;
+    }
+
+    function isDiablo(raceType) {
+      return raceType === 'diablo50k_beg' || raceType === 'diablo50k_int';
+    }
 
     const STRENGTH_ROUTINES = {
       lower: {
@@ -329,7 +358,7 @@
     }
 
     // ── Peak long run targets by race type (miles) ───────────────────────────
-    const PEAK_LONG_RUN = { '5k': 9, '10k': 12, 'half': 13, 'marathon': 21 };
+    const PEAK_LONG_RUN = { '5k': 9, '10k': 12, 'half': 13, 'marathon': 21, 'diablo50k_beg': 28, 'diablo50k_int': 30 };
 
     // ── 10% Rule + 80/20 Intensity Distribution ──────────────────────────────
     // The 10% rule: never increase weekly mileage by more than 10% week-over-week.
@@ -341,7 +370,7 @@
     //      raises the starting mileage so they reach a better peak given the shorter time
     //   3. The long run is then derived as a % of weekly total, capped at race-appropriate peak
     function weeklyMileage(raceType, weekIdx, totalWeeks, volumeFactor, fitnessAssessment) {
-      const peakMileage = { '5k': 30, '10k': 40, 'half': 50, 'marathon': 60 };
+      const peakMileage = { '5k': 30, '10k': 40, 'half': 50, 'marathon': 60, 'diablo50k_beg': 58, 'diablo50k_int': 63 };
       const fullPeak = peakMileage[raceType] * volumeFactor;
       const taperStart = totalWeeks - 2;
       const raceWeek   = totalWeeks - 1;
