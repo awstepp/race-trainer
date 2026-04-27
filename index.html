@@ -625,7 +625,7 @@
       return null;
     }
 
-    function buildWeekWorkouts(weekData, raceType, goalTime, fitnessLevel, includeStrength = true, fitnessAssessment = null, adaptationState = null, schedulePrefs = null) {
+    function buildWeekWorkouts(weekData, raceType, goalTime, fitnessLevel, includeStrength = true, fitnessAssessment = null, adaptationState = null, schedulePrefs = null, fuelChain = 'Taco Bell') {
       const { weekNum, phase, mileage } = weekData;
       const basePaces    = calcPaces(raceType, goalTime, fitnessLevel, fitnessAssessment);
       const phaseScaling = computeAdaptation(weekNum, phase, raceType); // existing phase-based volume scalar
@@ -687,9 +687,12 @@
           if (typeKey === 'long') miles = Math.min(miles, PEAK_LONG_RUN[raceType] || miles);
           const roundedMiles = Math.round(miles * 10) / 10;
           const structure = getWorkoutStructure(typeKey, phase, raceType, roundedMiles, paces, weekIdx);
+          const description = typeKey === 'fuelStop'
+            ? `Fuel stop run — stop at ${fuelChain} mid-run (GI training)`
+            : baseInfo.description;
           dayWorkouts.push({
             type: typeKey,
-            description: baseInfo.description,
+            description,
             miles: roundedMiles,
             pace,
             structure,
@@ -4259,6 +4262,34 @@
 
           {/* Adaptation Banner */}
           <AdaptationBanner phase={phase} adaptationState={adaptationState} />
+
+          {/* Diablo 50K GI Coaching Banner */}
+          {isDiablo(plan.raceType) && (() => {
+            const giTier = getDiabloGITier(currentWeekIdx, plan.raceType);
+            const fuelChain = plan.fuelChain || 'Taco Bell';
+            if (giTier.level === 0) return (
+              <div className="rounded-xl p-4 border border-red-900" style={{background:'rgba(127,29,29,0.25)'}}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xl">🌋</span>
+                  <span className="text-red-300 font-bold text-sm">Diablo 50K — Ignition Phase</span>
+                </div>
+                <p className="text-red-200 text-xs">Building your aerobic base before introducing fuel stop training. Keep miles easy and consistent — the gut training starts later.</p>
+              </div>
+            );
+            const levelColors = ['','text-yellow-300','text-orange-300','text-red-300'];
+            const levelBg = ['','rgba(113,63,18,0.4)','rgba(124,45,18,0.4)','rgba(127,29,29,0.4)'];
+            const levelBorder = ['','border-yellow-800','border-orange-800','border-red-800'];
+            return (
+              <div className="rounded-xl p-4 border" style={{background: levelBg[giTier.level], borderColor: levelBorder[giTier.level].replace('border-','')}}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xl">🌶️</span>
+                  <span className={`font-bold text-sm ${levelColors[giTier.level]}`}>{giTier.tag}</span>
+                  <span className="ml-auto text-xs text-gray-400">{fuelChain}</span>
+                </div>
+                <p className="text-gray-200 text-xs leading-relaxed">{giTier.text}</p>
+              </div>
+            );
+          })()}
 
           {/* Missed Workouts */}
           <MissedWorkoutsBanner plan={plan} logs={logs} onLogWorkout={onLogWorkout} />
@@ -7849,7 +7880,7 @@
           for (let i = 0; i < newPlan.totalWeeks; i++) {
             weeks.push(buildWeekWorkouts(newPlan.weeks[i], newPlan.raceType, newPlan.goalTime, newPlan.fitnessLevel, newPlan.includeStrength, newPlan.fitnessAssessment, null, schedulePrefs));
           }
-          return { ...newPlan, weekWorkouts: weeks };
+          return { ...newPlan, weekWorkouts: weeks, fuelChain: c.fuelChain || undefined };
         };
 
         try {
@@ -8168,7 +8199,7 @@
         for (let i = 0; i < newPlan.totalWeeks; i++) {
           weeks.push(buildWeekWorkouts(newPlan.weeks[i], newPlan.raceType, newPlan.goalTime, newPlan.fitnessLevel, newPlan.includeStrength, newPlan.fitnessAssessment, null, schedulePrefs));
         }
-        return { ...newPlan, weekWorkouts: weeks };
+        return { ...newPlan, weekWorkouts: weeks, fuelChain: cfg.fuelChain || undefined };
       };
 
       const handleSetupComplete = (newConfig) => {
