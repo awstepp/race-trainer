@@ -4238,7 +4238,9 @@
             <div className="text-center">
               <div className="text-white font-semibold text-sm">
                 Week {plan.weeks[currentWeekIdx]?.weekNum} of {plan.totalWeeks}
-                <span className="ml-2 text-xs text-gray-500 capitalize">{phase}</span>
+                <span className="ml-2 text-xs capitalize" style={{color: isDiablo(plan.raceType) ? '#f87171' : '#6b7280'}}>
+                  {(RACE_TYPES[plan.raceType]?.phaseNames?.[phase]) || phase}
+                </span>
               </div>
               {!isViewingCurrentWeek && (
                 <button
@@ -4550,7 +4552,9 @@
               <div key={weekIdx} className="bg-slate-800 rounded-lg p-4 border border-slate-700">
                 <h3 className="text-white font-bold text-lg mb-1 flex items-center justify-between flex-wrap gap-2">
                   <span>Week {week.weekNum} of {plan.totalWeeks}</span>
-                  <span className="text-sm font-normal text-gray-400 capitalize">{week.phase} phase</span>
+                  <span className="text-sm font-normal capitalize" style={{color: isDiablo(plan.raceType) ? '#f87171' : '#9ca3af'}}>
+                    {(RACE_TYPES[plan.raceType]?.phaseNames?.[week.phase]) || week.phase} phase
+                  </span>
                 </h3>
                 <div className="flex gap-3 text-xs mb-3 text-gray-500">
                   {(() => {
