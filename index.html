@@ -184,7 +184,8 @@
       hills: { time: '8 min', steps: ['Easy jog to hill', 'Leg swings and A-skips', '2 easy hill jogs before hard efforts'] },
       long: { time: '5 min', steps: ['Start at very easy pace for first mile', 'Leg swings and hip circles', 'Do NOT stretch cold muscles'] },
       recovery: { time: '2 min', steps: ['Begin with brisk walk', 'Ease into very light jog'] },
-      race: { time: '20 min', steps: ['20-min easy jog (2–3 hrs before start)', '6–8 strides at race pace', 'Light dynamic stretching', 'Stay warm until gun'] }
+      race:     { time: '20 min', steps: ['20-min easy jog (2–3 hrs before start)', '6–8 strides at race pace', 'Light dynamic stretching', 'Stay warm until gun'] },
+      fuelStop: { time: '5 min', steps: ['Leg swings front/back: 15×', 'Hip circles: 10× each', 'High knees: 20 steps', 'Plan your route to the fuel stop location'] },
     };
 
     const WORKOUT_COOLDOWNS = {
@@ -194,7 +195,8 @@
       hills: { steps: ['Hip flexor stretch 30s×2', 'Quad stretch 30s×2', 'Hamstring 30s×2', 'Calf stretch 30s×2'] },
       long: { steps: ['Hip flexor stretch 30s×2', 'Quad stretch 30s×2', 'Hamstring 30s×2', 'IT band stretch 45s×2', 'Glute/pigeon pose 45s×2', 'Elevate legs 5–10 min'] },
       recovery: { steps: ['Hip flexor stretch 30s×2', 'Quad stretch 30s×2', 'Hamstring 30s×2', 'Calf stretch 30s×2'] },
-      race: { steps: ['Hip flexor stretch 30s×2', 'Quad stretch 30s×2', 'Hamstring 30s×2', 'Calf stretch 30s×2'] }
+      race:     { steps: ['Hip flexor stretch 30s×2', 'Quad stretch 30s×2', 'Hamstring 30s×2', 'Calf stretch 30s×2'] },
+      fuelStop: { steps: ['Hip flexor stretch 30s×2', 'Quad stretch 30s×2', 'Hamstring 30s×2', 'Log GI symptoms in your notes', 'Rate gut comfort 1-10 for the post-run hours'] },
     };
 
     const FITNESS_LEVELS = {
@@ -2022,7 +2024,8 @@
         hills: ['intervals', 'tempo'],
         long: ['easy', 'recovery'],
         recovery: ['easy', 'rest'],
-        rest: ['easy', 'recovery']
+        rest: ['easy', 'recovery'],
+        fuelStop: ['easy', 'recovery', 'rest'],
       };
 
       const options = alternatives[currentType] || [];
@@ -7865,9 +7868,10 @@
           const fitnessAssessment = p.fitnessAssessment || null;
           const adaptationState   = p.adaptationState  || null;
           const schedulePrefs     = p.schedulePrefs     || null;
+          const fuelChain         = p.fuelChain         || 'Taco Bell';
           const weeks = [];
           for (let i = 0; i < p.totalWeeks; i++) {
-            weeks.push(buildWeekWorkouts(p.weeks[i], p.raceType, goalTime, fitnessLevel, includeStrength, fitnessAssessment, adaptationState, schedulePrefs));
+            weeks.push(buildWeekWorkouts(p.weeks[i], p.raceType, goalTime, fitnessLevel, includeStrength, fitnessAssessment, adaptationState, schedulePrefs, fuelChain));
           }
           return { ...p, goalTime, fitnessLevel, includeStrength, fitnessAssessment, adaptationState, schedulePrefs, weekWorkouts: weeks };
         };
